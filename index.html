@@ -79,7 +79,17 @@ nav a:hover,
         <article class="card"><div class="icon">📊</div><h3 data-fa="تحلیل بازار" data-en="Market Analysis">تحلیل بازار</h3><p data-fa="بررسی ساختار قیمت، نواحی مهم و رفتار بازار برای تدوین سناریوهای معاملاتی." data-en="Reviewing price structure, key levels and market behavior to build trading scenarios.">بررسی ساختار قیمت، نواحی مهم و رفتار بازار برای تدوین سناریوهای معاملاتی.</p></article>
         <article class="card"><div class="icon">🎯</div><h3 data-fa="سناریوهای معاملاتی" data-en="Trade Setups">سناریوهای معاملاتی</h3><p data-fa="ارائه سناریوهای احتمالی خرید و فروش همراه با نقاط ابطال و توجه به مدیریت ریسک." data-en="Potential long and short scenarios with invalidation levels and risk management in mind.">ارائه سناریوهای احتمالی خرید و فروش همراه با نقاط ابطال و توجه به مدیریت ریسک.</p></article>
         <article class="card"><div class="icon">🎓</div><h3 data-fa="آموزش معامله‌گری" data-en="Trading Education">آموزش معامله‌گری</h3><p data-fa="محتوای آموزشی برای شناخت بهتر ابزارها، ساختار بازار و اصول تصمیم‌گیری معاملاتی." data-en="Educational content to better understand tools, market structure and trading decisions.">محتوای آموزشی برای شناخت بهتر ابزارها، ساختار بازار و اصول تصمیم‌گیری معاملاتی.</p></article>
-      </div>
+      </div><div style="margin-top:30px;width:100%;overflow:hidden;border-radius:14px;">
+  <h3 style="text-align:center;color:#d9b45b;margin-bottom:15px;">
+    قیمت لحظه‌ای بازارها | LIVE MARKET PRICES
+  </h3>
+  <tv-ticker-tape
+    symbols="OANDA:XAUUSD,CME_MINI:NQ1!,BINANCE:BTCUSDT"
+    item-size="compact">
+  </tv-ticker-tape>
+</div>
+
+<script type="module" src="https://www.tradingview-widget.com/w/en/tv-ticker-tape.js"></script>
     </section>
 
     <section class="container" id="markets">
