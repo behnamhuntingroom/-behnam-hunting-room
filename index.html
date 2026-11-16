@@ -327,8 +327,8 @@ style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index
   let mouse = { x: -1000, y: -1000 };
   let target = { x: -1000, y: -1000 };
 
-  const count = 65;
-  const maxDistance = 195;
+  const count =110;
+  const maxDistance = 250;
   const influenceRadius = 210;
 
   function resize() {
@@ -421,7 +421,7 @@ style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index
         const distance = Math.hypot(p.x - q.x, p.y - q.y);
 
         if (distance < maxDistance) {
-          let opacity = (1 - distance / maxDistance) * 0.32;
+          let opacity = (1 - distance / maxDistance) * 0.48;
 
           const nearMouse = Math.hypot(
             (p.x + q.x) / 2 - mouse.x,
