@@ -182,5 +182,126 @@ document.getElementById('gregorianDate').textContent=gregorian;
 updateDates();
 setInterval(updateDates,60*60*1000);
 </script>
+
+<canvas id="bhr-effects" aria-hidden="true"></canvas>
+
+<script>
+(() => {
+  const canvas = document.getElementById('bhr-effects');
+  if (!canvas) return;
+
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  let width, height;
+  let particles = [];
+  let mouse = { x: -1000, y: -1000 };
+  let lastX = -1000;
+  let lastY = -1000;
+
+  const maxParticles = 90;
+
+  function resize() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function addParticle(x, y, amount = 3) {
+    for (let i = 0; i < amount; i++) {
+      if (particles.length >= maxParticles) particles.shift();
+
+      particles.push({
+        x: x + (Math.random() - 0.5) * 18,
+        y: y + (Math.random() - 0.5) * 18,
+        vx: (Math.random() - 0.5) * 1.1,
+        vy: (Math.random() - 0.5) * 1.1,
+        life: 1,
+        size: Math.random() * 2.2 + 0.6
+      });
+    }
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+
+  window.addEventListener('mousemove', e => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+
+    const distance = Math.hypot(mouse.x - lastX, mouse.y - lastY);
+
+    if (distance > 5) {
+      addParticle(
+        mouse.x,
+        mouse.y,
+        Math.min(5, Math.ceil(distance / 15))
+      );
+      lastX = mouse.x;
+      lastY = mouse.y;
+    }
+  });
+
+  window.addEventListener('mouseout', e => {
+    if (!e.relatedTarget) {
+      mouse.x = -1000;
+      mouse.y = -1000;
+    }
+  });
+
+  function draw() {
+    ctx.clearRect(0, 0, width, height);
+
+    if (mouse.x > 0) {
+      const glow = ctx.createRadialGradient(
+        mouse.x, mouse.y, 0,
+        mouse.x, mouse.y, 145
+      );
+
+      glow.addColorStop(0, 'rgba(242,217,139,0.12)');
+      glow.addColorStop(0.35, 'rgba(215,180,90,0.055)');
+      glow.addColorStop(1, 'rgba(215,180,90,0)');
+
+      ctx.fillStyle = glow;
+      ctx.fillRect(
+        mouse.x - 145,
+        mouse.y - 145,
+        290,
+        290
+      );
+    }
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life -= 0.012;
+      p.vx *= 0.99;
+      p.vy *= 0.99;
+
+      if (p.life <= 0) {
+        particles.splice(i, 1);
+        continue;
+      }
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(242,217,139,${p.life * 0.8})`;
+      ctx.shadowBlur = 12;
+      ctx.shadowColor = '#d7b45a';
+      ctx.fill();
+    }
+
+    ctx.shadowBlur = 0;
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+})();
+</script>
 </body>
 </html>
