@@ -184,17 +184,26 @@ section{padding:40px 0}
 .quote h3{
   display:flex;
   align-items:center;
-  gap:10px;
+  gap:12px;
   margin:0 0 14px;
-  padding-bottom:10px;
+  padding:0 0 12px;
   color:#f2d98b;
   font-size:15px;
-  font-weight:800;
-  letter-spacing:.7px;
-  border-bottom:1px solid rgba(215,180,90,.25);
-  text-shadow:0 0 12px rgba(215,180,90,.25);
+  font-weight:900;
+  letter-spacing:1.2px;
+  border-bottom:1px solid rgba(215,180,90,.3);
+  text-shadow:0 0 14px rgba(215,180,90,.4);
 }
-.tradingview-widget-container{width:100%;min-height:80px}
+
+.quote h3:before{
+  content:"";
+  width:7px;
+  height:7px;
+  flex-shrink:0;
+  border-radius:50%;
+  background:#f2d98b;
+  box-shadow:0 0 8px #f2d98b,0 0 16px rgba(215,180,90,.7);
+}.tradingview-widget-container{width:100%;min-height:80px}
 .tradingview-widget-container iframe{max-width:100%!important}
 .note{color:#aaa;font-size:12px;text-align:center;margin:12px 0 0}
 
