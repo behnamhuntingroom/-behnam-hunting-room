@@ -317,7 +317,16 @@ body > footer {
 <article class="card"><h3 class="market-heading"><svg class="market-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M7 4h10l3 5-8 12L4 9zM4 9h16M7 4l5 17 5-17"/></svg>GOLD | XAUUSD</h3><p data-fa="بررسی طلا و سناریوهای معاملاتی" data-en="Gold market analysis and trade scenarios">بررسی طلا و سناریوهای معاملاتی</p></article>
 <article class="card"><h3 class="market-heading"><svg class="market-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 19V5m0 14h17M7 15l4-5 3 2 5-7"/></svg>NASDAQ | NQ</h3><p data-fa="بررسی شاخص نزدک و معاملات آتی" data-en="Nasdaq index and futures analysis">بررسی شاخص نزدک و معاملات آتی</p></article>
 <article class="card"><h3 class="market-heading"><svg class="market-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M10 6v12m4-12v12M8 9h6a2 2 0 0 1 0 4H8m0 0h7a2 2 0 0 1 0 4H8"/></svg>CRYPTO | BTC</h3><p data-fa="بررسی بیت‌کوین و بازار رمزارزها" data-en="Bitcoin and crypto market analysis">بررسی بیت‌کوین و بازار رمزارزها</p></article>
+</div><div class="market-search">
+  <input
+    type="text"
+    id="marketSearch"
+    placeholder="جستجوی نماد... BTC, ETH, XAUUSD, EURUSD"
+    autocomplete="off"
+  >
+  <button type="button" onclick="searchMarket()">جستجو</button>
 </div>
+<div id="marketSearchResult"></div>
 <h2 class="section-title" style="font-size:23px;margin-top:34px" data-fa="قیمت بازارها" data-en="Market Quotes">قیمت بازارها</h2>
 <div class="quotes">
   <div class="quote" style="grid-column:1/-1;min-height:520px;padding:20px">
