@@ -291,7 +291,7 @@ setInterval(updateDates,60*60*1000);
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
       ctx.fillStyle = `rgba(242,217,139,${p.life * 0.8})`;
-      ctx.shadowBlur = 6;
+      ctx.shadowBlur =2;
       ctx.shadowColor = '#d7b45a';
       ctx.fill();
     }
