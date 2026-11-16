@@ -6,112 +6,55 @@
 <title>اتاق شکار بهنام | BEHNAM HUNTING ROOM</title>
 <meta name="description" content="اتاق شکار بهنام؛ تحلیل، آموزش و بررسی بازارهای مالی">
 <style>
-:root{
-  color-scheme:dark;
-  --gold:#d7b45a;
-  --gold2:#f2d98b;
-  --bg:#080909;
-  --panel:rgba(255,255,255,.055);
-  --line:rgba(215,180,90,.25);
-  --muted:#b8b8b8;
-  --text:#f5f1e7;
-  --header:rgba(16,17,17,.58);
-  --card:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.025));
-  --goldGlow:rgba(215,180,90,.16);
-}
-:root[data-theme="light"]{
-  color-scheme:light;
-  --bg:#f3f0e8;
-  --text:#191711;
-  --muted:#5d5a52;
-  --header:rgba(255,255,255,.72);
-  --panel:rgba(255,255,255,.75);
-  --line:rgba(160,119,35,.32);
-  --card:linear-gradient(145deg,rgba(255,255,255,.95),rgba(235,229,214,.85));
-}
+:root{color-scheme:dark;--gold:#d7b45a;--gold2:#f2d98b;--bg:#080909;--panel:rgba(255,255,255,.055);--line:rgba(215,180,90,.25);--muted:#b8b8b8;--text:#f5f1e7;--header:rgba(16,17,17,.58);--card:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.025));--goldGlow:rgba(215,180,90,.16)}
+:root[data-theme="light"]{color-scheme:light;--bg:#f3f0e8;--text:#191711;--muted:#5d5a52;--header:rgba(255,255,255,.72);--panel:rgba(255,255,255,.75);--line:rgba(160,119,35,.32);--card:linear-gradient(145deg,rgba(255,255,255,.95),rgba(235,229,214,.85))}
+:root[data-theme="light"] body{background:radial-gradient(ellipse at 50% -15%,#e9d9ae 0,transparent 42%),var(--bg);color:var(--text)}
+:root[data-theme="light"] header{background:var(--header);box-shadow:0 12px 35px #66552a22}
+:root[data-theme="light"] .card,:root[data-theme="light"] .quote{background:var(--card);box-shadow:0 10px 30px #66552a18}
+:root[data-theme="light"] nav a,:root[data-theme="light"] .lang,:root[data-theme="light"] .theme-btn{background:#ffffffa8;color:#4b3914;border-color:#a77d2c55}
+:root[data-theme="light"] footer{border-color:#00000018;color:#625d50}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{
-  margin:0;
-  background:radial-gradient(ellipse at 50% -15%,#292315 0,transparent 42%),var(--bg);
-  color:var(--text);
-  font-family:Tahoma,Arial,sans-serif;
-  line-height:1.8;
-}
-:root[data-theme="light"] body{
-  background:radial-gradient(ellipse at 50% -15%,#e9d9ae 0,transparent 42%),var(--bg);
-}
-body:before{
-  content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  z-index:-1;
-  background:radial-gradient(circle at 8% 35%,rgba(215,180,90,.055),transparent 24%),radial-gradient(circle at 92% 72%,rgba(215,180,90,.045),transparent 22%);
-}
+body{margin:0;background:radial-gradient(ellipse at 50% -15%,#292315 0,transparent 42%),var(--bg);color:var(--text);font-family:Tahoma,Arial,sans-serif;line-height:1.8}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:radial-gradient(circle at 8% 35%,rgba(215,180,90,.055),transparent 24%),radial-gradient(circle at 92% 72%,rgba(215,180,90,.045),transparent 22%)}
 a{color:inherit;text-decoration:none}
 .wrap{width:min(1120px,92%);margin:auto}
-header{
-  position:sticky;top:10px;z-index:10;
-  width:min(1120px,94%);margin:12px auto 0;
-  padding:12px 18px;display:flex;
-  align-items:center;justify-content:space-between;gap:15px;
-  background:var(--header);backdrop-filter:blur(18px) saturate(160%);
-  -webkit-backdrop-filter:blur(18px) saturate(160%);
-  border:1px solid var(--line);border-radius:18px;
-  box-shadow:0 12px 35px #0008;transition:border-color .25s;
-}
-.brand{
-  font-weight:800;letter-spacing:.5px;color:var(--gold2);
-  display:flex;align-items:center;gap:10px;font-size:14px;
-}
-.brand:before{
-  content:"BHR";display:grid;place-items:center;
-  width:35px;height:35px;border:1px solid var(--gold);
-  border-radius:11px;background:linear-gradient(145deg,#f2d98b22,#b58b3510);
-  color:var(--gold2);font-size:11px;letter-spacing:1px;
-  box-shadow:0 0 22px var(--goldGlow);
-}
+header{position:sticky;top:10px;z-index:10;width:min(1120px,94%);margin:12px auto 0;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:15px;background:var(--header);backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);border:1px solid var(--line);border-radius:18px;box-shadow:0 12px 35px #0008;transition:border-color .25s}
+.brand{font-weight:800;letter-spacing:.5px;color:var(--gold2);display:flex;align-items:center;gap:10px;font-size:14px}
+.brand:before{content:"BHR";display:grid;place-items:center;width:35px;height:35px;border:1px solid var(--gold);border-radius:11px;background:linear-gradient(145deg,#f2d98b22,#b58b3510);color:var(--gold2);font-size:11px;letter-spacing:1px;box-shadow:0 0 22px var(--goldGlow)}
 nav{display:flex;gap:8px;flex-wrap:wrap}
-nav a,.lang{
-  display:inline-flex;align-items:center;gap:7px;
-  padding:8px 12px;border:1px solid #ffffff16;
-  border-radius:12px;background:#ffffff0b;
-  backdrop-filter:blur(12px);font-size:13px;transition:.2s;
-}
+nav a,.lang{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border:1px solid #ffffff16;border-radius:12px;background:#ffffff0b;backdrop-filter:blur(12px);font-size:13px;transition:.2s}
+
 nav a:hover,.lang:hover{
-  border-color:rgba(242,217,139,.8);color:#ffe9ad;
+  border-color:rgba(242,217,139,.8);
+  color:#ffe9ad;
   background:linear-gradient(135deg,rgba(215,180,90,.22),rgba(215,180,90,.06));
   transform:translateY(-3px);
-  box-shadow:0 5px 16px rgba(215,180,90,.2),0 0 12px rgba(242,217,139,.15);
+  box-shadow:
+    0 5px 16px rgba(215,180,90,.2),
+    0 0 12px rgba(242,217,139,.15),
+    inset 0 0 10px rgba(242,217,139,.06);
   text-shadow:0 0 8px rgba(242,217,139,.35);
 }
-.nav-icon,.market-icon{
-  width:17px;height:17px;display:inline-block;
-  vertical-align:middle;flex:0 0 auto;
-}
+.nav-icon,.market-icon{width:17px;height:17px;display:inline-block;vertical-align:middle;flex:0 0 auto}
 .lang{cursor:pointer;color:var(--gold2)}
-.theme-btn{
-  padding:8px 12px;border:1px solid var(--line);
-  border-radius:12px;background:#ffffff0b;color:var(--gold2);
-  cursor:pointer;font:inherit;font-size:13px;transition:all .2s;
-}
-.theme-btn:hover,.lang:hover{
-  transform:translateY(-2px);box-shadow:0 5px 18px var(--goldGlow);
-}
+.theme-btn{padding:8px 12px;border:1px solid var(--line);border-radius:12px;background:#ffffff0b;color:var(--gold2);cursor:pointer;font:inherit;font-size:13px;transition:all .2s}
+.theme-btn:hover,.lang:hover{transform:translateY(-2px);box-shadow:0 5px 18px var(--goldGlow)}
 .header-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.datebox{
-  display:flex;gap:6px;align-items:center;flex-wrap:wrap;
-  color:var(--muted);font-size:11px;padding:5px 9px;
-  border:1px solid var(--line);border-radius:12px;background:var(--panel);
-}
+.datebox{display:flex;gap:6px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:11px;padding:5px 9px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
 .datebox b{color:var(--gold2);font-weight:600}
 .hero{text-align:center;padding:48px 0 35px;position:relative}
 .hero img{
-  display:block;width:min(100%,900px);height:auto;max-height:360px;
-  object-fit:contain;margin:0 auto 25px;
-  border:1px solid rgba(215,180,90,.55);border-radius:18px;
-  outline:1px solid rgba(242,217,139,.12);outline-offset:5px;
+  display:block;
+  width:min(100%,900px);
+  height:auto;
+  max-height:360px;
+  object-fit:contain;
+  margin:0 auto 25px;
+  border:1px solid rgba(215,180,90,.55);
+  border-radius:18px;
+  outline:1px solid rgba(242,217,139,.12);
+  outline-offset:5px;
   box-shadow:0 15px 55px #0009,0 0 25px rgba(215,180,90,.25);
   transition:transform .45s ease,border-color .45s ease,box-shadow .45s ease;
   animation:lionGlow 3.5s ease-in-out infinite;
@@ -119,633 +62,825 @@ nav a:hover,.lang:hover{
 .hero img:hover{
   transform:translateY(-7px) scale(1.025);
   border-color:#f2d98b;
-  box-shadow:0 22px 70px #000b,0 0 30px rgba(242,217,139,.65),0 0 75px rgba(215,180,90,.35);
+  box-shadow:
+    0 22px 70px #000b,
+    0 0 30px rgba(242,217,139,.65),
+    0 0 75px rgba(215,180,90,.35);
   filter:brightness(1.08);
 }
 @keyframes lionGlow{
-  0%,100%{box-shadow:0 15px 55px #0009,0 0 15px rgba(215,180,90,.15)}
-  50%{box-shadow:0 15px 55px #0009,0 0 28px rgba(242,217,139,.38),0 0 55px rgba(215,180,90,.18)}
-}
-.eyebrow{
-  color:var(--gold);letter-spacing:3px;font-size:12px;
-  display:inline-flex;align-items:center;gap:9px;
-}
-.eyebrow:before,.eyebrow:after{
-  content:"";width:28px;height:1px;
-  background:linear-gradient(90deg,transparent,var(--gold));
-}
+  0%,100%{
+    box-shadow:0 15px 55px #0009,0 0 15px rgba(215,180,90,.15);
+  }
+  50%{
+    box-shadow:0 15px 55px #0009,0 0 28px rgba(242,217,139,.38),0 0 55px rgba(215,180,90,.18);
+  }
+}.eyebrow{color:var(--gold);letter-spacing:3px;font-size:12px;display:inline-flex;align-items:center;gap:9px}
+.eyebrow:before,.eyebrow:after{content:"";width:28px;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
 .hero h1{font-size:clamp(28px,5vw,48px);line-height:1.35;margin:10px 0;color:var(--gold2)}
 .hero p{color:var(--muted);max-width:720px;margin:10px auto 24px}
-.btn{
-  display:inline-block;padding:11px 22px;border-radius:12px;
-  background:linear-gradient(135deg,#f1d88b,#b58b35);
-  color:#15120a;font-weight:bold;
-  box-shadow:0 7px 22px rgba(181,139,53,.22);
-  transition:transform .2s,box-shadow .2s;
-}
+.btn{display:inline-block;padding:11px 22px;border-radius:12px;background:linear-gradient(135deg,#f1d88b,#b58b35);color:#15120a;font-weight:bold;box-shadow:0 7px 22px rgba(181,139,53,.22);transition:transform .2s,box-shadow .2s}
+
 .btn:hover{
   transform:translateY(-4px) scale(1.04);
-  box-shadow:0 12px 28px rgba(181,139,53,.4),0 0 22px rgba(242,217,139,.4);
+  box-shadow:
+    0 12px 28px rgba(181,139,53,.4),
+    0 0 22px rgba(242,217,139,.4);
   filter:brightness(1.12);
 }
-.btn:active{transform:translateY(-1px) scale(.98)}
+.btn:active{
+  transform:translateY(-1px) scale(.98);
+}
 section{padding:40px 0}
 .section-title{text-align:center;margin:0 0 8px;color:var(--gold2);font-size:28px}
 .section-sub{text-align:center;color:var(--muted);margin:0 0 25px}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.card{
-  position:relative;overflow:hidden;background:var(--card);
-  border:1px solid var(--line);border-radius:18px;padding:22px;
-  box-shadow:0 10px 30px #0005;
-  transition:transform .25s,border-color .25s,box-shadow .25s;
-}
+.card{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 10px 30px #0005;transition:transform .25s,border-color .25s,box-shadow .25s}
+
 .card:before{
-  content:"";position:absolute;top:-100%;left:-60%;
-  width:45%;height:300%;
-  background:linear-gradient(90deg,transparent,rgba(242,217,139,.13),rgba(255,239,190,.28),rgba(242,217,139,.13),transparent);
-  transform:rotate(25deg);transition:left .8s ease;pointer-events:none;
+  content:"";
+  position:absolute;
+  top:-100%;
+  left:-60%;
+  width:45%;
+  height:300%;
+  background:linear-gradient(
+    90deg,
+    transparent,
+    rgba(242,217,139,.13),
+    rgba(255,239,190,.28),
+    rgba(242,217,139,.13),
+    transparent
+  );
+  transform:rotate(25deg);
+  transition:left .8s ease;
+  pointer-events:none;
 }
-.card:hover:before{left:120%}
+.card:hover:before{
+  left:120%;
+}
+
 .card:hover{
   transform:translateY(-7px) scale(1.015);
   border-color:rgba(255,225,150,.85);
-  box-shadow:0 20px 45px #0009,0 0 15px rgba(215,180,90,.28),0 0 35px rgba(215,180,90,.16),inset 0 0 18px rgba(215,180,90,.06);
+  box-shadow:
+    0 20px 45px #0009,
+    0 0 15px rgba(215,180,90,.28),
+    0 0 35px rgba(215,180,90,.16),
+    inset 0 0 18px rgba(215,180,90,.06);
 }
-.card h3{color:var(--gold2);margin:0 0 8px;transition:all .35s ease}
+
+.card h3{
+  color:var(--gold2);
+  margin:0 0 8px;
+  transition:all .35s ease;
+  text-shadow:0 0 0 transparent;
+}
 .card:hover h3{
   color:#ffe8a6;
-  text-shadow:0 0 8px rgba(242,217,139,.45),0 0 18px rgba(215,180,90,.3);
+  text-shadow:
+    0 0 8px rgba(242,217,139,.45),
+    0 0 18px rgba(215,180,90,.3);
   transform:translateX(-3px);
 }
+
 .card p{color:var(--muted);margin:0}
 .market-heading{display:flex;align-items:center;gap:10px}
+
+
 .market-icon{
-  width:38px;height:38px;padding:8px;
-  border:1px solid rgba(242,217,139,.65);border-radius:12px;
-  color:#f8df98;background:linear-gradient(145deg,#51401d,#211b0d 65%,#100e09);
-  box-shadow:inset 0 1px 3px rgba(255,240,190,.25),0 4px 12px rgba(181,139,53,.22),0 0 10px rgba(215,180,90,.12);
+  width:38px;
+  height:38px;
+  padding:8px;
+  border:1px solid rgba(242,217,139,.65);
+  border-radius:12px;
+  color:#f8df98;
+  background:linear-gradient(145deg,#51401d,#211b0d 65%,#100e09);
+  box-shadow:
+    inset 0 1px 3px rgba(255,240,190,.25),
+    0 4px 12px rgba(181,139,53,.22),
+    0 0 10px rgba(215,180,90,.12);
   transition:all .35s ease;
 }
+
 .market-heading:hover .market-icon{
-  color:#fff5d5;transform:translateY(-4px) scale(1.12) rotate(-5deg);
+  color:#fff5d5;
+  transform:translateY(-4px) scale(1.12) rotate(-5deg);
   border-color:#ffe7a5;
   background:linear-gradient(145deg,#a98232,#4a3715 65%,#171108);
-  box-shadow:inset 0 1px 5px rgba(255,245,210,.4),0 8px 20px rgba(215,180,90,.35),0 0 18px rgba(242,217,139,.4);
+  box-shadow:
+    inset 0 1px 5px rgba(255,245,210,.4),
+    0 8px 20px rgba(215,180,90,.35),
+    0 0 18px rgba(242,217,139,.4);
 }
-</style>
+.quotes{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:22px;
+  margin-top:22px;
+}
+.quotes .quote h3{
+  color:#f2d98b;
+  font-size:18px;
+  font-weight:900;
+  letter-spacing:1.5px;
+  padding-bottom:14px;
+  margin:0 0 18px;
+  border-bottom:1px solid rgba(215,180,90,.3);
+  text-shadow:0 0 15px rgba(215,180,90,.4);
+}
+.quotes .quote{
+  width:100%;
+  min-width:0;
+  box-sizing:border-box;
+  background:
+    radial-gradient(ellipse at top right,rgba(215,180,90,.12),transparent 65%),
+    linear-gradient(145deg,#17150f,#090a0a 75%);
+  border:1px solid rgba(215,180,90,.4);
+  border-radius:20px;
+  padding:20px;
+  box-shadow:0 12px 35px #0009,inset 0 1px 0 rgba(242,217,139,.12);
+}
+
+.quote:hover:before{
+  left:120%;
+}
+
+.quote:hover{
+  transform:translateY(-6px);
+  border-color:#f2d98b;
+  box-shadow:0 18px 40px #000b,0 0 18px rgba(215,180,90,.28);
+}
+.quote h3{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:0 0 14px;
+  padding:0 0 12px;
+  color:#f2d98b;
+  font-size:15px;
+  font-weight:900;
+  letter-spacing:1.2px;
+  border-bottom:1px solid rgba(215,180,90,.3);
+  text-shadow:0 0 14px rgba(215,180,90,.4);
+}
+
+.quote h3:before{
+  content:"";
+  width:7px;
+  height:7px;
+  flex-shrink:0;
+  border-radius:50%;
+  background:#f2d98b;
+  box-shadow:0 0 8px #f2d98b,0 0 16px rgba(215,180,90,.7);
+}.tradingview-widget-container{width:100%;min-height:80px}
+.tradingview-widget-container iframe{max-width:100%!important}
+.note{color:#aaa;font-size:12px;text-align:center;margin:12px 0 0}
+
+.services{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
+}
+.services .card{
+  transition:transform .35s ease,border-color .35s ease,box-shadow .35s ease;
+}
+.services .card:hover{
+  transform:translateY(-7px) scale(1.015);
+  border-color:rgba(242,217,139,.7);
+  box-shadow:
+    0 18px 40px #0009,
+    0 0 25px rgba(215,180,90,.2);
+}
+.contact{text-align:center}
+.contact a{color:var(--gold2)}
+footer{text-align:center;padding:24px;color:#888;border-top:1px solid #ffffff14;font-size:12px}
+[dir="ltr"] body{text-align:left}
+[dir="ltr"] .hero{text-align:center}
+:focus-visible{outline:2px solid var(--gold2);outline-offset:3px}
+@media(max-width:760px){header{align-items:flex-start;flex-direction:column}nav{width:100%}nav a{font-size:12px;padding:7px 9px}.grid,.quotes,.services{grid-template-columns:1fr}.hero{padding-top:30px}.hero img{max-height:250px}.quote{min-height:135px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+/* BHR Golden Mouse Effects */
+#bhr-effects {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body > header,
+body > main,
+body > footer {
+  position: relative;
+  z-index: 1;
+}
+
+@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+  #bhr-effects {
+    display: none;
+  }
+}
+.market-search{
+  max-width:850px;
+  margin:30px auto;
+  padding:24px;
+  border:1px solid rgba(215,180,90,.35);
+  border-radius:20px;
+  background:
+    radial-gradient(ellipse at top right,rgba(215,180,90,.12),transparent 65%),
+    linear-gradient(145deg,#17150f,#090a0a);
+  box-shadow:0 15px 40px #0008,inset 0 1px 0 rgba(242,217,139,.12);
+}
+
+.search-heading{
+  color:#f2d98b;
+  font-size:14px;
+  font-weight:900;
+  letter-spacing:3px;
+  margin-bottom:16px;
+  text-shadow:0 0 15px rgba(215,180,90,.4);
+}
+
+.search-box{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:8px 10px 8px 16px;
+  border:1px solid rgba(215,180,90,.35);
+  border-radius:14px;
+  background:#080909;
+  transition:border-color .3s,box-shadow .3s;
+}
+
+.search-box:focus-within{
+  border-color:#f2d98b;
+  box-shadow:0 0 20px rgba(215,180,90,.18);
+}
+
+.search-icon{
+  color:#f2d98b;
+  font-size:27px;
+}
+
+.search-box input{
+  flex:1;
+  min-width:0;
+  background:transparent;
+  border:0;
+  outline:none;
+  color:#f2d98b;
+  font-size:15px;
+  padding:12px 4px;
+}
+
+.search-box input::placeholder{
+  color:#89847a;
+}
+
+.search-box button{
+  border:1px solid #d7b45a;
+  border-radius:10px;
+  padding:12px 22px;
+  background:linear-gradient(135deg,#f2d98b,#b58b35);
+  color:#17130a;
+  font-weight:900;
+  cursor:pointer;
+  transition:all .3s ease;
+}
+
+.search-box button:hover{
+  transform:translateY(-2px);
+  box-shadow:0 0 20px rgba(215,180,90,.35);
+}
+
+.market-search-result{
+  color:#bdb5a2;
+  font-size:13px;
+  margin-top:15px;
+  min-height:20px;
+}
+
+.market-search-result a{
+  color:#f2d98b;
+  text-decoration:none;
+  font-weight:800;
+}
+
+@media(max-width:600px){
+  .market-search{padding:16px}
+  .search-box{gap:7px;padding:6px 8px}
+  .search-box button{padding:11px 13px;font-size:12px}
+  .search-box input{font-size:13px}
+}</style>
 </head>
 <body>
-
-<canvas id="bhr-ambient"></canvas>
-
 <header>
-  <a class="brand" href="#">BEHNAM HUNTING ROOM</a>
-
-  <nav>
-    <a href="#home"><span>⌂</span><span data-fa="خانه" data-en="Home">خانه</span></a>
-    <a href="#markets"><span>◈</span><span data-fa="بازارها" data-en="Markets">بازارها</span></a>
-    <a href="#services"><span>✧</span><span data-fa="خدمات" data-en="Services">خدمات</span></a>
-    <a href="#contact"><span>✉</span><span data-fa="ارتباط" data-en="Contact">ارتباط</span></a>
-  </nav>
-
-  <div class="header-tools">
-    <div class="datebox">
-      <span id="date-fa"></span>
-      <b id="clock"></b>
-    </div>
-    <button class="theme-btn" id="theme-toggle" type="button">☀ / ☾</button>
-    <button class="lang" id="lang-toggle" type="button">EN</button>
-  </div>
+<a class="brand" href="#home">BEHNAM HUNTING ROOM</a>
+<nav>
+<a href="#home"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-6v-7h-4v7H4a1 1 0 0 1-1-1z"/></svg><span data-fa="خانه" data-en="Home">خانه</span></a>
+<a href="#markets"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 19V5m0 14h17M7 15l4-5 3 2 5-7"/></svg><span data-fa="بازارها" data-en="Markets">بازارها</span></a>
+<a href="#services"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/><circle cx="18" cy="17" r="2"/></svg><span data-fa="خدمات" data-en="Services">خدمات</span></a>
+<a href="#contact"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg><span data-fa="تماس" data-en="Contact">تماس</span></a>
+</nav>
+<div class="header-tools">
+<div class="datebox"><span>شمسی:</span><b id="jalaliDate">—</b><span>| میلادی:</span><b id="gregorianDate">—</b></div>
+<button class="theme-btn" id="themeBtn" type="button" aria-label="تغییر حالت روز و شب">☀️ روز</button>
+<button class="lang" id="langBtn" type="button">EN</button>
+</div>
 </header>
-
-<main class="wrap">
-
-  <section class="hero" id="home">
-    <img src="Logo.jpg" alt="لوگوی اتاق شکار بهنام">
-
-    <div class="eyebrow">BEHNAM HUNTING ROOM</div>
-
-    <h1 data-fa="اتاق شکار بهنام" data-en="BEHNAM HUNTING ROOM">
-      اتاق شکار بهنام
-    </h1>
-
-    <p
-      data-fa="تحلیل بازار، آموزش و بررسی سناریوهای معاملاتی با تمرکز بر طلا، نزدک و رمزارزها."
-      data-en="Market analysis, education and trading scenarios focused on Gold, Nasdaq and cryptocurrencies."
+<main>
+<div class="wrap hero" id="home">
+<img src="Logo.jpg" alt="لوگوی اتاق شکار بهنام">
+<div class="eyebrow">TRADE • LEARN • PROFIT</div>
+<h1 data-fa="اتاق شکار بهنام" data-en="BEHNAM HUNTING ROOM">اتاق شکار بهنام</h1>
+<p data-fa="تحلیل بازار، آموزش و بررسی سناریوهای معاملاتی با تمرکز بر طلا، نزدک و رمزارزها." data-en="Market analysis, education and trading scenarios focused on Gold, Nasdaq and Crypto.">تحلیل بازار، آموزش و بررسی سناریوهای معاملاتی با تمرکز بر طلا، نزدک و رمزارزها.</p>
+<a class="btn" href="#markets" data-fa="مشاهده بازارها" data-en="Explore Markets">مشاهده بازارها</a>
+</div>
+<section id="markets">
+<div class="wrap">
+<h2 class="section-title" data-fa="بازارهای مورد بررسی" data-en="Markets We Follow">بازارهای مورد بررسی</h2>
+<p class="section-sub" data-fa="رصد بازارهای منتخب و قیمت‌های قابل مشاهده از TradingView" data-en="Track selected markets and quotes powered by TradingView">رصد بازارهای منتخب و قیمت‌های قابل مشاهده از TradingView</p>
+<div class="grid">
+<article class="card"><h3 class="market-heading"><svg class="market-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M7 4h10l3 5-8 12L4 9zM4 9h16M7 4l5 17 5-17"/></svg>GOLD | XAUUSD</h3><p data-fa="بررسی طلا و سناریوهای معاملاتی" data-en="Gold market analysis and trade scenarios">بررسی طلا و سناریوهای معاملاتی</p></article>
+<article class="card"><h3 class="market-heading"><svg class="market-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 19V5m0 14h17M7 15l4-5 3 2 5-7"/></svg>NASDAQ | NQ</h3><p data-fa="بررسی شاخص نزدک و معاملات آتی" data-en="Nasdaq index and futures analysis">بررسی شاخص نزدک و معاملات آتی</p></article>
+<article class="card"><h3 class="market-heading"><svg class="market-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M10 6v12m4-12v12M8 9h6a2 2 0 0 1 0 4H8m0 0h7a2 2 0 0 1 0 4H8"/></svg>CRYPTO | BTC</h3><p data-fa="بررسی بیت‌کوین و بازار رمزارزها" data-en="Bitcoin and crypto market analysis">بررسی بیت‌کوین و بازار رمزارزها</p></article>
+<div class="market-search">
+  <div class="search-heading">MARKET FINDER</div>
+  <div class="search-box">
+    <span class="search-icon">⌕</span>
+    <input
+      type="text"
+      id="marketSearch"
+      placeholder="جستجوی طلا، بیت‌کوین، نزدک یا نماد..."
+      autocomplete="off"
     >
-      تحلیل بازار، آموزش و بررسی سناریوهای معاملاتی با تمرکز بر طلا، نزدک و رمزارزها.
-    </p>
-
-    <a class="btn" href="#markets"
-       data-fa="ورود به بازارها"
-       data-en="Explore Markets">ورود به بازارها</a>
-  </section>
-
-  <section id="markets">
-    <h2 class="section-title" data-fa="بازارهای مالی" data-en="Financial Markets">بازارهای مالی</h2>
-    <p class="section-sub"
-       data-fa="دسترسی سریع به بازارهای مهم جهانی"
-       data-en="Quick access to major global markets">
-      دسترسی سریع به بازارهای مهم جهانی
-    </p>
-
-    <div class="grid">
-
-      <div class="card">
-        <div class="market-heading">
-          <svg class="market-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-            <path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-          </svg>
-          <h3 data-fa="طلا و فلزات" data-en="Gold & Metals">طلا و فلزات</h3>
-        </div>
-        <p data-fa="بررسی طلا، نقره و فلزات گران‌بها"
-           data-en="Gold, silver and precious metals analysis">
-          بررسی طلا، نقره و فلزات گران‌بها
-        </p>
-      </div>
-
-      <div class="card">
-        <div class="market-heading">
-          <svg class="market-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-            <path d="M3 17l6-6 4 4 8-9M15 6h6v6"/>
-          </svg>
-          <h3 data-fa="شاخص‌های بورس" data-en="Stock Indices">شاخص‌های بورس</h3>
-        </div>
-        <p data-fa="تحلیل نزدک، داوجونز و شاخص‌های جهانی"
-           data-en="Nasdaq, Dow Jones and global indices">
-          تحلیل نزدک، داوجونز و شاخص‌های جهانی
-        </p>
-      </div>
-
-      <div class="card">
-        <div class="market-heading">
-          <svg class="market-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-            <circle cx="12" cy="12" r="9"/>
-            <path d="M8 12h8M12 8v8"/>
-          </svg>
-          <h3 data-fa="ارزهای دیجیتال" data-en="Cryptocurrencies">ارزهای دیجیتال</h3>
-        </div>
-        <p data-fa="بررسی بیت‌کوین، اتریوم و آلت‌کوین‌ها"
-           data-en="Bitcoin, Ethereum and altcoin analysis">
-          بررسی بیت‌کوین، اتریوم و آلت‌کوین‌ها
-        </p>
-      </div>
-
-      <div class="card">
-        <div class="market-heading">
-          <svg class="market-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-            <circle cx="12" cy="12" r="9"/>
-            <path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>
-          </svg>
-          <h3 data-fa="فارکس" data-en="Forex">فارکس</h3>
-        </div>
-        <p data-fa="بررسی جفت‌ارزهای اصلی و فرعی"
-           data-en="Major and minor currency pairs">
-          بررسی جفت‌ارزهای اصلی و فرعی
-        </p>
-      </div>
-
-      <div class="card">
-        <div class="market-heading">
-          <svg class="market-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-            <path d="M4 19V5m0 14h16M7 15l4-5 3 2 5-7"/>
-          </svg>
-          <h3 data-fa="انرژی" data-en="Energy">انرژی</h3>
-        </div>
-        <p data-fa="نفت، گاز طبیعی و بازار انرژی"
-           data-en="Oil, natural gas and energy markets">
-          نفت، گاز طبیعی و بازار انرژی
-        </p>
-      </div>
-
-      <div class="card">
-        <div class="market-heading">
-          <svg class="market-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-            <path d="M4 18V6h16v12zM8 14l3-3 2 2 3-4"/>
-          </svg>
-          <h3 data-fa="سهام جهانی" data-en="Global Stocks">سهام جهانی</h3>
-        </div>
-        <p data-fa="بررسی سهام شرکت‌های بزرگ جهان"
-           data-en="Analysis of leading global companies">
-          بررسی سهام شرکت‌های بزرگ جهان
-        </p>
-      </div>
-
-      <div class="card market-search">
-        <h3 data-fa="جستجوی نماد بازار" data-en="Market Symbol Search">جستجوی نماد بازار</h3>
-        <p data-fa="نام فارسی یا نماد انگلیسی را وارد کنید"
-           data-en="Enter a Persian name or English symbol">
-          نام فارسی یا نماد انگلیسی را وارد کنید
-        </p>
-
-        <div class="search-row">
-          <input id="market-search-input"
-                 type="text"
-                 placeholder="مثلاً طلا، بیت‌کوین، XAUUSD"
-                 autocomplete="off">
-          <button class="btn" type="button" onclick="searchMarket()"
-                  data-fa="جستجو" data-en="Search">جستجو</button>
-        </div>
-        <div id="market-search-result"></div>
-      </div>
-
-    </div>
-  </section>
-
-  <section id="market-widget">
-    <h2 class="section-title" data-fa="نمایش زنده بازارها" data-en="Live Market Overview">
-      نمایش زنده بازارها
-    </h2>
-    <p class="section-sub"
-       data-fa="نمای کلی بازارهای مالی"
-       data-en="Global financial market overview">
-      نمای کلی بازارهای مالی
-    </p>
-
-    <div class="tradingview-widget-container">
+    <button type="button" onclick="searchMarket()">SEARCH</button>
+  </div>
+  <div id="marketSearchResult" class="market-search-result">
+    نماد مورد نظرت رو جستجو کن
+  </div>
+</div><h2 class="section-title" style="font-size:23px;margin-top:34px" data-fa="قیمت بازارها" data-en="Market Quotes">قیمت بازارها</h2>
+<div class="quotes">
+  <div class="quote" style="grid-column:1/-1;min-height:520px;padding:20px">
+    <h3>LIVE MARKET | بازارهای زنده</h3>
+    <div class="tradingview-widget-container" style="width:100%;height:460px">
       <div class="tradingview-widget-container__widget"></div>
-      <script type="text/javascript"
-        src="https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js"
-        async>
+      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js" async>
       {
-        "width": "100%",
-        "height": "500",
-        "symbolsGroups": [
+        "width":"100%",
+        "height":460,
+        "symbolsGroups":[
           {
-            "name": "Indices",
-            "originalName": "Indices",
-            "symbols": [
-              {"name": "FOREXCOM:SPXUSD","displayName": "S&P 500"},
-              {"name": "FOREXCOM:NSXUSD","displayName": "Nasdaq 100"},
-              {"name": "FOREXCOM:DJI","displayName": "Dow Jones"}
+            "name":"CRYPTO",
+            "symbols":[
+              {"name":"BINANCE:BTCUSDT","displayName":"Bitcoin"},
+              {"name":"BINANCE:ETHUSDT","displayName":"Ethereum"},
+              {"name":"BINANCE:BNBUSDT","displayName":"BNB"},
+              {"name":"BINANCE:SOLUSDT","displayName":"Solana"},
+              {"name":"BINANCE:XRPUSDT","displayName":"XRP"},
+              {"name":"BINANCE:DOGEUSDT","displayName":"Dogecoin"},
+              {"name":"BINANCE:ADAUSDT","displayName":"Cardano"},
+              {"name":"BINANCE:TRXUSDT","displayName":"TRON"},
+              {"name":"BINANCE:LINKUSDT","displayName":"Chainlink"},
+              {"name":"BINANCE:AVAXUSDT","displayName":"Avalanche"},
+              {"name":"BINANCE:LTCUSDT","displayName":"Litecoin"},
+              {"name":"BINANCE:DOTUSDT","displayName":"Polkadot"}
             ]
           },
           {
-            "name": "Commodities",
-            "symbols": [
-              {"name": "OANDA:XAUUSD","displayName": "Gold"},
-              {"name": "OANDA:XAGUSD","displayName": "Silver"},
-              {"name": "NYMEX:CL1!","displayName": "Crude Oil"}
+            "name":"FOREX",
+            "symbols":[
+              {"name":"OANDA:EURUSD"},
+              {"name":"OANDA:GBPUSD"},
+              {"name":"OANDA:USDJPY"},
+              {"name":"OANDA:USDCHF"},
+              {"name":"OANDA:AUDUSD"},
+              {"name":"OANDA:USDCAD"},
+              {"name":"OANDA:NZDUSD"}
             ]
           },
           {
-            "name": "Forex",
-            "symbols": [
-              {"name": "FX:EURUSD","displayName": "EUR/USD"},
-              {"name": "FX:GBPUSD","displayName": "GBP/USD"},
-              {"name": "FX:USDJPY","displayName": "USD/JPY"}
+            "name":"COMMODITIES",
+            "symbols":[
+              {"name":"OANDA:XAUUSD","displayName":"Gold"},
+              {"name":"OANDA:XAGUSD","displayName":"Silver"},
+              {"name":"TVC:USOIL","displayName":"WTI Oil"},
+              {"name":"TVC:UKOIL","displayName":"Brent Oil"},
+              {"name":"TVC:NATGAS","displayName":"Natural Gas"}
             ]
           },
           {
-            "name": "Crypto",
-            "symbols": [
-              {"name": "BITSTAMP:BTCUSD","displayName": "Bitcoin"},
-              {"name": "BITSTAMP:ETHUSD","displayName": "Ethereum"}
+            "name":"INDICES",
+            "symbols":[
+              {"name":"CME_MINI:NQ1!","displayName":"NASDAQ"},
+              {"name":"CME_MINI:ES1!","displayName":"S&P 500"},
+              {"name":"CBOT_MINI:YM1!","displayName":"Dow Jones"},
+              {"name":"CME_MINI:RTY1!","displayName":"Russell 2000"}
             ]
           }
         ],
-        "showSymbolLogo": true,
-        "colorTheme": "light",
-        "isTransparent": true,
-        "locale": "en"
+        "showSymbolLogo":true,
+"colorTheme":"light",
+          "isTransparent":true,
+        "locale":"en"
       }
       </script>
     </div>
-  </section>
-
-  <section id="services">
-    <h2 class="section-title" data-fa="خدمات اتاق شکار" data-en="Our Services">خدمات اتاق شکار</h2>
-    <p class="section-sub"
-       data-fa="ابزارها و خدمات تخصصی برای معامله‌گران"
-       data-en="Professional tools and services for traders">
-      ابزارها و خدمات تخصصی برای معامله‌گران
-    </p>
-
-    <div class="grid">
-      <div class="card">
-        <h3 data-fa="تحلیل بازار" data-en="Market Analysis">تحلیل بازار</h3>
-        <p data-fa="بررسی ساختار بازار و سناریوهای معاملاتی"
-           data-en="Market structure and trading scenarios">
-          بررسی ساختار بازار و سناریوهای معاملاتی
-        </p>
-      </div>
-      <div class="card">
-        <h3 data-fa="آموزش معامله‌گری" data-en="Trading Education">آموزش معامله‌گری</h3>
-        <p data-fa="آموزش مفاهیم و روش‌های حرفه‌ای معامله‌گری"
-           data-en="Professional trading concepts and methods">
-          آموزش مفاهیم و روش‌های حرفه‌ای معامله‌گری
-        </p>
-      </div>
-      <div class="card">
-        <h3 data-fa="اتاق معاملاتی" data-en="Trading Room">اتاق معاملاتی</h3>
-        <p data-fa="فضایی برای بررسی بازار و تبادل دیدگاه‌های معاملاتی"
-           data-en="A space for market review and trading ideas">
-          فضایی برای بررسی بازار و تبادل دیدگاه‌های معاملاتی
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <section id="contact">
-    <h2 class="section-title" data-fa="ارتباط با ما" data-en="Contact Us">ارتباط با ما</h2>
-    <p class="section-sub"
-       data-fa="برای ارتباط و همکاری با اتاق شکار بهنام"
-       data-en="Get in touch with Behnam Hunting Room">
-      برای ارتباط و همکاری با اتاق شکار بهنام
-    </p>
-    <div class="card" style="text-align:center">
-      <h3>BEHNAM HUNTING ROOM</h3>
-      <p data-fa="به‌زودی راه‌های ارتباطی در این بخش قرار می‌گیرند."
-         data-en="Contact channels will be available here soon.">
-        به‌زودی راه‌های ارتباطی در این بخش قرار می‌گیرند.
-      </p>
-    </div>
-  </section>
-
+  </div>
+</div><p class="note" data-fa="توجه: زمان به‌روزرسانی و تأخیر قیمت‌ها به منبع داده و سطح دسترسی بازار در TradingView بستگی دارد؛ این نمایشگر تضمین‌کننده داده بدون تأخیر نیست." data-en="Note: quote update speed and any delay depend on TradingView's data source and market entitlement; real-time, delay-free data is not guaranteed.">توجه: زمان به‌روزرسانی و تأخیر قیمت‌ها به منبع داده و سطح دسترسی بازار در TradingView بستگی دارد؛ این نمایشگر تضمین‌کننده داده بدون تأخیر نیست.</p>
+</div>
+</section>
+<section id="services">
+<div class="wrap">
+<h2 class="section-title" data-fa="خدمات اتاق شکار" data-en="Hunting Room Services">خدمات اتاق شکار</h2>
+<div class="services">
+<article class="card"><h3 data-fa="تحلیل بازار" data-en="Market Analysis">تحلیل بازار</h3><p data-fa="بررسی ساختار بازار و سناریوهای معاملاتی." data-en="Market structure and trading scenarios.">بررسی ساختار بازار و سناریوهای معاملاتی.</p></article>
+<article class="card"><h3 data-fa="آموزش ترید" data-en="Trading Education">آموزش ترید</h3><p data-fa="مفاهیم و ابزارهای تحلیل و مدیریت معامله." data-en="Concepts and tools for analysis and trade management.">مفاهیم و ابزارهای تحلیل و مدیریت معامله.</p></article>
+<article class="card"><h3 data-fa="اتاق معاملاتی" data-en="Trading Room">اتاق معاملاتی</h3><p data-fa="فضایی برای پیگیری تحلیل‌ها و دیدگاه‌های بازار." data-en="A space to follow market analysis and perspectives.">فضایی برای پیگیری تحلیل‌ها و دیدگاه‌های بازار.</p></article>
+</div>
+</div>
+</section>
+<section id="contact">
+<div class="wrap contact">
+<h2 class="section-title" data-fa="ارتباط با ما" data-en="Contact Us">ارتباط با ما</h2>
+<p><a href="mailto:Behnamhuntingroom@gmail.com">Behnamhuntingroom@gmail.com</a></p>
+<p><a href="https://behnamhunter.ir">behnamhunter.ir</a></p>
+</div>
+</section>
 </main>
-
-<footer class="wrap" style="text-align:center;padding:25px 0;color:var(--muted)">
-  <p>© <span id="year"></span> BEHNAM HUNTING ROOM</p>
-</footer>
+<footer>© BEHNAM HUNTING ROOM</footer>
 <script>
-/* =========================
-   تنظیم زبان سایت
-========================= */
+const btn=document.getElementById('langBtn');
+let lang='fa';
+btn.addEventListener('click',()=>{
+lang=lang==='fa'?'en':'fa';
+document.documentElement.lang=lang;
+document.documentElement.dir=lang==='fa'?'rtl':'ltr';
+document.querySelectorAll('[data-fa]').forEach(el=>el.textContent=el.dataset[lang]);
+btn.textContent=lang==='fa'?'EN':'FA';
+});
+// Day/night theme toggle; preference is remembered on this device.
+const themeBtn=document.getElementById('themeBtn');
+const root=document.documentElement;
+let theme=localStorage.getItem('bhr-theme')||'dark';
+function applyTheme(){root.dataset.theme=theme;themeBtn.textContent=theme==='dark'?'☀️ روز':'🌙 شب';}
+themeBtn.addEventListener('click',()=>{theme=theme==='dark'?'light':'dark';localStorage.setItem('bhr-theme',theme);applyTheme();});
+applyTheme();
+// Display Persian and Gregorian dates.
+function updateDates(){
+const now=new Date();
+const jalali=new Intl.DateTimeFormat('fa-IR-u-ca-persian',{year:'numeric',month:'long',day:'numeric'}).format(now);
+const gregorian=new Intl.DateTimeFormat('en-GB',{year:'numeric',month:'short',day:'2-digit'}).format(now);
+document.getElementById('jalaliDate').textContent=jalali;
+document.getElementById('gregorianDate').textContent=gregorian;
+}
+updateDates();
+setInterval(updateDates,60*60*1000);
+</script>
 
-let currentLang = "fa";
+<canvas id="bhr-ambient" aria-hidden="true"
+style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;"></canvas>
 
-document.getElementById("lang-toggle").addEventListener("click", function () {
-  currentLang = currentLang === "fa" ? "en" : "fa";
+<script>
+(() => {
+  const canvas = document.getElementById('bhr-ambient');
+  if (!canvas) return;
 
-  document.documentElement.lang = currentLang;
-  document.documentElement.dir = currentLang === "fa" ? "rtl" : "ltr";
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
 
-  document.querySelectorAll("[data-fa][data-en]").forEach(function (element) {
-    element.textContent = element.getAttribute("data-" + currentLang);
+  if (matchMedia('(pointer: coarse)').matches ||
+      matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    canvas.style.display = 'none';
+    return;
+  }
+
+  let w, h, particles = [];
+  let mouse = { x: -1000, y: -1000 };
+  let target = { x: -1000, y: -1000 };
+
+  const count =65;
+  const maxDistance = 250;
+  const influenceRadius = 210;
+
+  function resize() {
+    const dpr = Math.min(devicePixelRatio || 1, 1.5);
+    w = innerWidth;
+    h = innerHeight;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function createParticles() {
+    particles = [];
+
+    for (let i = 0; i < count; i++) {
+      const x = Math.random() * w;
+      const y = Math.random() * h;
+
+      particles.push({
+        x, y,
+       vx: (Math.random() - 0.5) * 1.8,
+        vy: (Math.random() - 0.5) *1.8,
+        r: Math.random() * 1.3 + 0.8
+      });
+    }
+  }1
+
+  window.addEventListener('mousemove', e => {
+    target.x = e.clientX;
+    target.y = e.clientY;
   });
 
-  this.textContent = currentLang === "fa" ? "EN" : "FA";
-});
-
-
-/* =========================
-   تغییر تم روشن و تاریک
-========================= */
-
-const themeButton = document.getElementById("theme-toggle");
-
-themeButton.addEventListener("click", function () {
-  document.body.classList.toggle("light-mode");
-
-  const isLight = document.body.classList.contains("light-mode");
-
-  localStorage.setItem("bhr-theme", isLight ? "light" : "dark");
-  themeButton.textContent = isLight ? "☾" : "☀";
-});
-
-if (localStorage.getItem("bhr-theme") === "light") {
-  document.body.classList.add("light-mode");
-  themeButton.textContent = "☾";
-}
-
-
-/* =========================
-   تاریخ و ساعت
-========================= */
-
-function updateClock() {
-  const now = new Date();
-
-  const dateElement = document.getElementById("date-fa");
-  const clockElement = document.getElementById("clock");
-  const yearElement = document.getElementById("year");
-
-  if (dateElement) {
-    dateElement.textContent = new Intl.DateTimeFormat(
-      currentLang === "fa" ? "fa-IR" : "en-US",
-      {
-        year: "numeric",
-        month: "long",
-        day: "numeric"
-      }
-    ).format(now);
-  }
-
-  if (clockElement) {
-    clockElement.textContent = now.toLocaleTimeString(
-      currentLang === "fa" ? "fa-IR" : "en-US"
-    );
-  }
-
-  if (yearElement) {
-    yearElement.textContent = now.getFullYear();
-  }
-}
-
-updateClock();
-setInterval(updateClock, 1000);
-
-
-/* =========================
-   جستجوی نمادهای بازار
-========================= */
-
-const markets = {
-  "طلا": "OANDA:XAUUSD",
-  "طلای جهانی": "OANDA:XAUUSD",
-  "xauusd": "OANDA:XAUUSD",
-  "gold": "OANDA:XAUUSD",
-
-  "نقره": "OANDA:XAGUSD",
-  "xagusd": "OANDA:XAGUSD",
-  "silver": "OANDA:XAGUSD",
-
-  "بیت کوین": "BITSTAMP:BTCUSD",
-  "بیت‌کوین": "BITSTAMP:BTCUSD",
-  "bitcoin": "BITSTAMP:BTCUSD",
-  "btc": "BITSTAMP:BTCUSD",
-
-  "اتریوم": "BITSTAMP:ETHUSD",
-  "ethereum": "BITSTAMP:ETHUSD",
-  "eth": "BITSTAMP:ETHUSD",
-
-  "نزدک": "NASDAQ:NDX",
-  "nasdaq": "NASDAQ:NDX",
-  "ndx": "NASDAQ:NDX",
-
-  "داوجونز": "DJ:DJI",
-  "dow jones": "DJ:DJI",
-  "dji": "DJ:DJI",
-
-  "یورو دلار": "FX:EURUSD",
-  "eurusd": "FX:EURUSD",
-  "eur/usd": "FX:EURUSD",
-
-  "پوند دلار": "FX:GBPUSD",
-  "gbpusd": "FX:GBPUSD",
-  "gbp/usd": "FX:GBPUSD",
-
-  "دلار ین": "FX:USDJPY",
-  "usdjpy": "FX:USDJPY",
-  "usd/jpy": "FX:USDJPY",
-
-  "نفت": "NYMEX:CL1!",
-  "نفت خام": "NYMEX:CL1!",
-  "oil": "NYMEX:CL1!"
-};
-
-function searchMarket() {
-  const input = document.getElementById("market-search-input");
-  const result = document.getElementById("market-search-result");
-
-  const symbol = input.value.trim().toLowerCase();
-
-  if (!symbol) {
-    result.textContent = "لطفاً نام یا نماد بازار را وارد کنید.";
-    return;
-  }
-
-  if (!markets[symbol]) {
-    result.textContent = "نماد مورد نظر در فهرست جست‌وجو نیست.";
-    return;
-  }
-
-  const url = "https://www.tradingview.com/chart/?symbol=" +
-    encodeURIComponent(markets[symbol]);
-
-  result.innerHTML =
-    '<a href="' + url + '" target="_blank" rel="noopener">' +
-    "مشاهده نمودار " + input.value.trim() +
-    " در TradingView ↗</a>";
-}
-
-document.getElementById("market-search-input").addEventListener(
-  "keydown",
-  function (event) {
-    if (event.key === "Enter") {
-      searchMarket();
+  window.addEventListener('mouseout', e => {
+    if (!e.relatedTarget) {
+      target.x = -1000;
+      target.y = -1000;
     }
-  }
-);
+  });
 
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
 
-/* =========================
-   افکت شبکه‌ای پس‌زمینه
-========================= */
+    mouse.x += (target.x - mouse.x) * 0.08;
+    mouse.y += (target.y - mouse.y) * 0.08;
 
-const canvas = document.getElementById("bhr-ambient");
-const ctx = canvas.getContext("2d");
+    particles.forEach(p => {
+      const dx = p.x - mouse.x;
+      const dy = p.y - mouse.y;
+      const distance = Math.hypot(dx, dy);
 
-let particles = [];
-let mouse = {
-  x: -1000,
-  y: -1000,
-  targetX: -1000,
-  targetY: -1000
-};
+      // Stronger mouse reaction
+      if (distance < influenceRadius && distance > 0) {
+        const force = (1 - distance / influenceRadius) * 18;
+        p.vx += (dx / distance) * force;
+        p.vy += (dy / distance) * force;
+      }
 
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
+      // Continuous independent movement
+      p.vx += (Math.random() - 0.5) * 0.06;
+      p.vy += (Math.random() - 0.5) * 0.06;
 
-window.addEventListener("resize", resizeCanvas);
-resizeCanvas();
+      // Smooth movement
+      p.vx *= 0.986;
+      p.vy *= 0.986;
 
-window.addEventListener("mousemove", function (event) {
-  mouse.targetX = event.clientX;
-  mouse.targetY = event.clientY;
-});
+      // Limit speed
+      const speed = Math.hypot(p.vx, p.vy);
+      if (speed > 2.2) {
+        p.vx *= 0.9 / speed;
+        p.vy *= 0.9 / speed;
+      }
 
-window.addEventListener("mouseout", function (event) {
-  if (!event.relatedTarget) {
-    mouse.targetX = -1000;
-    mouse.targetY = -1000;
-  }
-});
+      p.x += p.vx;
+      p.y += p.vy;
 
-function createParticles() {
-  particles = [];
+      // Keep particles inside the screen
+      if (p.x < 0 || p.x > w) p.vx *= -1;
+      if (p.y < 0 || p.y > h) p.vy *= -1;
 
-  for (let i = 0; i < 65; i++) {
-    particles.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      vx: (Math.random() - 0.5) * 0.6,
-      vy: (Math.random() - 0.5) * 0.6,
-      radius: Math.random() * 1.5 + 0.7
+      p.x = Math.max(0, Math.min(w, p.x));
+      p.y = Math.max(0, Math.min(h, p.y));
     });
-  }
-}
 
-createParticles();
+    // Connected golden network
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
 
-function animateParticles() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let j = i + 1; j < particles.length; j++) {
+        const q = particles[j];
+        const distance = Math.hypot(p.x - q.x, p.y - q.y);
 
-  mouse.x += (mouse.targetX - mouse.x) * 0.08;
-  mouse.y += (mouse.targetY - mouse.y) * 0.08;
+        if (distance < maxDistance) {
+          let opacity = (1 - distance / maxDistance) * 0.48;
 
-  particles.forEach(function (p) {
-    p.x += p.vx;
-    p.y += p.vy;
+          const nearMouse = Math.hypot(
+            (p.x + q.x) / 2 - mouse.x,
+            (p.y + q.y) / 2 - mouse.y
+          );
 
-    p.vx += (Math.random() - 0.5) * 0.06;
-    p.vy += (Math.random() - 0.5) * 0.06;
+          if (nearMouse < influenceRadius) {
+            opacity = Math.min(opacity * 1.8, 0.48);
+          }
 
-    p.vx *= 0.986;
-    p.vy *= 0.986;
-
-    const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-
-    if (speed > 2.2) {
-      p.vx = (p.vx / speed) * 2.2;
-      p.vy = (p.vy / speed) * 2.2;
-    }
-
-    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-
-    const dx = p.x - mouse.x;
-    const dy = p.y - mouse.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-
-    if (distance < 210 && distance > 0) {
-      const force = (1 - distance / 210) * 18;
-
-      p.vx += (dx / distance) * force * 0.01;
-      p.vy += (dy / distance) * force * 0.01;
-    }
-
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(215,180,90,0.65)";
-    ctx.fill();
-  });
-
-  for (let i = 0; i < particles.length; i++) {
-    for (let j = i + 1; j < particles.length; j++) {
-      const dx = particles[i].x - particles[j].x;
-      const dy = particles[i].y - particles[j].y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-
-      if (distance < 250) {
-        const opacity = (1 - distance / 250) * 0.22;
-
-        ctx.beginPath();
-        ctx.moveTo(particles[i].x, particles[i].y);
-        ctx.lineTo(particles[j].x, particles[j].y);
-        ctx.strokeStyle = "rgba(215,180,90," + opacity + ")";
-        ctx.lineWidth = 0.7;
-        ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(q.x, q.y);
+          ctx.strokeStyle = rgba(222,185,96,${opacity});
+          ctx.lineWidth = 0.9;
+          ctx.stroke();
+        }
       }
     }
+
+    // Soft golden nodes
+    particles.forEach(p => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(232,200,125,0.8)';
+      ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
   }
 
-  requestAnimationFrame(animateParticles);
+  window.addEventListener('resize', () => {
+    resize();
+    createParticles();
+  });
+
+  resize();
+  createParticles();
+  draw();
+})();
+function searchMarket(){
+  const input=document.getElementById("marketSearch");
+  const result=document.getElementById("marketSearchResult");
+
+  const symbol=input.value.trim().toUpperCase().replace(/[\s/_-]/g,"");
+
+  const markets={
+
+    // CRYPTO
+    BTC:["BINANCE:BTCUSDT","Bitcoin"],
+    BITCOIN:["BINANCE:BTCUSDT","Bitcoin"],
+    ETH:["BINANCE:ETHUSDT","Ethereum"],
+    ETHEREUM:["BINANCE:ETHUSDT","Ethereum"],
+    BNB:["BINANCE:BNBUSDT","BNB"],
+    SOL:["BINANCE:SOLUSDT","Solana"],
+    XRP:["BINANCE:XRPUSDT","XRP"],
+    DOGE:["BINANCE:DOGEUSDT","Dogecoin"],
+    ADA:["BINANCE:ADAUSDT","Cardano"],
+    TRX:["BINANCE:TRXUSDT","TRON"],
+    LINK:["BINANCE:LINKUSDT","Chainlink"],
+    AVAX:["BINANCE:AVAXUSDT","Avalanche"],
+    LTC:["BINANCE:LTCUSDT","Litecoin"],
+    DOT:["BINANCE:DOTUSDT","Polkadot"],
+    BCH:["BINANCE:BCHUSDT","Bitcoin Cash"],
+    ETC:["BINANCE:ETCUSDT","Ethereum Classic"],
+    XLM:["BINANCE:XLMUSDT","Stellar"],
+    ATOM:["BINANCE:ATOMUSDT","Cosmos"],
+    NEAR:["BINANCE:NEARUSDT","NEAR Protocol"],
+    APT:["BINANCE:APTUSDT","Aptos"],
+    ARB:["BINANCE:ARBUSDT","Arbitrum"],
+    OP:["BINANCE:OPUSDT","Optimism"],
+    FIL:["BINANCE:FILUSDT","Filecoin"],
+    ICP:["BINANCE:ICPUSDT","Internet Computer"],
+    UNI:["BINANCE:UNIUSDT","Uniswap"],
+    AAVE:["BINANCE:AAVEUSDT","Aave"],
+    MKR:["BINANCE:MKRUSDT","Maker"],
+    SAND:["BINANCE:SANDUSDT","The Sandbox"],
+    MANA:["BINANCE:MANAUSDT","Decentraland"],
+    AXS:["BINANCE:AXSUSDT","Axie Infinity"],
+    GALA:["BINANCE:GALAUSDT","Gala"],
+    SHIB:["BINANCE:SHIBUSDT","Shiba Inu"],
+    PEPE:["BINANCE:PEPEUSDT","Pepe"],
+    FLOKI:["BINANCE:FLOKIUSDT","Floki"],
+    TON:["BINANCE:TONUSDT","Toncoin"],
+    SUI:["BINANCE:SUIUSDT","Sui"],
+    SEI:["BINANCE:SEIUSDT","Sei"],
+    INJ:["BINANCE:INJUSDT","Injective"],
+    FET:["BINANCE:FETUSDT","Artificial Superintelligence"],
+    RENDER:["BINANCE:RENDERUSDT","Render"],
+    HBAR:["BINANCE:HBARUSDT","Hedera"],
+    VET:["BINANCE:VETUSDT","VeChain"],
+    EOS:["BINANCE:EOSUSDT","EOS"],
+    XTZ:["BINANCE:XTZUSDT","Tezos"],
+    ALGO:["BINANCE:ALGOUSDT","Algorand"],
+    COMP:["BINANCE:COMPUSDT","Compound"],
+    CRV:["BINANCE:CRVUSDT","Curve"],
+    SNX:["BINANCE:SNXUSDT","Synthetix"],
+    DYDX:["BINANCE:DYDXUSDT","dYdX"],
+    LDO:["BINANCE:LDOUSDT","Lido DAO"],
+    WIF:["BINANCE:WIFUSDT","dogwifhat"],
+    BONK:["BINANCE:BONKUSDT","Bonk"],
+    JUP:["BINANCE:JUPUSDT","Jupiter"],
+    TIA:["BINANCE:TIAUSDT","Celestia"],
+
+    // FOREX
+    EURUSD:["OANDA:EURUSD","EUR/USD"],
+    GBPUSD:["OANDA:GBPUSD","GBP/USD"],
+    USDJPY:["OANDA:USDJPY","USD/JPY"],
+    USDCHF:["OANDA:USDCHF","USD/CHF"],
+    USDCAD:["OANDA:USDCAD","USD/CAD"],
+    AUDUSD:["OANDA:AUDUSD","AUD/USD"],
+    NZDUSD:["OANDA:NZDUSD","NZD/USD"],
+    EURGBP:["OANDA:EURGBP","EUR/GBP"],
+    EURJPY:["OANDA:EURJPY","EUR/JPY"],
+    GBPJPY:["OANDA:GBPJPY","GBP/JPY"],
+    AUDJPY:["OANDA:AUDJPY","AUD/JPY"],
+    EURCHF:["OANDA:EURCHF","EUR/CHF"],
+    EURAUD:["OANDA:EURAUD","EUR/AUD"],
+    GBPAUD:["OANDA:GBPAUD","GBP/AUD"],
+    EURNZD:["OANDA:EURNZD","EUR/NZD"],
+    GBPNZD:["OANDA:GBPNZD","GBP/NZD"],
+    CADJPY:["OANDA:CADJPY","CAD/JPY"],
+    CHFJPY:["OANDA:CHFJPY","CHF/JPY"],
+    AUDCAD:["OANDA:AUDCAD","AUD/CAD"],
+    NZDJPY:["OANDA:NZDJPY","NZD/JPY"],
+
+    // METALS
+    GOLD:["OANDA:XAUUSD","Gold"],
+    XAUUSD:["OANDA:XAUUSD","Gold"],
+    SILVER:["OANDA:XAGUSD","Silver"],
+    XAGUSD:["OANDA:XAGUSD","Silver"],
+    PLATINUM:["TVC:PLATINUM","Platinum"],
+    PALLADIUM:["TVC:PALLADIUM","Palladium"],
+
+    // ENERGY
+    USOIL:["TVC:USOIL","WTI Crude Oil"],
+    WTI:["TVC:USOIL","WTI Crude Oil"],
+    UKOIL:["TVC:UKOIL","Brent Crude Oil"],
+    BRENT:["TVC:UKOIL","Brent Crude Oil"],
+    NATGAS:["TVC:NATGAS","Natural Gas"],
+    HEATINGOIL:["NYMEX:HO1!","Heating Oil"],
+
+    // INDICES
+    NASDAQ:["CME_MINI:NQ1!","Nasdaq Futures"],
+    NQ:["CME_MINI:NQ1!","Nasdaq Futures"],
+    SP500:["CME_MINI:ES1!","S&P 500 Futures"],
+    ES:["CME_MINI:ES1!","S&P 500 Futures"],
+    DOW:["CBOT_MINI:YM1!","Dow Jones Futures"],
+    YM:["CBOT_MINI:YM1!","Dow Jones Futures"],
+    RUSSELL:["CME_MINI:RTY1!","Russell 2000 Futures"],
+    RTY:["CME_MINI:RTY1!","Russell 2000 Futures"],
+    SPX:["SP:SPX","S&P 500 Index"],
+    SP500INDEX:["SP:SPX","S&P 500 Index"],
+    NDX:["NASDAQ:NDX","Nasdaq 100 Index"],
+    DJI:["DJ:DJI","Dow Jones Index"],
+    VIX:["TVC:VIX","Volatility Index"],
+    DXY:["TVC:DXY","US Dollar Index"],
+    DAX:["XETR:DAX","DAX Germany"],
+    FTSE:["TVC:UKX","FTSE 100"],
+    NIKKEI:["TVC:NI225","Nikkei 225"],
+
+    // STOCKS
+    AAPL:["NASDAQ:AAPL","Apple"],
+    APPLE:["NASDAQ:AAPL","Apple"],
+    MSFT:["NASDAQ:MSFT","Microsoft"],
+    MICROSOFT:["NASDAQ:MSFT","Microsoft"],
+    NVDA:["NASDAQ:NVDA","NVIDIA"],
+    NVIDIA:["NASDAQ:NVDA","NVIDIA"],
+    AMZN:["NASDAQ:AMZN","Amazon"],
+    AMAZON:["NASDAQ:AMZN","Amazon"],
+    GOOGL:["NASDAQ:GOOGL","Alphabet Google"],
+    GOOG:["NASDAQ:GOOG","Alphabet Google"],
+    META:["NASDAQ:META","Meta Platforms"],
+    FACEBOOK:["NASDAQ:META","Meta Platforms"],
+    TSLA:["NASDAQ:TSLA","Tesla"],
+    TESLA:["NASDAQ:TSLA","Tesla"],
+    AMD:["NASDAQ:AMD","AMD"],
+    INTC:["NASDAQ:INTC","Intel"],
+    NFLX:["NASDAQ:NFLX","Netflix"],
+    AVGO:["NASDAQ:AVGO","Broadcom"],
+    QCOM:["NASDAQ:QCOM","Qualcomm"],
+    ORCL:["NYSE:ORCL","Oracle"],
+    CRM:["NYSE:CRM","Salesforce"],
+    PLTR:["NASDAQ:PLTR","Palantir"],
+    COIN:["NASDAQ:COIN","Coinbase"],
+    MSTR:["NASDAQ:MSTR","Strategy"],
+    JPM:["NYSE:JPM","JPMorgan"],
+    XOM:["NYSE:XOM","Exxon Mobil"],
+    DIS:["NYSE:DIS","Disney"],
+    BA:["NYSE:BA","Boeing"],
+    WMT:["NYSE:WMT","Walmart"],
+    KO:["NYSE:KO","Coca-Cola"]
+
+  };
+
+  if(!symbol){
+    result.textContent="ابتدا نام یا نماد بازار را وارد کن.";
+    return;
+  }
+
+  const market=markets[symbol];
+
+  if(!market){
+    result.textContent="نماد مورد نظر در فهرست فعلی موجود نیست.";
+    return;
+  }
+
+  const url="https://www.tradingview.com/chart/?symbol="+encodeURIComponent(market[0]);
+
+  result.innerHTML='<a href="'+url+'" target="_blank" rel="noopener">مشاهده '+market[1]+' در TradingView ↗</a>';
 }
 
-animateParticles();
+document.getElementById("marketSearch").addEventListener("keydown",function(event){
+  if(event.key==="Enter") searchMarket();
+});
+  if(!markets[symbol]){
+    result.innerHTML="نماد مورد نظر در فهرست جست‌وجو نیست.";
+    return;
+  }
+
+  const url="https://www.tradingview.com/chart/?symbol="+encodeURIComponent(markets[symbol]);
+
+  result.innerHTML='<a href="'+url+'" target="_blank" rel="noopener">مشاهده نمودار '+symbol+' در TradingView ↗</a>';
+}</script>
 
 </script>
 
