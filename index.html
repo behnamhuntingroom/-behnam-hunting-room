@@ -25,7 +25,18 @@ header{position:sticky;top:10px;z-index:10;width:min(1120px,94%);margin:12px aut
 .brand:before{content:"BHR";display:grid;place-items:center;width:35px;height:35px;border:1px solid var(--gold);border-radius:11px;background:linear-gradient(145deg,#f2d98b22,#b58b3510);color:var(--gold2);font-size:11px;letter-spacing:1px;box-shadow:0 0 22px var(--goldGlow)}
 nav{display:flex;gap:8px;flex-wrap:wrap}
 nav a,.lang{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border:1px solid #ffffff16;border-radius:12px;background:#ffffff0b;backdrop-filter:blur(12px);font-size:13px;transition:.2s}
-nav a:hover,.lang:hover{border-color:var(--gold);color:var(--gold2);background:#d7b45a18;transform:translateY(-2px)}
+
+nav a:hover,.lang:hover{
+  border-color:rgba(242,217,139,.8);
+  color:#ffe9ad;
+  background:linear-gradient(135deg,rgba(215,180,90,.22),rgba(215,180,90,.06));
+  transform:translateY(-3px);
+  box-shadow:
+    0 5px 16px rgba(215,180,90,.2),
+    0 0 12px rgba(242,217,139,.15),
+    inset 0 0 10px rgba(242,217,139,.06);
+  text-shadow:0 0 8px rgba(242,217,139,.35);
+}
 .nav-icon,.market-icon{width:17px;height:17px;display:inline-block;vertical-align:middle;flex:0 0 auto}
 .lang{cursor:pointer;color:var(--gold2)}
 .theme-btn{padding:8px 12px;border:1px solid var(--line);border-radius:12px;background:#ffffff0b;color:var(--gold2);cursor:pointer;font:inherit;font-size:13px;transition:all .2s}
