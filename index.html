@@ -52,7 +52,24 @@ section{padding:40px 0}
 .card h3{color:var(--gold2);margin:0 0 8px}
 .card p{color:var(--muted);margin:0}
 .market-heading{display:flex;align-items:center;gap:10px}
-.market-icon{width:30px;height:30px;padding:6px;border:1px solid var(--line);border-radius:9px;color:var(--gold2);background:var(--goldGlow)}
+
+.market-icon{
+  width:34px;
+  height:34px;
+  padding:7px;
+  border:1px solid rgba(242,217,139,.35);
+  border-radius:11px;
+  color:#f2d98b;
+  background:linear-gradient(145deg,rgba(242,217,139,.16),rgba(181,139,53,.04));
+  filter:drop-shadow(0 0 4px rgba(215,180,90,.18));
+  transition:all .3s ease;
+}
+.market-heading:hover .market-icon{
+  color:#fff0bd;
+  transform:scale(1.12) rotate(-4deg);
+  filter:drop-shadow(0 0 8px rgba(242,217,139,.5));
+  border-color:rgba(242,217,139,.7);
+}
 .quotes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:24px}
 .quote{min-height:145px;overflow:hidden;background:rgba(18,19,19,.72);border:1px solid var(--line);border-radius:16px;padding:14px;backdrop-filter:blur(14px);transition:transform .22s,border-color .22s}
 .quote:hover{transform:translateY(-3px);border-color:rgba(242,217,139,.55)}
