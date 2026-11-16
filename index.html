@@ -41,7 +41,17 @@ nav a:hover,.lang:hover{border-color:var(--gold);color:var(--gold2);background:#
 .hero h1{font-size:clamp(28px,5vw,48px);line-height:1.35;margin:10px 0;color:var(--gold2)}
 .hero p{color:var(--muted);max-width:720px;margin:10px auto 24px}
 .btn{display:inline-block;padding:11px 22px;border-radius:12px;background:linear-gradient(135deg,#f1d88b,#b58b35);color:#15120a;font-weight:bold;box-shadow:0 7px 22px rgba(181,139,53,.22);transition:transform .2s,box-shadow .2s}
-.btn:hover{transform:translateY(-2px);box-shadow:0 11px 28px rgba(181,139,53,.34)}
+
+.btn:hover{
+  transform:translateY(-4px) scale(1.04);
+  box-shadow:
+    0 12px 28px rgba(181,139,53,.4),
+    0 0 22px rgba(242,217,139,.4);
+  filter:brightness(1.12);
+}
+.btn:active{
+  transform:translateY(-1px) scale(.98);
+}
 section{padding:40px 0}
 .section-title{text-align:center;margin:0 0 8px;color:var(--gold2);font-size:28px}
 .section-sub{text-align:center;color:var(--muted);margin:0 0 25px}
