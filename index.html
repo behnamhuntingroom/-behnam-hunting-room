@@ -381,7 +381,7 @@ style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index
 
       // Stronger mouse reaction
       if (distance < influenceRadius && distance > 0) {
-        const force = (1 - distance / influenceRadius) * 14;
+        const force = (1 - distance / influenceRadius) * 24;
         p.vx += (dx / distance) * force;
         p.vy += (dy / distance) * force;
       }
