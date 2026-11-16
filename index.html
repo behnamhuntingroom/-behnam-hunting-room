@@ -53,22 +53,31 @@ section{padding:40px 0}
 .card p{color:var(--muted);margin:0}
 .market-heading{display:flex;align-items:center;gap:10px}
 
+
 .market-icon{
-  width:34px;
-  height:34px;
-  padding:7px;
-  border:1px solid rgba(242,217,139,.35);
-  border-radius:11px;
-  color:#f2d98b;
-  background:linear-gradient(145deg,rgba(242,217,139,.16),rgba(181,139,53,.04));
-  filter:drop-shadow(0 0 4px rgba(215,180,90,.18));
-  transition:all .3s ease;
+  width:38px;
+  height:38px;
+  padding:8px;
+  border:1px solid rgba(242,217,139,.65);
+  border-radius:12px;
+  color:#f8df98;
+  background:linear-gradient(145deg,#51401d,#211b0d 65%,#100e09);
+  box-shadow:
+    inset 0 1px 3px rgba(255,240,190,.25),
+    0 4px 12px rgba(181,139,53,.22),
+    0 0 10px rgba(215,180,90,.12);
+  transition:all .35s ease;
 }
+
 .market-heading:hover .market-icon{
-  color:#fff0bd;
-  transform:scale(1.12) rotate(-4deg);
-  filter:drop-shadow(0 0 8px rgba(242,217,139,.5));
-  border-color:rgba(242,217,139,.7);
+  color:#fff5d5;
+  transform:translateY(-4px) scale(1.12) rotate(-5deg);
+  border-color:#ffe7a5;
+  background:linear-gradient(145deg,#a98232,#4a3715 65%,#171108);
+  box-shadow:
+    inset 0 1px 5px rgba(255,245,210,.4),
+    0 8px 20px rgba(215,180,90,.35),
+    0 0 18px rgba(242,217,139,.4);
 }
 .quotes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:24px}
 .quote{min-height:145px;overflow:hidden;background:rgba(18,19,19,.72);border:1px solid var(--line);border-radius:16px;padding:14px;backdrop-filter:blur(14px);transition:transform .22s,border-color .22s}
