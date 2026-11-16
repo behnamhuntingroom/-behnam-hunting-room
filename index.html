@@ -602,7 +602,43 @@ style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index
   createParticles();
   draw();
 })();
-</script>
+function searchMarket(){
+  const input=document.getElementById("marketSearch");
+  const result=document.getElementById("marketSearchResult");
+  const symbol=input.value.trim().toUpperCase();
+
+  const markets={
+    "BTC":"BINANCE:BTCUSDT",
+    "BTCUSDT":"BINANCE:BTCUSDT",
+    "ETH":"BINANCE:ETHUSDT",
+    "ETHUSDT":"BINANCE:ETHUSDT",
+    "BNB":"BINANCE:BNBUSDT",
+    "SOL":"BINANCE:SOLUSDT",
+    "XRP":"BINANCE:XRPUSDT",
+    "DOGE":"BINANCE:DOGEUSDT",
+    "ADA":"BINANCE:ADAUSDT",
+    "XAUUSD":"OANDA:XAUUSD",
+    "GOLD":"OANDA:XAUUSD",
+    "XAGUSD":"OANDA:XAGUSD",
+    "SILVER":"OANDA:XAGUSD",
+    "EURUSD":"OANDA:EURUSD",
+    "GBPUSD":"OANDA:GBPUSD",
+    "USDJPY":"OANDA:USDJPY",
+    "NASDAQ":"CME_MINI:NQ1!",
+    "NQ":"CME_MINI:NQ1!",
+    "SPX":"SP:SPX",
+    "USOIL":"TVC:USOIL"
+  };
+
+  if(!markets[symbol]){
+    result.innerHTML="نماد مورد نظر در فهرست جست‌وجو نیست.";
+    return;
+  }
+
+  const url="https://www.tradingview.com/chart/?symbol="+encodeURIComponent(markets[symbol]);
+
+  result.innerHTML='<a href="'+url+'" target="_blank" rel="noopener">مشاهده نمودار '+symbol+' در TradingView ↗</a>';
+}</script>
 
 </script>
 
