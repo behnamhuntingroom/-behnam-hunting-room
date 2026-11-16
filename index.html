@@ -80,7 +80,21 @@ section{padding:40px 0}
     0 0 35px rgba(215,180,90,.16),
     inset 0 0 18px rgba(215,180,90,.06);
 }
-.card h3{color:var(--gold2);margin:0 0 8px}
+
+.card h3{
+  color:var(--gold2);
+  margin:0 0 8px;
+  transition:all .35s ease;
+  text-shadow:0 0 0 transparent;
+}
+.card:hover h3{
+  color:#ffe8a6;
+  text-shadow:
+    0 0 8px rgba(242,217,139,.45),
+    0 0 18px rgba(215,180,90,.3);
+  transform:translateX(-3px);
+}
+
 .card p{color:var(--muted);margin:0}
 .market-heading{display:flex;align-items:center;gap:10px}
 
