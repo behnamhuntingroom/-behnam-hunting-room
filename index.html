@@ -160,7 +160,26 @@ section{padding:40px 0}
     inset 0 1px 0 rgba(242,217,139,.12);
   transition:all .35s ease;
 }
-.quote:hover{transform:translateY(-3px);border-color:rgba(242,217,139,.55)}
+.quote:before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:-100%;
+  width:60%;
+  height:1px;
+  background:linear-gradient(90deg,transparent,#f2d98b,transparent);
+  transition:left .8s ease;
+}
+
+.quote:hover:before{
+  left:120%;
+}
+
+.quote:hover{
+  transform:translateY(-6px);
+  border-color:#f2d98b;
+  box-shadow:0 18px 40px #000b,0 0 18px rgba(215,180,90,.28);
+}
 .quote h3{
   display:flex;
   align-items:center;
