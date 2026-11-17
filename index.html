@@ -731,8 +731,7 @@ function searchMarket() {
 
   const symbol = input.value.trim().toUpperCase().replace(/[\s/_-]/g, "");
 
-  const markets = window.bhrMarkets || {};
-
+const markets = {
   if (!symbol) {
     result.textContent = "ابتدا نام یا نماد بازار را وارد کن.";
     panel.style.display = "none";
