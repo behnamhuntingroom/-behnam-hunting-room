@@ -374,6 +374,31 @@ body > footer {
   .search-box{gap:7px;padding:6px 8px}
   .search-box button{padding:11px 13px;font-size:12px}
   .search-box input{font-size:13px}
+}.bhr-chart-panel{
+  display:none;
+  width:100%;
+  margin:25px auto;
+  padding:18px;
+  border:1px solid rgba(215,180,90,.4);
+  border-radius:20px;
+  background:linear-gradient(145deg,#17150f,#090a0a);
+  box-shadow:0 15px 40px #0008;
+}
+.bhr-chart-title{
+  color:#f2d98b;
+  font-weight:900;
+  margin-bottom:15px;
+  letter-spacing:1px;
+}
+#bhrTradingViewChart{
+  width:100%;
+  height:620px;
+  min-height:450px;
+  overflow:hidden;
+}
+#bhrTradingViewChart .tradingview-widget-container,
+#bhrTradingViewChart iframe{
+  width:100%!important;
 }</style>
 </head>
 <body>
@@ -419,7 +444,10 @@ body > footer {
     >
     <button type="button" onclick="searchMarket()">SEARCH</button>
   </div>
-  <div id="marketSearchResult" class="market-search-result">
+  <div id="marketSearchResult" class="market-search-result"><div id="bhrChartPanel" class="bhr-chart-panel">
+  <div class="bhr-chart-title">LIVE CHART | نمودار زنده بازار</div>
+  <div id="bhrTradingViewChart"></div>
+</div>
     نماد مورد نظرت رو جستجو کن
   </div>
 </div><h2 class="section-title" style="font-size:23px;margin-top:34px" data-fa="قیمت بازارها" data-en="Market Quotes">قیمت بازارها</h2>
@@ -698,159 +726,16 @@ style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index
 function searchMarket() {
   const input = document.getElementById("marketSearch");
   const result = document.getElementById("marketSearchResult");
+  const panel = document.getElementById("bhrChartPanel");
+  const chart = document.getElementById("bhrTradingViewChart");
 
   const symbol = input.value.trim().toUpperCase().replace(/[\s/_-]/g, "");
 
-  const markets = {
-
-    // CRYPTO
-    BTC: ["BINANCE:BTCUSDT", "Bitcoin"],
-    BITCOIN: ["BINANCE:BTCUSDT", "Bitcoin"],
-    ETH: ["BINANCE:ETHUSDT", "Ethereum"],
-    ETHEREUM: ["BINANCE:ETHUSDT", "Ethereum"],
-    BNB: ["BINANCE:BNBUSDT", "BNB"],
-    SOL: ["BINANCE:SOLUSDT", "Solana"],
-    XRP: ["BINANCE:XRPUSDT", "XRP"],
-    DOGE: ["BINANCE:DOGEUSDT", "Dogecoin"],
-    ADA: ["BINANCE:ADAUSDT", "Cardano"],
-    TRX: ["BINANCE:TRXUSDT", "TRON"],
-    LINK: ["BINANCE:LINKUSDT", "Chainlink"],
-    AVAX: ["BINANCE:AVAXUSDT", "Avalanche"],
-    LTC: ["BINANCE:LTCUSDT", "Litecoin"],
-    DOT: ["BINANCE:DOTUSDT", "Polkadot"],
-    BCH: ["BINANCE:BCHUSDT", "Bitcoin Cash"],
-    ETC: ["BINANCE:ETCUSDT", "Ethereum Classic"],
-    XLM: ["BINANCE:XLMUSDT", "Stellar"],
-    ATOM: ["BINANCE:ATOMUSDT", "Cosmos"],
-    NEAR: ["BINANCE:NEARUSDT", "NEAR Protocol"],
-    APT: ["BINANCE:APTUSDT", "Aptos"],
-    ARB: ["BINANCE:ARBUSDT", "Arbitrum"],
-    OP: ["BINANCE:OPUSDT", "Optimism"],
-    FIL: ["BINANCE:FILUSDT", "Filecoin"],
-    ICP: ["BINANCE:ICPUSDT", "Internet Computer"],
-    UNI: ["BINANCE:UNIUSDT", "Uniswap"],
-    AAVE: ["BINANCE:AAVEUSDT", "Aave"],
-    MKR: ["BINANCE:MKRUSDT", "Maker"],
-    SAND: ["BINANCE:SANDUSDT", "The Sandbox"],
-    MANA: ["BINANCE:MANAUSDT", "Decentraland"],
-    AXS: ["BINANCE:AXSUSDT", "Axie Infinity"],
-    GALA: ["BINANCE:GALAUSDT", "Gala"],
-    SHIB: ["BINANCE:SHIBUSDT", "Shiba Inu"],
-    PEPE: ["BINANCE:PEPEUSDT", "Pepe"],
-    FLOKI: ["BINANCE:FLOKIUSDT", "Floki"],
-    TON: ["BINANCE:TONUSDT", "Toncoin"],
-    SUI: ["BINANCE:SUIUSDT", "Sui"],
-    SEI: ["BINANCE:SEIUSDT", "Sei"],
-    INJ: ["BINANCE:INJUSDT", "Injective"],
-    FET: ["BINANCE:FETUSDT", "Artificial Superintelligence"],
-    RENDER: ["BINANCE:RENDERUSDT", "Render"],
-    HBAR: ["BINANCE:HBARUSDT", "Hedera"],
-    VET: ["BINANCE:VETUSDT", "VeChain"],
-    EOS: ["BINANCE:EOSUSDT", "EOS"],
-    XTZ: ["BINANCE:XTZUSDT", "Tezos"],
-    ALGO: ["BINANCE:ALGOUSDT", "Algorand"],
-    COMP: ["BINANCE:COMPUSDT", "Compound"],
-    CRV: ["BINANCE:CRVUSDT", "Curve"],
-    SNX: ["BINANCE:SNXUSDT", "Synthetix"],
-    DYDX: ["BINANCE:DYDXUSDT", "dYdX"],
-    LDO: ["BINANCE:LDOUSDT", "Lido DAO"],
-    WIF: ["BINANCE:WIFUSDT", "dogwifhat"],
-    BONK: ["BINANCE:BONKUSDT", "Bonk"],
-    JUP: ["BINANCE:JUPUSDT", "Jupiter"],
-    TIA: ["BINANCE:TIAUSDT", "Celestia"],
-
-    // FOREX
-    EURUSD: ["OANDA:EURUSD", "EUR/USD"],
-    GBPUSD: ["OANDA:GBPUSD", "GBP/USD"],
-    USDJPY: ["OANDA:USDJPY", "USD/JPY"],
-    USDCHF: ["OANDA:USDCHF", "USD/CHF"],
-    USDCAD: ["OANDA:USDCAD", "USD/CAD"],
-    AUDUSD: ["OANDA:AUDUSD", "AUD/USD"],
-    NZDUSD: ["OANDA:NZDUSD", "NZD/USD"],
-    EURGBP: ["OANDA:EURGBP", "EUR/GBP"],
-    EURJPY: ["OANDA:EURJPY", "EUR/JPY"],
-    GBPJPY: ["OANDA:GBPJPY", "GBP/JPY"],
-    AUDJPY: ["OANDA:AUDJPY", "AUD/JPY"],
-    EURCHF: ["OANDA:EURCHF", "EUR/CHF"],
-    EURAUD: ["OANDA:EURAUD", "EUR/AUD"],
-    GBPAUD: ["OANDA:GBPAUD", "GBP/AUD"],
-    EURNZD: ["OANDA:EURNZD", "EUR/NZD"],
-    GBPNZD: ["OANDA:GBPNZD", "GBP/NZD"],
-    CADJPY: ["OANDA:CADJPY", "CAD/JPY"],
-    CHFJPY: ["OANDA:CHFJPY", "CHF/JPY"],
-    AUDCAD: ["OANDA:AUDCAD", "AUD/CAD"],
-    NZDJPY: ["OANDA:NZDJPY", "NZD/JPY"],
-
-    // METALS
-    GOLD: ["OANDA:XAUUSD", "Gold"],
-    XAUUSD: ["OANDA:XAUUSD", "Gold"],
-    SILVER: ["OANDA:XAGUSD", "Silver"],
-    XAGUSD: ["OANDA:XAGUSD", "Silver"],
-    PLATINUM: ["TVC:PLATINUM", "Platinum"],
-    PALLADIUM: ["TVC:PALLADIUM", "Palladium"],
-
-    // ENERGY
-    USOIL: ["TVC:USOIL", "WTI Crude Oil"],
-    WTI: ["TVC:USOIL", "WTI Crude Oil"],
-    UKOIL: ["TVC:UKOIL", "Brent Crude Oil"],
-    BRENT: ["TVC:UKOIL", "Brent Crude Oil"],
-    NATGAS: ["TVC:NATGAS", "Natural Gas"],
-    HEATINGOIL: ["NYMEX:HO1!", "Heating Oil"],
-
-    // INDICES
-    NASDAQ: ["CME_MINI:NQ1!", "Nasdaq Futures"],
-    NQ: ["CME_MINI:NQ1!", "Nasdaq Futures"],
-    SP500: ["CME_MINI:ES1!", "S&P 500 Futures"],
-    ES: ["CME_MINI:ES1!", "S&P 500 Futures"],
-    DOW: ["CBOT_MINI:YM1!", "Dow Jones Futures"],
-    YM: ["CBOT_MINI:YM1!", "Dow Jones Futures"],
-    RUSSELL: ["CME_MINI:RTY1!", "Russell 2000 Futures"],
-    RTY: ["CME_MINI:RTY1!", "Russell 2000 Futures"],
-    SPX: ["SP:SPX", "S&P 500 Index"],
-    SP500INDEX: ["SP:SPX", "S&P 500 Index"],
-    NDX: ["NASDAQ:NDX", "Nasdaq 100 Index"],
-    DJI: ["DJ:DJI", "Dow Jones Index"],
-    VIX: ["TVC:VIX", "Volatility Index"],
-    DXY: ["TVC:DXY", "US Dollar Index"],
-    DAX: ["XETR:DAX", "DAX Germany"],
-    FTSE: ["TVC:UKX", "FTSE 100"],
-    NIKKEI: ["TVC:NI225", "Nikkei 225"],
-
-    // STOCKS
-    AAPL: ["NASDAQ:AAPL", "Apple"],
-    APPLE: ["NASDAQ:AAPL", "Apple"],
-    MSFT: ["NASDAQ:MSFT", "Microsoft"],
-    MICROSOFT: ["NASDAQ:MSFT", "Microsoft"],
-    NVDA: ["NASDAQ:NVDA", "NVIDIA"],
-    NVIDIA: ["NASDAQ:NVDA", "NVIDIA"],
-    AMZN: ["NASDAQ:AMZN", "Amazon"],
-    AMAZON: ["NASDAQ:AMZN", "Amazon"],
-    GOOGL: ["NASDAQ:GOOGL", "Alphabet Google"],
-    GOOG: ["NASDAQ:GOOG", "Alphabet Google"],
-    META: ["NASDAQ:META", "Meta Platforms"],
-    FACEBOOK: ["NASDAQ:META", "Meta Platforms"],
-    TSLA: ["NASDAQ:TSLA", "Tesla"],
-    TESLA: ["NASDAQ:TSLA", "Tesla"],
-    AMD: ["NASDAQ:AMD", "AMD"],
-    INTC: ["NASDAQ:INTC", "Intel"],
-    NFLX: ["NASDAQ:NFLX", "Netflix"],
-    AVGO: ["NASDAQ:AVGO", "Broadcom"],
-    QCOM: ["NASDAQ:QCOM", "Qualcomm"],
-    ORCL: ["NYSE:ORCL", "Oracle"],
-    CRM: ["NYSE:CRM", "Salesforce"],
-    PLTR: ["NASDAQ:PLTR", "Palantir"],
-    COIN: ["NASDAQ:COIN", "Coinbase"],
-    MSTR: ["NASDAQ:MSTR", "Strategy"],
-    JPM: ["NYSE:JPM", "JPMorgan"],
-    XOM: ["NYSE:XOM", "Exxon Mobil"],
-    DIS: ["NYSE:DIS", "Disney"],
-    BA: ["NYSE:BA", "Boeing"],
-    WMT: ["NYSE:WMT", "Walmart"],
-    KO: ["NYSE:KO", "Coca-Cola"]
-  };
+  const markets = window.bhrMarkets || {};
 
   if (!symbol) {
     result.textContent = "ابتدا نام یا نماد بازار را وارد کن.";
+    panel.style.display = "none";
     return;
   }
 
@@ -858,17 +743,54 @@ function searchMarket() {
 
   if (!market) {
     result.textContent = "نماد مورد نظر در فهرست فعلی موجود نیست.";
+    panel.style.display = "none";
     return;
   }
 
-  const url = "https://www.tradingview.com/chart/?symbol=" +
-    encodeURIComponent(market[0]);
+  result.textContent = "نمودار " + market[1] + " در اتاق شکار بهنام";
 
-  result.innerHTML =
-    '<a href="' + url + '" target="_blank" rel="noopener">مشاهده ' +
-    market[1] + ' در TradingView ↗</a>';
+  panel.style.display = "block";
+  chart.innerHTML = "";
+
+  const widget = document.createElement("div");
+  widget.className = "tradingview-widget-container";
+  widget.style.width = "100%";
+  widget.style.height = "620px";
+
+  const widgetContent = document.createElement("div");
+  widgetContent.className = "tradingview-widget-container__widget";
+  widgetContent.style.height = "100%";
+  widgetContent.style.width = "100%";
+
+  widget.appendChild(widgetContent);
+  chart.appendChild(widget);
+
+  const script = document.createElement("script");
+  script.type = "text/javascript";
+  script.async = true;
+  script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
+
+  script.textContent = JSON.stringify({
+    autosize: true,
+    symbol: market[0],
+    interval: "15",
+    timezone: "Etc/UTC",
+    theme: "dark",
+    style: "1",
+    locale: "fa",
+    enable_publishing: false,
+    allow_symbol_change: true,
+    calendar: false,
+    support_host: "https://www.tradingview.com"
+  });
+
+  widget.appendChild(script);
+
+  panel.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
 }
-
 document.getElementById("marketSearch").addEventListener("keydown", function(event) {
   if (event.key === "Enter") searchMarket();
 });
