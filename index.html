@@ -562,6 +562,17 @@ header nav a[aria-current="page"]{border-color:var(--gold2);color:var(--gold2);b
 :root[data-theme="light"] .bhr-sun-letters{color:#68460c;text-shadow:0 0 5px #f5ce68,0 0 10px #d69b22}
 </style>
 
+/* Subtle BHR method introduction on the home page */
+.bhr-home-method-intro{width:min(1120px,92%);margin:8px auto 22px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:20px;border:1px solid var(--line);border-right:3px solid var(--gold2);border-radius:14px;background:linear-gradient(110deg,var(--card),transparent);box-shadow:0 6px 20px #0000000a}
+.bhr-home-method-copy{min-width:0}
+.bhr-home-method-eyebrow{display:block;margin-bottom:3px;color:var(--muted);font-size:10px;letter-spacing:.7px}
+.bhr-home-method-intro h2{margin:0 0 4px;color:var(--gold2);font-size:17px;font-weight:800}
+.bhr-home-method-intro p{margin:0;color:var(--muted);font-size:12px;line-height:1.9}
+.bhr-home-method-link{flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;color:var(--gold2);font-size:12px;text-decoration:none;white-space:nowrap;transition:background .2s,border-color .2s}
+.bhr-home-method-link:hover{background:var(--goldGlow);border-color:var(--gold2)}
+@media(max-width:620px){.bhr-home-method-intro{align-items:flex-start;flex-direction:column;gap:10px;padding:14px}.bhr-home-method-link{align-self:flex-start}}
+
+
 </head>
 <body>
 <header>
@@ -2418,6 +2429,12 @@ shortcuts.innerHTML=
  '<a class="bhr-shortcut" href="#bhr-page-tools" data-bhr-page="tools"><span class="bhr-shortcut-icon">⚙</span><strong>ابزارهای ترید</strong><small>ماشین‌حساب و ابزارهای مدیریت معامله</small></a>'+
  '<a class="bhr-shortcut" href="#bhr-page-community" data-bhr-page="community"><span class="bhr-shortcut-icon">♧</span><strong>تحلیل کاربران</strong><small>ثبت و بررسی تحلیل‌ها</small></a>'+
  '<a class="bhr-shortcut" href="#bhr-page-about" data-bhr-page="about"><span class="bhr-shortcut-icon">✦</span><strong>درباره ما</strong><small>آشنایی با برند BHR</small></a>';
+const methodIntro=document.createElement("section");
+methodIntro.className="bhr-home-method-intro";
+methodIntro.innerHTML=
+ '<div class="bhr-home-method-copy"><span class="bhr-home-method-eyebrow" data-fa="رویکرد اختصاصی اتاق شکار" data-en="THE BHR SIGNATURE APPROACH">رویکرد اختصاصی اتاق شکار</span><h2 data-fa="روش معاملاتی BHR" data-en="BHR Trading Method">روش معاملاتی BHR</h2><p data-fa="ترکیبی هدفمند از والیوم تریدینگ، اسمارت مانی و پرایس اکشن؛ برای خواندن دقیق‌تر ساختار بازار و تصمیم‌گیری بر پایه شواهد هم‌جهت." data-en="A focused blend of Volume Trading, Smart Money, and Price Action to read market structure and make decisions from aligned evidence.">ترکیبی هدفمند از والیوم تریدینگ، اسمارت مانی و پرایس اکشن؛ برای خواندن دقیق‌تر ساختار بازار و تصمیم‌گیری بر پایه شواهد هم‌جهت.</p></div>'+
+ '<a href="#bhr-page-room" data-bhr-page="room" class="bhr-home-method-link"><span data-fa="آشنایی با روش" data-en="Explore the method">آشنایی با روش</span><span aria-hidden="true">←</span></a>';
+home.append(methodIntro);
 home.append(shortcuts);
 move($("bhr-method"),room);
 move($("bhr-command-center"),room);
