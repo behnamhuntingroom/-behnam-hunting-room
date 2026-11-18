@@ -451,6 +451,14 @@ body > footer {
 @media(max-width:600px){.bhr-price-banner{padding:13px;margin-bottom:18px}.bhr-price-grid{gap:8px}.bhr-price-item{padding:11px 6px}.bhr-price-item strong{font-size:clamp(14px,4vw,17px)}.bhr-price-item span{font-size:14px}}
 
 </style>
+<meta name="theme-color" content="#080909">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="اتاق شکار">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./Logo.jpg">
+<link rel="icon" href="./Logo.jpg" type="image/jpeg">
 </head>
 <body>
 <header>
@@ -2108,5 +2116,15 @@ document.querySelectorAll("#bhr-upgrade button").forEach(b=>{
 
 <footer>© BEHNAM HUNTING ROOM</footer>
 
+
+<script>
+/* Register the installable mobile app service worker */
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js", { scope: "./" })
+      .catch(error => console.warn("BHR service worker registration failed:", error));
+  });
+}
+</script>
 </body>
 </html>
