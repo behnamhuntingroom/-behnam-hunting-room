@@ -1192,7 +1192,7 @@ document.getElementById("marketSearch").addEventListener("keydown", function(eve
   const all=window.BHR_MARKETS||[];
   const list=document.getElementById('marketSymbolsList');
   if(!list||!input)return;
-  function norm(s){return String(s||'').toLowerCase().replace(/[يى]/g,'ی').replace(/ك/g,'ک').replace(/[\\s/_\\-.:‌]/g,'');}
+  function norm(s){return String(s||'').toLowerCase().replace(/[يى]/g,'ی').replace(/ك/g,'ک').replace(/[\s/_\-.:‌]/g,'');}
   function render(term=''){
     const q=norm(term);
     list.innerHTML='';
