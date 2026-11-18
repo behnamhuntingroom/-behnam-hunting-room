@@ -1414,6 +1414,22 @@ document.getElementById("marketSearch").addEventListener("keydown", function(eve
 .market-main .market-symbol-button span{font-size:9px}
 @media(max-width:900px){.market-main .market-symbols-list{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(max-width:650px){.market-main .market-search{padding:14px}.market-main .market-symbols-list{grid-template-columns:repeat(2,minmax(0,1fr));max-height:230px}}
+
+/* Gentle left-right 3D motion for the BHR header emblem */
+header .bhr-sun-mark{
+  transform-style:preserve-3d;
+  transform-origin:center center;
+  animation:bhr-mark-sway 5s ease-in-out infinite;
+}
+@keyframes bhr-mark-sway{
+  0%,100%{transform:perspective(500px) rotateY(0deg)}
+  25%{transform:perspective(500px) rotateY(18deg)}
+  50%{transform:perspective(500px) rotateY(0deg)}
+  75%{transform:perspective(500px) rotateY(-18deg)}
+}
+@media(prefers-reduced-motion:reduce){
+  header .bhr-sun-mark{animation:none!important}
+}
 </style>
 <section id="bhr-method" aria-labelledby="bhr-method-title">
  <div class="bhr-method-kicker">THE SIGNATURE TRADING APPROACH OF BEHNAM HUNTING ROOM</div>
