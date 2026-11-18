@@ -1164,11 +1164,17 @@ document.getElementById("marketSearch").addEventListener("keydown", function(eve
   const input=document.getElementById('marketSearch');
   if(input){
     input.value='BTC';
-    const showDefaultBitcoinChart=()=>{input.value='BTC';searchMarket(false);};
-    if(document.readyState==='loading'){
-      document.addEventListener('DOMContentLoaded',showDefaultBitcoinChart,{once:true});
+    const showDefaultBitcoinChart=()=>{
+      input.value='BTC';
+      searchMarket(false);
+    };
+    const initializeVisibleBitcoinChart=()=>{
+      requestAnimationFrame(()=>requestAnimationFrame(showDefaultBitcoinChart));
+    };
+    if(document.readyState==='complete'){
+      initializeVisibleBitcoinChart();
     }else{
-      showDefaultBitcoinChart();
+      window.addEventListener('load',initializeVisibleBitcoinChart,{once:true});
     }
   }
   const all=window.BHR_MARKETS||[];
