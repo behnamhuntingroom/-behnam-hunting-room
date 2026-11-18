@@ -1162,7 +1162,15 @@ document.getElementById("marketSearch").addEventListener("keydown", function(eve
 <script>
 (function(){
   const input=document.getElementById('marketSearch');
-  if(input){input.value='BTC';searchMarket(false);}
+  if(input){
+    input.value='BTC';
+    const showDefaultBitcoinChart=()=>{input.value='BTC';searchMarket(false);};
+    if(document.readyState==='loading'){
+      document.addEventListener('DOMContentLoaded',showDefaultBitcoinChart,{once:true});
+    }else{
+      showDefaultBitcoinChart();
+    }
+  }
   const all=window.BHR_MARKETS||[];
   const list=document.getElementById('marketSymbolsList');
   if(!list||!input)return;
@@ -1548,7 +1556,7 @@ header .bhr-sun-letters{transform:translateZ(12px);text-shadow:0 1px 0 #8d6420,0
    width:70%!important;
    max-width:none!important;
    margin-left:auto!important;
-   margin-right:0!important;
+   margin-right:38px!important;
    transform:none!important;
  }
 }
