@@ -1142,6 +1142,8 @@ document.getElementById("marketSearch").addEventListener("keydown", function(eve
 
 <script>
 (function(){
+  const input=document.getElementById('marketSearch');
+  if(input){input.value='BTC';searchMarket(false);}
   const all=window.BHR_MARKETS||[];
   const list=document.getElementById('marketSymbolsList');
   const filter=document.getElementById('symbolFilter');
@@ -1165,8 +1167,6 @@ document.getElementById("marketSearch").addEventListener("keydown", function(eve
   }
   filter.addEventListener('input',()=>render(filter.value));
   render();
-  const input=document.getElementById('marketSearch');
-  if(input){input.value='BTC';searchMarket(false);}
 })();
 </script>
 
@@ -1398,6 +1398,12 @@ document.getElementById("marketSearch").addEventListener("keydown", function(eve
 #bhr-method .bhr-method-process{margin-top:17px;padding:15px;border-radius:13px;background:#d7b45a12;border:1px solid #d7b45a35;text-align:center;line-height:2;color:#ead9ac}
 #bhr-method .bhr-method-note{text-align:center;margin:13px 0 0;color:#a99e86;font-size:11px}
 @media(max-width:700px){#bhr-method{padding:20px 14px}#bhr-method .bhr-method-pillars{grid-template-columns:1fr}}
+
+/* BHR home layout refinements: method above market search, tighter chart/quotes spacing */
+#bhr-home-market-workspace{margin-top:10px!important;column-gap:10px!important}
+#bhr-home-market-workspace .market-sidebar>.section-title{margin-top:0!important}
+#bhr-home-market-workspace .market-main .market-search{margin-bottom:10px!important}
+.bhr-price-banner{margin-bottom:12px!important}
 </style>
 <section id="bhr-method" aria-labelledby="bhr-method-title">
  <div class="bhr-method-kicker">THE SIGNATURE TRADING APPROACH OF BEHNAM HUNTING ROOM</div>
@@ -2463,8 +2469,7 @@ methodIntro.className="bhr-home-method-intro";
 methodIntro.innerHTML=
  '<div class="bhr-home-method-copy"><span class="bhr-home-method-eyebrow" data-fa="رویکرد اختصاصی اتاق شکار" data-en="THE BHR SIGNATURE APPROACH">رویکرد اختصاصی اتاق شکار</span><h2 data-fa="روش معاملاتی BHR؛ سه نگاه، یک تصمیم دقیق‌تر" data-en="BHR Trading Method — Three Perspectives, One Clearer Decision">روش معاملاتی BHR؛ سه نگاه، یک تصمیم دقیق‌تر</h2><p data-fa="در سبک اختصاصی BHR، والیوم تریدینگ برای سنجش قدرت و مشارکت بازار، اسمارت مانی برای شناخت نقدینگی و ساختار سفارش‌ها، و پرایس اکشن برای زمان‌بندی ورود و خروج کنار هم قرار می‌گیرند. هدف، تصمیم‌گیری بر پایه هم‌جهتی شواهد است؛ نه اتکا به یک ابزار یا سیگنال تنها." data-en="BHR combines Volume Trading to assess market participation, Smart Money to read liquidity and order structure, and Price Action to time entries and exits. The goal is to make decisions when evidence aligns—not from a single indicator or signal.">در سبک اختصاصی BHR، والیوم تریدینگ برای سنجش قدرت و مشارکت بازار، اسمارت مانی برای شناخت نقدینگی و ساختار سفارش‌ها، و پرایس اکشن برای زمان‌بندی ورود و خروج کنار هم قرار می‌گیرند. هدف، تصمیم‌گیری بر پایه هم‌جهتی شواهد است؛ نه اتکا به یک ابزار یا سیگنال تنها.</p><div class="bhr-home-method-pill-row"><span class="bhr-home-method-pill">◈ Volume Trading</span><span class="bhr-home-method-pill">◇ Smart Money</span><span class="bhr-home-method-pill">⌁ Price Action</span></div></div>'+
  '<a href="#bhr-page-room" data-bhr-page="room" class="bhr-home-method-link"><span data-fa="جزئیات روش BHR" data-en="Explore BHR Method">جزئیات روش BHR</span><span aria-hidden="true">←</span></a>';
-const chartPanel=$("bhrChartPanel"),marketMain=document.querySelector(".market-main");
-if(marketMain&&chartPanel)marketMain.insertBefore(methodIntro,chartPanel);else home.append(methodIntro);
+if(workspace)home.insertBefore(methodIntro,workspace);else home.append(methodIntro);
 home.append(shortcuts);
 move($("bhr-method"),room);
 move($("bhr-command-center"),room);
