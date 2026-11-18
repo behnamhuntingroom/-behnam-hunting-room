@@ -805,8 +805,8 @@ style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index
   let target = { x: -1000, y: -1000 };
 
   // More particles on larger screens, with a safe upper limit for smooth rendering.
-  let count = 48;
-  const maxDistance = 125;
+  let count = 82;
+  const maxDistance = 155;
   const influenceRadius = 190;
 
   function resize() {
@@ -816,7 +816,7 @@ style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index
     canvas.width = w * dpr;
     canvas.height = h * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    count = Math.min(68, Math.max(38, Math.round((w * h) / 24000)));
+    count = Math.min(105, Math.max(65, Math.round((w * h) / 19000)));
   }
 
   function createParticles() {
