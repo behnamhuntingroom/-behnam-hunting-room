@@ -2205,6 +2205,8 @@ if(tools){
   });
   tools.appendChild(b);
  });
+ const languageButton=$("langBtn");
+ if(languageButton)tools.appendChild(languageButton);
 }
 $("bhrAuthClose")?.addEventListener("click",()=>{
  $("bhr-auth-panel").classList.remove("open");
