@@ -398,8 +398,8 @@ body > footer {
 }
 #bhrTradingViewChart{
   width:100%;
-  height:620px;
-  min-height:450px;
+  height:430px;
+  min-height:360px;
   overflow:hidden;
 }
 #bhrTradingViewChart .tradingview-widget-container,
@@ -410,7 +410,7 @@ body > footer {
 .market-main{min-width:0;width:100%}.market-main .search-box input{width:100%;box-sizing:border-box}.market-main .search-box button{flex:0 0 auto;white-space:nowrap}
 .market-main .market-search{max-width:none;margin:0 0 18px}
 .market-main .bhr-chart-panel{display:block;margin:0 0 22px;padding:18px}
-#bhrTradingViewChart{height:650px;min-height:500px}
+#bhrTradingViewChart{height:440px;min-height:360px}
 .market-sidebar{min-width:0;position:sticky;top:18px}
 .market-sidebar .quote{padding:15px;min-height:0!important}
 .market-sidebar .quote h3{font-size:14px}
@@ -429,7 +429,7 @@ body > footer {
 .market-symbol-button b{display:block;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .market-symbol-button span{display:block;margin-top:4px;color:#a69a7d;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media(max-width:1050px){.market-workspace{grid-template-columns:1fr}.market-sidebar{position:static}.market-sidebar .tradingview-widget-container{height:430px!important}.market-sidebar .tradingview-widget-container iframe{height:430px!important}}
-@media(max-width:650px){.market-symbols-list{grid-template-columns:repeat(2,minmax(0,1fr))}.market-main .bhr-chart-panel{padding:10px}#bhrTradingViewChart{height:520px;min-height:420px}.symbol-directory{padding:14px}}
+@media(max-width:650px){.market-symbols-list{grid-template-columns:repeat(2,minmax(0,1fr))}.market-main .bhr-chart-panel{padding:10px}#bhrTradingViewChart{height:390px;min-height:330px}.symbol-directory{padding:14px}}
 
 
 /* BHR live toman price banner */
@@ -561,6 +561,28 @@ header nav a[aria-current="page"]{border-color:var(--gold2);color:var(--gold2);b
 :root[data-theme="light"] .bhr-shortcut{background:#fffdf7}
 :root[data-theme="light"] .bhr-sun-letters{color:#68460c;text-shadow:0 0 5px #f5ce68,0 0 10px #d69b22}
 </style>
+
+/* Refined header row, BHR halo and compact chart */
+header>nav{justify-content:flex-start!important;gap:8px!important}
+header nav .bhr-nav-cart{margin-inline-start:auto;flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border-radius:10px}
+header nav .bhr-nav-cart svg{width:17px;height:17px}
+header .brand{position:relative;display:inline-flex;align-items:center;gap:10px;color:var(--gold2);text-shadow:0 0 7px rgba(215,180,90,.22),0 0 16px rgba(215,180,90,.12);overflow:visible;font-weight:900;letter-spacing:.35px}
+.bhr-sun-mark{isolation:isolate;box-shadow:0 0 0 3px rgba(215,180,90,.08),0 0 18px rgba(215,180,90,.32),0 0 34px rgba(215,180,90,.14),inset 0 0 10px rgba(215,180,90,.18)!important}
+.bhr-sun-mark:before{content:"";position:absolute;z-index:-1;inset:-10px;border-radius:50%;background:radial-gradient(circle,rgba(235,193,91,.28) 0%,rgba(215,180,90,.12) 42%,transparent 72%);filter:blur(5px);pointer-events:none}
+.bhr-sun-letters{font-size:12px!important;letter-spacing:.45px!important;color:#ffe5a0!important;text-shadow:0 0 5px rgba(255,220,130,.45),0 1px 3px #000!important}
+.market-main .bhr-chart-panel{padding:12px!important;margin-bottom:16px!important}
+.bhr-chart-title{margin-bottom:9px!important;font-size:14px}
+#bhrTradingViewChart{height:440px!important;min-height:360px!important}
+@media(max-width:760px){
+ header>nav{justify-content:center!important}
+ header nav .bhr-nav-cart{margin-inline-start:0}
+ #bhrTradingViewChart{height:390px!important;min-height:330px!important}
+}
+@media(max-width:420px){
+ header nav .bhr-nav-cart{padding:6px 8px;font-size:11px}
+ header nav .bhr-nav-cart svg{width:15px;height:15px}
+}
+
 
 /* Subtle BHR method introduction on the home page */
 .bhr-home-method-intro{width:min(1120px,92%);margin:8px auto 22px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:20px;border:1px solid var(--line);border-right:3px solid var(--gold2);border-radius:14px;background:linear-gradient(110deg,var(--card),transparent);box-shadow:0 6px 20px #0000000a}
@@ -776,9 +798,9 @@ style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index
   let target = { x: -1000, y: -1000 };
 
   // More particles on larger screens, with a safe upper limit for smooth rendering.
-  let count = 120;
-  const maxDistance = 215;
-  const influenceRadius = 330;
+  let count = 48;
+  const maxDistance = 125;
+  const influenceRadius = 190;
 
   function resize() {
     const dpr = Math.min(devicePixelRatio || 1, 1.5);
@@ -787,7 +809,7 @@ style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index
     canvas.width = w * dpr;
     canvas.height = h * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    count = Math.min(165, Math.max(105, Math.round((w * h) / 9500)));
+    count = Math.min(68, Math.max(38, Math.round((w * h) / 24000)));
   }
 
   function createParticles() {
@@ -800,8 +822,8 @@ style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index
       particles.push({
         x,
         y,
-        vx: (Math.random() - 0.5) * 1.6,
-        vy: (Math.random() - 0.5) * 1.6,
+        vx: (Math.random() - 0.5) * 0.85,
+        vy: (Math.random() - 0.5) * 0.85,
         r: Math.random() * 1.5 + 0.9
       });
     }
@@ -833,22 +855,22 @@ style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index
 
       if (distance < influenceRadius && distance > 0) {
         const strength = 1 - distance / influenceRadius;
-        const force = strength * 0.72;
+        const force = strength * 0.38;
         p.vx += (dx / distance) * force;
         p.vy += (dy / distance) * force;
         // A little extra impulse makes nearby points dart away from the cursor.
-        p.vx += (dx / distance) * strength * 0.16;
-        p.vy += (dy / distance) * strength * 0.16;
+        p.vx += (dx / distance) * strength * 0.07;
+        p.vy += (dy / distance) * strength * 0.07;
       }
 
-      p.vx += (Math.random() - 0.5) * 0.045;
-      p.vy += (Math.random() - 0.5) * 0.045;
+      p.vx += (Math.random() - 0.5) * 0.022;
+      p.vy += (Math.random() - 0.5) * 0.022;
 
       p.vx *= 0.975;
       p.vy *= 0.975;
 
       const speed = Math.hypot(p.vx, p.vy);
-      const maxSpeed = 4.2;
+      const maxSpeed = 2.4;
       if (speed > maxSpeed) {
         p.vx = (p.vx / speed) * maxSpeed;
         p.vy = (p.vy / speed) * maxSpeed;
@@ -2457,6 +2479,11 @@ if(nav){
  '<a href="#bhr-page-tools" data-bhr-page="tools">⚙ <span>ابزارها</span></a>'+
  '<a href="#bhr-page-community" data-bhr-page="community">♧ <span>تحلیل کاربران</span></a>'+
  '<a href="#bhr-page-about" data-bhr-page="about">✦ <span>درباره ما</span></a>';
+}
+const cartToggle=$("bhrCartToggle");
+if(nav&&cartToggle){
+ cartToggle.classList.add("bhr-nav-cart");
+ nav.append(cartToggle);
 }
 const brand=document.querySelector("header .brand");
 if(brand&&!brand.querySelector(".bhr-sun-mark")){
