@@ -456,7 +456,7 @@ body > footer {
 
 
 
-/* Refined market layout: narrower symbol search and slightly right-shifted chart */
+/* Refined market layout: narrower symbol search and centered, compact chart */
 @media(min-width:1051px){
  #bhr-home-market-workspace .market-main .market-search{
    width:min(100%,560px)!important;
@@ -464,11 +464,11 @@ body > footer {
    margin-right:0!important;
  }
  #bhr-home-market-workspace .market-main .bhr-chart-panel{
-   width:calc(100% - 18px)!important;
-   margin-left:auto!important;
-   margin-right:0!important;
-   transform:translateX(18px);
+   width:88%!important;
+   margin-inline:auto!important;
+   transform:none!important;
  }
+ #bhr-home-market-workspace #bhrTradingViewChart{height:520px!important}
 }
 @media(max-width:1050px){
  #bhr-home-market-workspace .market-main .market-search{width:100%!important}
@@ -1122,7 +1122,7 @@ function searchMarket(shouldScroll = true) {
   const widget = document.createElement("div");
   widget.className = "tradingview-widget-container";
   widget.style.width = "100%";
-  widget.style.height = "620px";
+  widget.style.height = "520px";
 
   const widgetContent = document.createElement("div");
   widgetContent.className = "tradingview-widget-container__widget";
