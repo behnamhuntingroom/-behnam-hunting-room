@@ -534,6 +534,36 @@ header .theme-btn,header .lang{padding:8px 10px;white-space:nowrap}
 }
 </style>
 
+
+<style id="bhr-multipage-styles">
+.bhr-page-view{display:none;min-height:58vh;padding:24px 0 38px;animation:bhrPageIn .28s ease both}
+.bhr-page-view.is-active{display:block}
+@keyframes bhrPageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.bhr-page-heading{width:min(1120px,92%);margin:10px auto 22px;text-align:center}
+.bhr-page-heading h1{color:var(--gold2);font-size:clamp(23px,4vw,34px);margin:0 0 5px}
+.bhr-page-heading p{color:var(--muted);margin:0}
+.bhr-page-view>.bhr-section,.bhr-page-view>#bhr-method{width:min(1120px,92%);margin:0 auto}
+#bhr-market-page .market-workspace{width:min(1120px,92%);margin:0 auto}
+.bhr-home-shortcuts{width:min(1120px,92%);margin:22px auto 34px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.bhr-shortcut{display:block;text-align:center;padding:22px 16px;border:1px solid var(--line);border-radius:17px;background:var(--card);box-shadow:0 10px 28px #0002;transition:transform .2s,border-color .2s,box-shadow .2s}
+.bhr-shortcut:hover{transform:translateY(-4px);border-color:var(--gold2);box-shadow:0 10px 30px var(--goldGlow)}
+.bhr-shortcut .bhr-shortcut-icon{display:block;font-size:27px;color:var(--gold2);margin-bottom:6px}
+.bhr-shortcut strong{display:block;color:var(--gold2);font-size:16px}
+.bhr-shortcut small{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+header nav a[aria-current="page"]{border-color:var(--gold2);color:var(--gold2);background:var(--goldGlow)}
+.brand:before{content:none!important}
+.bhr-sun-mark{position:relative;width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center}
+.bhr-sun-mark svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 0 5px #f5cf65) drop-shadow(0 0 13px #d7a83e)}
+.bhr-sun-rays{transform-origin:50% 50%;animation:bhrSunRotate 28s linear infinite}
+.bhr-sun-core{filter:drop-shadow(0 0 7px #ffe6a0)}
+.bhr-sun-letters{position:relative;z-index:1;font-size:10px;font-weight:1000;letter-spacing:.4px;color:#fff1b8;text-shadow:0 0 5px #ffdb70,0 0 12px #e6ad35}
+@keyframes bhrSunRotate{to{transform:rotate(360deg)}}
+@media(max-width:760px){.bhr-home-shortcuts{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.bhr-shortcut{padding:17px 10px}}
+@media(max-width:420px){.bhr-home-shortcuts{grid-template-columns:1fr}}
+:root[data-theme="light"] .bhr-shortcut{background:#fffdf7}
+:root[data-theme="light"] .bhr-sun-letters{color:#68460c;text-shadow:0 0 5px #f5ce68,0 0 10px #d69b22}
+</style>
+
 </head>
 <body>
 <header>
@@ -2336,6 +2366,110 @@ if ("serviceWorker" in navigator && (location.protocol === "https:" || location.
   }catch(error){alert("افزودن محصول انجام نشد؛ اطلاعات محصول را بررسی کنید.")}
  });
  render();
+})();
+</script>
+
+
+<script id="bhr-multipage-system">
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const header=document.querySelector("header");
+const main=document.querySelector("main");
+if(!header||!main)return;
+const views=document.createElement("div");
+views.id="bhrPageViews";
+header.insertAdjacentElement("afterend",views);
+const makePage=(id,title,subtitle)=>{
+ const page=document.createElement("section");
+ page.className="bhr-page-view";
+ page.id=id;
+ page.setAttribute("aria-label",title);
+ const heading=document.createElement("div");
+ heading.className="bhr-page-heading";
+ const h=document.createElement("h1");h.textContent=title;
+ const p=document.createElement("p");p.textContent=subtitle;
+ heading.append(h,p);page.append(heading);views.append(page);return page;
+};
+const home=makePage("bhr-page-home","BEHNAM HUNTING ROOM","مرکز تخصصی تحلیل، آموزش و ابزارهای معامله‌گری");
+const market=makePage("bhr-market-page","مرکز بازار","دسترسی به نمودار زنده، جستجوی نمادها و بازارهای مالی");
+const room=makePage("bhr-room-page","اتاق معاملاتی BHR","روش اختصاصی، سناریوها و مرکز فرماندهی معاملات");
+const academy=makePage("bhr-academy-page","آکادمی آموزشی","آموزش مرحله‌به‌مرحله والیوم تریدینگ");
+const tools=makePage("bhr-tools-page","ابزارهای تخصصی ترید","ابزارهای مدیریت ریسک و برنامه‌ریزی معامله");
+const community=makePage("bhr-community-page","تحلیل کاربران","ثبت و مرور تحلیل‌ها و سناریوهای معاملاتی");
+const about=makePage("bhr-about-page","درباره ما","معرفی اتاق شکار بهنام و چارچوب فعالیت آن");
+const move=(node,target)=>{if(node&&target)target.append(node)};
+move($("home"),home);
+move(document.querySelector(".bhr-price-banner"),home);
+const marketsSection=$("markets");
+const workspace=marketsSection&&marketsSection.querySelector(".market-workspace");
+if(marketsSection){
+ const serviceHeading=marketsSection.querySelector(".section-title");
+ const serviceSub=marketsSection.querySelector(".section-sub");
+ const services=marketsSection.querySelector(".services");
+ if(serviceHeading)home.append(serviceHeading);
+ if(serviceSub)home.append(serviceSub);
+ if(services)home.append(services);
+}
+if(workspace)move(workspace,market);
+const shortcuts=document.createElement("div");
+shortcuts.className="bhr-home-shortcuts";
+shortcuts.innerHTML=
+ '<a class="bhr-shortcut" href="#bhr-page-room" data-bhr-page="room"><span class="bhr-shortcut-icon">◈</span><strong>اتاق معاملاتی</strong><small>روش BHR و سناریوهای معاملاتی</small></a>'+
+ '<a class="bhr-shortcut" href="#bhr-page-academy" data-bhr-page="academy"><span class="bhr-shortcut-icon">▤</span><strong>آکادمی آموزشی</strong><small>۹ فصل آموزش والیوم تریدینگ</small></a>'+
+ '<a class="bhr-shortcut" href="#bhr-page-markets" data-bhr-page="markets"><span class="bhr-shortcut-icon">⌁</span><strong>مرکز بازار</strong><small>نمودارها و ۱۱۰ نماد معاملاتی</small></a>'+
+ '<a class="bhr-shortcut" href="#bhr-page-tools" data-bhr-page="tools"><span class="bhr-shortcut-icon">⚙</span><strong>ابزارهای ترید</strong><small>ماشین‌حساب و ابزارهای مدیریت معامله</small></a>'+
+ '<a class="bhr-shortcut" href="#bhr-page-community" data-bhr-page="community"><span class="bhr-shortcut-icon">♧</span><strong>تحلیل کاربران</strong><small>ثبت و بررسی تحلیل‌ها</small></a>'+
+ '<a class="bhr-shortcut" href="#bhr-page-about" data-bhr-page="about"><span class="bhr-shortcut-icon">✦</span><strong>درباره ما</strong><small>آشنایی با برند BHR</small></a>';
+home.append(shortcuts);
+move($("bhr-method"),room);
+move($("bhr-command-center"),room);
+move($("bhr-academy"),academy);
+move($("bhr-trading-tools"),tools);
+move($("bhr-community"),community);
+move($("bhr-about"),about);
+const promo=$("instagram-promo"),contact=$("contact");
+move(promo,home);move(contact,home);
+if(marketsSection)marketsSection.remove();
+const services=document.querySelector(".services");
+if(services)services.remove();
+const nav=document.querySelector("header nav");
+if(nav){
+ nav.innerHTML=
+ '<a href="#bhr-page-home" data-bhr-page="home">⌂ <span>خانه</span></a>'+
+ '<a href="#bhr-page-room" data-bhr-page="room">◈ <span>اتاق معاملاتی</span></a>'+
+ '<a href="#bhr-page-academy" data-bhr-page="academy">▤ <span>آکادمی</span></a>'+
+ '<a href="#bhr-page-markets" data-bhr-page="markets">⌁ <span>مرکز بازار</span></a>'+
+ '<a href="#bhr-page-tools" data-bhr-page="tools">⚙ <span>ابزارها</span></a>'+
+ '<a href="#bhr-page-community" data-bhr-page="community">♧ <span>تحلیل کاربران</span></a>'+
+ '<a href="#bhr-page-about" data-bhr-page="about">✦ <span>درباره ما</span></a>';
+}
+const brand=document.querySelector("header .brand");
+if(brand&&!brand.querySelector(".bhr-sun-mark")){
+ const mark=document.createElement("span");mark.className="bhr-sun-mark";mark.setAttribute("aria-label","BHR");
+ mark.innerHTML='<svg viewBox="0 0 100 100" aria-hidden="true"><g class="bhr-sun-rays" fill="none" stroke="#f2d98b" stroke-width="3" stroke-linecap="round">'+Array.from({length:16},(_,i)=>'<path d="M50 3v12" transform="rotate('+(i*22.5)+' 50 50)"/>').join("")+'</g><circle class="bhr-sun-core" cx="50" cy="50" r="31" fill="url(#bhrSunGold)" stroke="#fff0b5" stroke-width="2"/><defs><radialGradient id="bhrSunGold"><stop stop-color="#fff6c9"/><stop offset=".48" stop-color="#e8bd58"/><stop offset="1" stop-color="#8e5b12"/></radialGradient></defs></svg><span class="bhr-sun-letters">BHR</span>';
+ brand.prepend(mark);
+}
+const pages={home,room,academy,markets:market,tools,community,about};
+function showPage(key,updateHash){
+ if(!pages[key])key="home";
+ Object.entries(pages).forEach(([name,node])=>node.classList.toggle("is-active",name===key));
+ if(updateHash)history.pushState({bhrPage:key},"","#bhr-page-"+key);
+ if(nav)nav.querySelectorAll("[data-bhr-page]").forEach(a=>{if(a.dataset.bhrPage===key)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
+ window.scrollTo({top:0,behavior:"instant"});
+ document.title=(key==="home"?"اتاق شکار بهنام":({room:"اتاق معاملاتی",academy:"آکادمی آموزشی",markets:"مرکز بازار",tools:"ابزارهای ترید",community:"تحلیل کاربران",about:"درباره ما"}[key]))+" | BEHNAM HUNTING ROOM";
+}
+document.addEventListener("click",e=>{
+ const link=e.target.closest("[data-bhr-page]");
+ if(!link)return;
+ e.preventDefault();showPage(link.dataset.bhrPage,true);
+});
+window.addEventListener("popstate",()=>{
+ const key=location.hash.replace("#bhr-page-","");
+ showPage(pages[key]?key:"home",false);
+});
+const initial=location.hash.startsWith("#bhr-page-")?location.hash.slice(10):"home";
+showPage(initial,false);
 })();
 </script>
 
