@@ -596,7 +596,7 @@ body > footer {
 </main>
  </section>
 
-<footer>© BEHNAM HUNTING ROOM</footer>
+
 <script>
 const btn=document.getElementById('langBtn');
 let lang='fa';
@@ -1143,6 +1143,16 @@ document.getElementById("marketSearch").addEventListener("keydown", function(eve
 }
 #bhrSupportClose:hover{background:#a8323220;color:#e27676;transform:rotate(90deg)}
 #bhrSupportClose svg{width:19px;height:19px}
+#bhrSupportStart{
+ width:100%;min-height:48px;display:flex;align-items:center;justify-content:center;gap:10px;
+ margin-top:12px;padding:11px 16px;border:1px solid #f1d58a;border-radius:14px;
+ background:linear-gradient(135deg,#f7e4a7 0%,#d4ad58 58%,#a87928 100%);
+ color:#211807;font:inherit;font-size:14px;font-weight:800;cursor:pointer;
+ box-shadow:0 5px 16px #0005;transition:transform .2s ease,filter .2s ease,box-shadow .2s ease
+}
+#bhrSupportStart:hover{transform:translateY(-2px);filter:brightness(1.06);box-shadow:0 8px 22px #0007}
+#bhrSupportStart:active{transform:scale(.985)}
+#bhrSupportStart svg{width:21px;height:21px;flex:0 0 21px}
 #bhr-support-messages{
  flex:1;min-height:160px;max-height:390px;overflow:auto;
  display:flex;flex-direction:column;gap:8px;padding:12px;margin:0;
@@ -1470,7 +1480,10 @@ document.getElementById("marketSearch").addEventListener("keydown", function(eve
   <input class="bhr-up-input" id="bhrSupportPhone" type="tel" inputmode="tel" placeholder="09xxxxxxxxx">
   <label class="bhr-up-label">نام و نام خانوادگی</label>
   <input class="bhr-up-input" id="bhrSupportName" placeholder="نام و نام خانوادگی">
-  <button type="button" id="bhrSupportStart">تأیید و شروع مکالمه</button>
+  <button type="button" id="bhrSupportStart">
+   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11.2V12a8 8 0 1 1-4.7-7.3"/><path d="m8.8 11.5 3.1 3.1L21 5.5"/></svg>
+   <span>تأیید و شروع مکالمه</span>
+  </button>
  </div>
  <div id="bhrSupportChat" class="bhr-up-hidden">
   <div id="bhr-support-messages" aria-live="polite" aria-relevant="additions"></div>
@@ -2067,6 +2080,8 @@ document.querySelectorAll("#bhr-upgrade button").forEach(b=>{
 <p><a href="https://behnamhunter.ir">behnamhunter.ir</a></p>
 </div>
 </section>
+
+<footer>© BEHNAM HUNTING ROOM</footer>
 
 </body>
 </html>
