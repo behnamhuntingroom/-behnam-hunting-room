@@ -494,6 +494,46 @@ html[dir="ltr"] #bhrCartDrawer{right:auto;left:0;transform:translateX(-105%);bor
 @media(max-width:520px){#bhrCartToggle{padding:7px 9px;font-size:12px}.header-tools{gap:5px}.datebox{font-size:10px}}
 </style>
 
+
+<style id="bhr-header-layout-fix">
+/* Clean, balanced two-row header */
+header{
+ display:grid!important;
+ grid-template-columns:minmax(190px,1fr) auto;
+ grid-template-areas:"brand tools" "nav nav";
+ align-items:center!important;
+ column-gap:18px!important;
+ row-gap:12px!important;
+ padding:13px 18px!important;
+}
+header>.brand{grid-area:brand;min-width:0;white-space:nowrap}
+header>nav{grid-area:nav;width:100%;display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;padding-top:10px;border-top:1px solid var(--line)}
+header>.header-tools{grid-area:tools;display:flex;align-items:center;justify-content:flex-end;gap:7px;flex-wrap:nowrap!important;min-width:0}
+header nav a{padding:7px 10px;font-size:12px;white-space:nowrap}
+header .datebox{white-space:nowrap;flex-wrap:nowrap;font-size:10px;padding:6px 8px}
+#bhrCartToggle{padding:8px 10px;gap:6px}
+header .theme-btn,header .lang{padding:8px 10px;white-space:nowrap}
+@media(max-width:1050px){
+ header{grid-template-columns:minmax(150px,1fr) auto;column-gap:10px!important;padding:12px!important}
+ header .datebox{display:none}
+ header>nav{gap:5px}
+ header nav a{padding:7px 9px}
+}
+@media(max-width:760px){
+ header{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:10px!important;padding:12px!important}
+ header>.brand{align-self:center;text-align:center}
+ header>.header-tools{width:100%;justify-content:center;flex-wrap:wrap!important;gap:6px}
+ header>nav{width:100%;justify-content:center;padding-top:10px;gap:6px}
+ header nav a{font-size:11px;padding:7px 9px}
+}
+@media(max-width:420px){
+ header>.header-tools{gap:5px}
+ #bhrCartToggle{font-size:11px;padding:7px 8px}
+ header .theme-btn,header .lang{font-size:11px;padding:7px 8px}
+ header nav a{font-size:10px;padding:6px 7px}
+}
+</style>
+
 </head>
 <body>
 <header>
