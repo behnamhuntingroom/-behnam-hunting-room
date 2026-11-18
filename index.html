@@ -1804,10 +1804,18 @@ $("bhrAuthSubmit")?.addEventListener("click",()=>{
   "اطلاعات وارد شد، اما ارسال و تأیید کد پیامکی هنوز فعال نیست. اتصال سرور احراز هویت و سرویس پیامک لازم است.";
 });
 
-/* Support chat: existing Cloudflare Worker */
+/* Support chat: two-way Cloudflare Worker + Telegram */
 const SUPPORT_ENDPOINT="https://tiny-unit-4ed3.behnamhuntingroom.workers.dev/";
 let supportUser=null;
+let supportConversationId=null;
 let lastSendAt=0;
+let supportPollTimer=null;
+let supportPolling=false;
+const supportSeenMessages=new Set();
+
+function supportConversationKey(phone){
+ return "bhr-support-conversation:"+phone;
+}
 
 $("bhr-support-launcher")?.addEventListener("click",()=>{
  $("bhr-support-panel").classList.toggle("bhr-up-hidden");
@@ -1824,6 +1832,36 @@ function addChatMessage(message,mine){
  $("bhr-support-messages").scrollTop=$("bhr-support-messages").scrollHeight;
 }
 
+async function pollSupportMessages(){
+ if(!supportConversationId||supportPolling)return;
+ supportPolling=true;
+ try{
+  const response=await fetch(
+   SUPPORT_ENDPOINT+"messages?conversationId="+encodeURIComponent(supportConversationId),
+   {method:"GET",cache:"no-store"}
+  );
+  if(!response.ok)throw new Error("HTTP "+response.status);
+  const data=await response.json();
+  if(data.ok&&Array.isArray(data.messages)){
+   data.messages.forEach(item=>{
+    if(!item||item.id==null||supportSeenMessages.has(String(item.id)))return;
+    supportSeenMessages.add(String(item.id));
+    if(item.text)addChatMessage(String(item.text),false);
+   });
+  }
+ }catch(error){
+  /* خطای موقت دریافت پیام؛ تلاش بعدی در نوبت بعدی انجام می‌شود. */
+ }finally{
+  supportPolling=false;
+ }
+}
+
+function startSupportPolling(){
+ if(supportPollTimer)clearInterval(supportPollTimer);
+ pollSupportMessages();
+ supportPollTimer=setInterval(pollSupportMessages,3000);
+}
+
 async function sendToSupport(message){
  const now=Date.now();
  if(now-lastSendAt<4000){
@@ -1833,21 +1871,30 @@ async function sendToSupport(message){
  lastSendAt=now;
  $("bhrSupportStatus").textContent="در حال ارسال پیام...";
  try{
+  const payload={
+   name:supportUser.name,
+   phone:supportUser.phone,
+   message:message
+  };
+  if(supportConversationId)payload.conversationId=supportConversationId;
   const response=await fetch(SUPPORT_ENDPOINT,{
    method:"POST",
    headers:{"Content-Type":"application/json"},
-   body:JSON.stringify({
-    name:supportUser.name,
-    phone:supportUser.phone,
-    message:message
-   })
+   body:JSON.stringify(payload)
   });
-  if(!response.ok)throw new Error("HTTP "+response.status);
-  $("bhrSupportStatus").textContent="پیام به سرویس پشتیبانی ارسال شد.";
+  const data=await response.json();
+  if(!response.ok||!data.ok)throw new Error("HTTP "+response.status);
+  if(data.conversationId){
+   supportConversationId=String(data.conversationId);
+   localStorage.setItem(supportConversationKey(supportUser.phone),supportConversationId);
+  }else if(!supportConversationId){
+   throw new Error("conversationId missing");
+  }
+  $("bhrSupportStatus").textContent="پیام به پشتیبانی ارسال شد.";
   return true;
  }catch(error){
   $("bhrSupportStatus").textContent=
-   "ارسال پیام انجام نشد. اتصال Worker، مجوز CORS و قالب درخواست باید بررسی شود.";
+   "ارسال پیام انجام نشد. اتصال Worker، مجوز CORS و پاسخ سرویس باید بررسی شود.";
   lastSendAt=0;
   return false;
  }
@@ -1865,17 +1912,24 @@ $("bhrSupportStart")?.addEventListener("click",async()=>{
   return;
  }
  supportUser={name,phone};
+ supportSeenMessages.clear();
+ try{
+  supportConversationId=localStorage.getItem(supportConversationKey(phone))||null;
+ }catch(error){
+  supportConversationId=null;
+ }
  const welcome="شروع گفت‌وگو با پشتیبانی | نام: "+name+" | موبایل: "+phone;
  const ok=await sendToSupport(welcome);
  if(ok){
   $("bhrSupportIntro").classList.add("bhr-up-hidden");
   $("bhrSupportChat").classList.remove("bhr-up-hidden");
   addChatMessage("گفت‌وگو شروع شد. پیام خود را بنویس.",false);
+  startSupportPolling();
  }
 });
 
 $("bhrSupportSend")?.addEventListener("click",async()=>{
- if(!supportUser)return;
+ if(!supportUser||!supportConversationId)return;
  const input=$("bhrSupportMessage");
  const message=input.value.trim();
  if(!message)return;
@@ -1883,6 +1937,7 @@ $("bhrSupportSend")?.addEventListener("click",async()=>{
  if(ok){
   addChatMessage(message,true);
   input.value="";
+  pollSupportMessages();
  }
 });
 $("bhrSupportMessage")?.addEventListener("keydown",e=>{
@@ -1890,7 +1945,6 @@ $("bhrSupportMessage")?.addEventListener("keydown",e=>{
   e.preventDefault();$("bhrSupportSend").click();
  }
 });
-
 /* Show current local date in command center */
 const update=$("bhrCommandUpdate");
 if(update)update.textContent="صفحه در "+new Date().toLocaleString("fa-IR")+" باز شده است.";
