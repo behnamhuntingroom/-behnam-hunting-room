@@ -465,7 +465,8 @@ body > footer {
  }
  #bhr-home-market-workspace .market-main .bhr-chart-panel{
    width:88%!important;
-   margin-inline:auto!important;
+   margin-right:0!important;
+   margin-left:auto!important;
    transform:none!important;
  }
  #bhr-home-market-workspace #bhrTradingViewChart{height:520px!important}
@@ -681,7 +682,7 @@ header .brand{position:relative;display:inline-flex;align-items:center;gap:10px;
       <div class="search-heading">⌕ MARKET FINDER | جستجوی بازار</div>
       <div class="search-box">
         <span class="search-icon">⌕</span>
-        <input type="text" id="marketSearch" placeholder="نام یا نماد بازار را جستجو کن؛ مثل BTC، طلا، نزدک..." autocomplete="off">
+        <input type="text" id="marketSearch" value="BTC" placeholder="نام یا نماد بازار را جستجو کن؛ مثل BTC، طلا، نزدک..." autocomplete="off">
         <button type="button" onclick="searchMarket()">نمایش نمودار</button>
       </div>
       <div id="marketSearchResult" class="market-search-result">نماد موردنظر را جستجو کن یا مستقیماً نمایش نمودار را بزن.</div>
