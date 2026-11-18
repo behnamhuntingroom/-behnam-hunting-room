@@ -1164,18 +1164,30 @@ document.getElementById("marketSearch").addEventListener("keydown", function(eve
   const input=document.getElementById('marketSearch');
   if(input){
     input.value='BTC';
-    const showDefaultBitcoinChart=()=>{
-      input.value='BTC';
-      searchMarket(false);
-    };
+    let lastDefaultChartInit=0;
     const initializeVisibleBitcoinChart=()=>{
-      requestAnimationFrame(()=>requestAnimationFrame(showDefaultBitcoinChart));
+      const now=Date.now();
+      if(now-lastDefaultChartInit<2000)return;
+      lastDefaultChartInit=now;
+      window.setTimeout(()=>{
+        input.value='BTC';
+        searchMarket(false);
+        // اگر اسکریپت نمودار در بارگذاری اول پاسخ نداد، فقط یک بار دوباره تلاش کن.
+        window.setTimeout(()=>{
+          const chart=document.getElementById('bhrTradingViewChart');
+          if(chart&&!chart.querySelector('iframe')){
+            input.value='BTC';
+            searchMarket(false);
+          }
+        },3000);
+      },700);
     };
     if(document.readyState==='complete'){
       initializeVisibleBitcoinChart();
     }else{
       window.addEventListener('load',initializeVisibleBitcoinChart,{once:true});
     }
+    window.addEventListener('pageshow',initializeVisibleBitcoinChart);
   }
   const all=window.BHR_MARKETS||[];
   const list=document.getElementById('marketSymbolsList');
