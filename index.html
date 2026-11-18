@@ -654,20 +654,14 @@ header .brand{position:relative;display:inline-flex;align-items:center;gap:10px;
 <div class="market-workspace">
   <div class="market-main">
     <div class="market-search">
-      <div class="search-heading">⌕ MARKET FINDER | جستجو و انتخاب از ۱۱۰ نماد بازار</div>
+      <div class="search-heading">⌕ MARKET FINDER | جستجوی بازار</div>
       <div class="search-box">
         <span class="search-icon">⌕</span>
-        <input type="text" id="marketSearch" placeholder="نام یا نماد را جستجو کن؛ مثل BTC، طلا، نزدک..." autocomplete="off">
+        <input type="text" id="marketSearch" placeholder="نام یا نماد بازار را جستجو کن؛ مثل BTC، طلا، نزدک..." autocomplete="off">
         <button type="button" onclick="searchMarket()">نمایش نمودار</button>
       </div>
-      <div id="marketSearchResult" class="market-search-result">از فهرست زیر انتخاب کن یا نام و نماد بازار را جستجو کن.</div>
-      <div class="symbol-directory">
-        <div class="symbol-directory-head">
-          <strong>نمادهای موجود در اتاق شکار</strong>
-          <b id="symbolCount">۱۱۰ نماد</b>
-        </div>
-        <div id="marketSymbolsList" class="market-symbols-list"></div>
-      </div>
+      <div id="marketSearchResult" class="market-search-result">نماد موردنظر را جستجو کن یا مستقیماً نمایش نمودار را بزن.</div>
+      <div id="marketSymbolsList" class="market-symbols-list" aria-label="نتایج جستجوی نمادها"></div>
     </div>
     <div class="bhr-chart-panel" id="bhrChartPanel">
       <div class="bhr-chart-title">LIVE CHART | نمودار زنده بازار</div>
@@ -678,14 +672,14 @@ header .brand{position:relative;display:inline-flex;align-items:center;gap:10px;
   <aside class="market-sidebar">
     <h2 class="section-title" style="font-size:23px;margin-top:34px" data-fa="قیمت بازارها" data-en="Market Quotes">قیمت بازارها</h2>
 <div class="quotes">
-  <div class="quote" style="grid-column:1/-1;min-height:520px;padding:20px">
-    <h3>LIVE MARKET | بازارهای زنده</h3>
-    <div class="tradingview-widget-container" style="width:100%;height:460px">
+  <div class="quote bhr-live-market-card" style="grid-column:1/-1;min-height:0;padding:12px">
+    <h3>LIVE MARKET <span>بازارهای زنده</span></h3>
+    <div class="tradingview-widget-container" style="width:100%;height:380px">
       <div class="tradingview-widget-container__widget"></div>
       <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js" async>
       {
         "width":"100%",
-        "height":460,
+        "height":380,
         "symbolsGroups":[
           {
             "name":"CRYPTO",
@@ -1146,26 +1140,29 @@ document.getElementById("marketSearch").addEventListener("keydown", function(eve
   if(input){input.value='BTC';searchMarket(false);}
   const all=window.BHR_MARKETS||[];
   const list=document.getElementById('marketSymbolsList');
-  const count=document.getElementById('symbolCount');
   if(!list||!input)return;
-  function norm(s){return String(s||'').toLowerCase().replace(/[يى]/g,'ی').replace(/ك/g,'ک').replace(/[\s/_\-.:‌]/g,'');}
+  function norm(s){return String(s||'').toLowerCase().replace(/[يى]/g,'ی').replace(/ك/g,'ک').replace(/[\\s/_\\-.:‌]/g,'');}
   function render(term=''){
     const q=norm(term);
-    const found=all.filter(item=>!q||norm([item[0],item[1],...(item[2]||'').split(',')].join(' ')).includes(q));
     list.innerHTML='';
-    found.forEach(item=>{
+    if(!q){list.classList.remove('is-open');return;}
+    const found=all.filter(item=>norm([item[0],item[1],...(item[2]||'').split(',')].join(' ')).includes(q)).slice(0,18);
+    if(!found.length){
+      const empty=document.createElement('div');empty.className='market-symbol-empty';empty.textContent='نمادی با این عبارت پیدا نشد';list.appendChild(empty);
+    }else found.forEach(item=>{
       const button=document.createElement('button');button.type='button';button.className='market-symbol-button';
       const ticker=item[0].split(':').pop().replace('1!','');
       const title=document.createElement('b');title.textContent=ticker;
-      const desc=document.createElement('span');desc.textContent=item[1]+'  |  '+item[0];
+      const desc=document.createElement('span');desc.textContent=item[1];
       button.append(title,desc);
-      button.addEventListener('click',()=>{input.value=ticker;render('');searchMarket();});
+      button.addEventListener('click',()=>{input.value=ticker;list.classList.remove('is-open');list.innerHTML='';searchMarket();});
       list.appendChild(button);
     });
-    count.textContent=found.length+' از '+all.length+' نماد';
+    list.classList.add('is-open');
   }
   input.addEventListener('input',()=>render(input.value));
-  render();
+  input.addEventListener('focus',()=>{if(input.value.trim())render(input.value);});
+  document.addEventListener('click',event=>{if(!event.target.closest('.market-search'))list.classList.remove('is-open');});
 })();</script>
 
 
@@ -1429,6 +1426,32 @@ header .bhr-sun-mark{
 }
 @media(prefers-reduced-motion:reduce){
   header .bhr-sun-mark{animation:none!important}
+}
+
+/* Compact searchable symbol suggestions; keep the chart immediately below */
+.market-main .market-search{position:relative;margin-bottom:8px!important;padding:14px 16px!important}
+.market-main .search-heading{margin-bottom:9px!important;font-size:13px}
+.market-main .search-box{margin-bottom:4px}
+.market-main .market-search-result{margin-top:5px;min-height:0;font-size:11px}
+.market-main .market-symbols-list{display:none;position:absolute;z-index:30;top:calc(100% - 3px);right:0;left:0;max-height:230px;overflow:auto;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:10px;border:1px solid rgba(215,180,90,.45);border-radius:0 0 14px 14px;background:rgba(13,13,12,.98);box-shadow:0 16px 30px #000b;backdrop-filter:blur(14px)}
+.market-main .market-symbols-list.is-open{display:grid}
+.market-main .market-symbol-button{padding:8px 9px;text-align:right}
+.market-main .market-symbol-button b{font-size:11px;color:#f2d98b}
+.market-main .market-symbol-button span{font-size:10px}
+.market-main .market-symbol-empty{grid-column:1/-1;padding:12px;text-align:center;color:#c8b98f;font-size:12px}
+.market-main .bhr-chart-panel{margin-top:7px!important}
+.market-sidebar .section-title{margin-top:5px!important;margin-bottom:9px!important;font-size:18px!important}
+.market-sidebar .bhr-live-market-card{padding:11px!important;border-radius:15px;background:linear-gradient(150deg,rgba(215,180,90,.11),rgba(16,16,15,.98));border:1px solid rgba(215,180,90,.32);box-shadow:0 10px 24px #0005}
+.market-sidebar .bhr-live-market-card h3{display:flex;align-items:center;justify-content:space-between;gap:6px;margin:0 0 8px!important;color:#f2d98b;font-size:11px!important;letter-spacing:.4px}
+.market-sidebar .bhr-live-market-card h3 span{font-size:12px;color:#e8ddc2;font-weight:700;letter-spacing:0}
+.market-sidebar .bhr-live-market-card .tradingview-widget-container{height:380px!important;overflow:hidden;border-radius:10px}
+.market-sidebar .bhr-live-market-card iframe{max-width:100%!important}
+header .bhr-sun-mark{border:1px solid #f0cf75;background:linear-gradient(145deg,#fff0b4 0%,#b8892e 24%,#4b3511 52%,#e6bd5c 76%,#72501b 100%);box-shadow:inset 2px 2px 4px #fff8,inset -3px -3px 6px #1b1208,0 3px 0 #684817,0 7px 13px #0009,0 0 18px rgba(215,180,90,.35)!important}
+header .bhr-sun-mark:after{content:"";position:absolute;inset:3px;border:1px solid rgba(255,236,174,.55);border-radius:50%;box-shadow:inset 0 1px 3px #fff6;pointer-events:none}
+header .bhr-sun-letters{transform:translateZ(12px);text-shadow:0 1px 0 #8d6420,0 2px 0 #634313,0 3px 4px #000,0 0 8px rgba(255,226,147,.6)!important;letter-spacing:.5px}
+@media(max-width:760px){
+ .market-main .market-symbols-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .market-sidebar .bhr-live-market-card .tradingview-widget-container{height:360px!important}
 }
 </style>
 <section id="bhr-method" aria-labelledby="bhr-method-title">
