@@ -586,14 +586,19 @@ header .brand{position:relative;display:inline-flex;align-items:center;gap:10px;
 
 
 /* Subtle BHR method introduction on the home page */
-.bhr-home-method-intro{width:min(1120px,92%);margin:8px auto 22px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:20px;border:1px solid var(--line);border-right:3px solid var(--gold2);border-radius:14px;background:linear-gradient(110deg,var(--card),transparent);box-shadow:0 6px 20px #0000000a}
+.bhr-home-method-intro{position:relative;isolation:isolate;overflow:hidden;width:min(100%,980px);margin:0 auto 18px;padding:21px 24px;display:flex;align-items:center;justify-content:space-between;gap:22px;border:1px solid rgba(215,180,90,.38);border-right:4px solid var(--gold2);border-radius:18px;background:radial-gradient(ellipse at 12% 0,rgba(215,180,90,.17),transparent 52%),linear-gradient(115deg,var(--card),rgba(215,180,90,.035));box-shadow:0 12px 32px #0003,inset 0 1px 0 rgba(255,230,160,.08)}
+.bhr-home-method-intro:before{content:"BHR";position:absolute;z-index:-1;left:22px;top:50%;transform:translateY(-50%);font-size:clamp(48px,8vw,88px);font-weight:1000;letter-spacing:4px;color:rgba(215,180,90,.055);pointer-events:none}
 .bhr-home-method-copy{min-width:0}
-.bhr-home-method-eyebrow{display:block;margin-bottom:3px;color:var(--muted);font-size:10px;letter-spacing:.7px}
-.bhr-home-method-intro h2{margin:0 0 4px;color:var(--gold2);font-size:17px;font-weight:800}
-.bhr-home-method-intro p{margin:0;color:var(--muted);font-size:12px;line-height:1.9}
-.bhr-home-method-link{flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;color:var(--gold2);font-size:12px;text-decoration:none;white-space:nowrap;transition:background .2s,border-color .2s}
-.bhr-home-method-link:hover{background:var(--goldGlow);border-color:var(--gold2)}
-@media(max-width:620px){.bhr-home-method-intro{align-items:flex-start;flex-direction:column;gap:10px;padding:14px}.bhr-home-method-link{align-self:flex-start}}
+.bhr-home-method-eyebrow{display:block;margin-bottom:6px;color:var(--gold2);font-size:10px;font-weight:800;letter-spacing:1px}
+.bhr-home-method-intro h2{margin:0 0 7px;color:var(--gold2);font-size:20px;font-weight:900}
+.bhr-home-method-intro p{max-width:760px;margin:0;color:var(--text);font-size:13px;line-height:2}
+.bhr-home-method-pill-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.bhr-home-method-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border:1px solid rgba(215,180,90,.25);border-radius:999px;background:rgba(215,180,90,.07);color:var(--gold2);font-size:10px;font-weight:700}
+.bhr-home-method-link{flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid rgba(215,180,90,.55);border-radius:11px;background:rgba(215,180,90,.09);color:var(--gold2);font-size:12px;font-weight:800;text-decoration:none;white-space:nowrap;transition:background .2s,border-color .2s,transform .2s}
+.bhr-home-method-link:hover{background:var(--goldGlow);border-color:var(--gold2);transform:translateY(-2px)}
+.market-main .bhr-chart-panel{width:min(88%,900px);margin:0 auto 22px!important}
+@media(max-width:760px){.market-main .bhr-chart-panel{width:100%}}
+@media(max-width:620px){.bhr-home-method-intro{align-items:flex-start;flex-direction:column;gap:13px;padding:17px}.bhr-home-method-intro h2{font-size:18px}.bhr-home-method-intro p{font-size:12px}.bhr-home-method-link{align-self:flex-start}.bhr-home-method-intro:before{left:12px;font-size:55px}}
 
 
 </style>
@@ -2456,9 +2461,10 @@ shortcuts.innerHTML=
 const methodIntro=document.createElement("section");
 methodIntro.className="bhr-home-method-intro";
 methodIntro.innerHTML=
- '<div class="bhr-home-method-copy"><span class="bhr-home-method-eyebrow" data-fa="رویکرد اختصاصی اتاق شکار" data-en="THE BHR SIGNATURE APPROACH">رویکرد اختصاصی اتاق شکار</span><h2 data-fa="روش معاملاتی BHR" data-en="BHR Trading Method">روش معاملاتی BHR</h2><p data-fa="ترکیبی هدفمند از والیوم تریدینگ، اسمارت مانی و پرایس اکشن؛ برای خواندن دقیق‌تر ساختار بازار و تصمیم‌گیری بر پایه شواهد هم‌جهت." data-en="A focused blend of Volume Trading, Smart Money, and Price Action to read market structure and make decisions from aligned evidence.">ترکیبی هدفمند از والیوم تریدینگ، اسمارت مانی و پرایس اکشن؛ برای خواندن دقیق‌تر ساختار بازار و تصمیم‌گیری بر پایه شواهد هم‌جهت.</p></div>'+
- '<a href="#bhr-page-room" data-bhr-page="room" class="bhr-home-method-link"><span data-fa="آشنایی با روش" data-en="Explore the method">آشنایی با روش</span><span aria-hidden="true">←</span></a>';
-home.append(methodIntro);
+ '<div class="bhr-home-method-copy"><span class="bhr-home-method-eyebrow" data-fa="رویکرد اختصاصی اتاق شکار" data-en="THE BHR SIGNATURE APPROACH">رویکرد اختصاصی اتاق شکار</span><h2 data-fa="روش معاملاتی BHR؛ سه نگاه، یک تصمیم دقیق‌تر" data-en="BHR Trading Method — Three Perspectives, One Clearer Decision">روش معاملاتی BHR؛ سه نگاه، یک تصمیم دقیق‌تر</h2><p data-fa="در سبک اختصاصی BHR، والیوم تریدینگ برای سنجش قدرت و مشارکت بازار، اسمارت مانی برای شناخت نقدینگی و ساختار سفارش‌ها، و پرایس اکشن برای زمان‌بندی ورود و خروج کنار هم قرار می‌گیرند. هدف، تصمیم‌گیری بر پایه هم‌جهتی شواهد است؛ نه اتکا به یک ابزار یا سیگنال تنها." data-en="BHR combines Volume Trading to assess market participation, Smart Money to read liquidity and order structure, and Price Action to time entries and exits. The goal is to make decisions when evidence aligns—not from a single indicator or signal.">در سبک اختصاصی BHR، والیوم تریدینگ برای سنجش قدرت و مشارکت بازار، اسمارت مانی برای شناخت نقدینگی و ساختار سفارش‌ها، و پرایس اکشن برای زمان‌بندی ورود و خروج کنار هم قرار می‌گیرند. هدف، تصمیم‌گیری بر پایه هم‌جهتی شواهد است؛ نه اتکا به یک ابزار یا سیگنال تنها.</p><div class="bhr-home-method-pill-row"><span class="bhr-home-method-pill">◈ Volume Trading</span><span class="bhr-home-method-pill">◇ Smart Money</span><span class="bhr-home-method-pill">⌁ Price Action</span></div></div>'+
+ '<a href="#bhr-page-room" data-bhr-page="room" class="bhr-home-method-link"><span data-fa="جزئیات روش BHR" data-en="Explore BHR Method">جزئیات روش BHR</span><span aria-hidden="true">←</span></a>';
+const chartPanel=$("bhrChartPanel"),marketMain=document.querySelector(".market-main");
+if(marketMain&&chartPanel)marketMain.insertBefore(methodIntro,chartPanel);else home.append(methodIntro);
 home.append(shortcuts);
 move($("bhr-method"),room);
 move($("bhr-command-center"),room);
