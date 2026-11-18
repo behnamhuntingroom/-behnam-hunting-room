@@ -654,26 +654,26 @@ header .brand{position:relative;display:inline-flex;align-items:center;gap:10px;
 <div class="market-workspace">
   <div class="market-main">
     <div class="market-search">
-      <div class="search-heading">⌕ MARKET FINDER | جستجوی بازار</div>
+      <div class="search-heading">⌕ MARKET FINDER | جستجو و انتخاب از ۱۱۰ نماد بازار</div>
       <div class="search-box">
         <span class="search-icon">⌕</span>
-        <input type="text" id="marketSearch" placeholder="نام یا نماد را وارد کن؛ مثل BTC، طلا، نزدک..." autocomplete="off">
+        <input type="text" id="marketSearch" placeholder="نام یا نماد را جستجو کن؛ مثل BTC، طلا، نزدک..." autocomplete="off">
         <button type="button" onclick="searchMarket()">نمایش نمودار</button>
       </div>
-      <div id="marketSearchResult" class="market-search-result">برای شروع، یکی از نمادها را انتخاب کن یا جستجو کن.</div>
+      <div id="marketSearchResult" class="market-search-result">از فهرست زیر انتخاب کن یا نام و نماد بازار را جستجو کن.</div>
+      <div class="symbol-directory">
+        <div class="symbol-directory-head">
+          <strong>نمادهای موجود در اتاق شکار</strong>
+          <b id="symbolCount">۱۱۰ نماد</b>
+        </div>
+        <div id="marketSymbolsList" class="market-symbols-list"></div>
+      </div>
     </div>
     <div class="bhr-chart-panel" id="bhrChartPanel">
       <div class="bhr-chart-title">LIVE CHART | نمودار زنده بازار</div>
       <div id="bhrTradingViewChart"></div>
     </div>
-    <div class="symbol-directory">
-      <div class="symbol-directory-head">
-        <div><strong>فهرست نمادهای اتاق شکار</strong><span>تمام نمادهای تعریف‌شده؛ برای باز کردن نمودار روی هر نماد بزن</span></div>
-        <b id="symbolCount">۱۱۰ نماد</b>
-      </div>
-      <input id="symbolFilter" class="symbol-filter" type="search" placeholder="فیلتر سریع نمادها..." autocomplete="off">
-      <div id="marketSymbolsList" class="market-symbols-list"></div>
-    </div>
+
   </div>
   <aside class="market-sidebar">
     <h2 class="section-title" style="font-size:23px;margin-top:34px" data-fa="قیمت بازارها" data-en="Market Quotes">قیمت بازارها</h2>
@@ -1146,29 +1146,27 @@ document.getElementById("marketSearch").addEventListener("keydown", function(eve
   if(input){input.value='BTC';searchMarket(false);}
   const all=window.BHR_MARKETS||[];
   const list=document.getElementById('marketSymbolsList');
-  const filter=document.getElementById('symbolFilter');
   const count=document.getElementById('symbolCount');
-  if(!list||!filter)return;
+  if(!list||!input)return;
   function norm(s){return String(s||'').toLowerCase().replace(/[يى]/g,'ی').replace(/ك/g,'ک').replace(/[\s/_\-.:‌]/g,'');}
   function render(term=''){
     const q=norm(term);
-    const found=all.filter(item=>norm([item[0],item[1],...(item[2]||'').split(',')].join(' ')).includes(q));
+    const found=all.filter(item=>!q||norm([item[0],item[1],...(item[2]||'').split(',')].join(' ')).includes(q));
     list.innerHTML='';
     found.forEach(item=>{
-      const b=document.createElement('button');b.type='button';b.className='market-symbol-button';
+      const button=document.createElement('button');button.type='button';button.className='market-symbol-button';
       const ticker=item[0].split(':').pop().replace('1!','');
       const title=document.createElement('b');title.textContent=ticker;
       const desc=document.createElement('span');desc.textContent=item[1]+'  |  '+item[0];
-      b.append(title,desc);
-      b.addEventListener('click',()=>{document.getElementById('marketSearch').value=ticker;searchMarket();});
-      list.appendChild(b);
+      button.append(title,desc);
+      button.addEventListener('click',()=>{input.value=ticker;render('');searchMarket();});
+      list.appendChild(button);
     });
-    count.textContent=found.length+' نماد';
+    count.textContent=found.length+' از '+all.length+' نماد';
   }
-  filter.addEventListener('input',()=>render(filter.value));
+  input.addEventListener('input',()=>render(input.value));
   render();
-})();
-</script>
+})();</script>
 
 
 <script>
@@ -1404,6 +1402,18 @@ document.getElementById("marketSearch").addEventListener("keydown", function(eve
 #bhr-home-market-workspace .market-sidebar>.section-title{margin-top:0!important}
 #bhr-home-market-workspace .market-main .market-search{margin-bottom:10px!important}
 .bhr-price-banner{margin-bottom:12px!important}
+
+/* Unified BHR Market Finder and 110-symbol selector */
+.market-main .market-search{padding:18px 20px;margin-bottom:14px!important}
+.market-main .symbol-directory{margin:13px 0 0;padding:12px 0 0;border:0;border-top:1px solid rgba(215,180,90,.2);border-radius:0;background:transparent;box-shadow:none}
+.market-main .symbol-directory-head{margin-bottom:9px}
+.market-main .symbol-directory-head strong{font-size:13px;color:#d9c58e}
+.market-main .symbol-directory-head b{font-size:11px;padding:4px 10px}
+.market-main .market-symbols-list{grid-template-columns:repeat(5,minmax(0,1fr));max-height:205px;gap:6px}
+.market-main .market-symbol-button{padding:8px 9px}
+.market-main .market-symbol-button span{font-size:9px}
+@media(max-width:900px){.market-main .market-symbols-list{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:650px){.market-main .market-search{padding:14px}.market-main .market-symbols-list{grid-template-columns:repeat(2,minmax(0,1fr));max-height:230px}}
 </style>
 <section id="bhr-method" aria-labelledby="bhr-method-title">
  <div class="bhr-method-kicker">THE SIGNATURE TRADING APPROACH OF BEHNAM HUNTING ROOM</div>
