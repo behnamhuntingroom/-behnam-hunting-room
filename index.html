@@ -1060,6 +1060,852 @@ document.getElementById("marketSearch").addEventListener("keydown", function(eve
   loadPrices();
   setInterval(loadPrices, 10 * 60 * 1000);
 })();</script>
+<style id="bhr-upgrade-style">
+:root{
+ --bhr-gold:#d7b45a;--bhr-gold2:#f2d98b;
+ --bhr-panel:#15140f;--bhr-border:rgba(215,180,90,.3);
+}
+#bhr-upgrade{width:min(1160px,94%);margin:35px auto;color:var(--text)}
+#bhr-upgrade *{box-sizing:border-box}
+.bhr-section{padding:35px 0;scroll-margin-top:100px}
+.bhr-section-title{text-align:center;color:var(--gold2);font-size:27px;margin:0 0 8px}
+.bhr-section-sub{text-align:center;color:var(--muted);margin:0 auto 24px}
+.bhr-up-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.bhr-up-card{
+ background:var(--card);border:1px solid var(--line);border-radius:17px;
+ padding:19px;box-shadow:0 8px 25px #0003;min-width:0
+}
+.bhr-up-card h3{color:var(--gold2);margin:0 0 8px;font-size:17px}
+.bhr-up-card p{color:var(--muted);margin:0 0 13px;font-size:13px}
+.bhr-up-btn,.bhr-up-card button{
+ border:1px solid var(--gold);border-radius:10px;padding:9px 14px;
+ background:linear-gradient(135deg,#f2d98b,#b58b35);
+ color:#17130a;font-weight:bold;cursor:pointer;font-family:inherit
+}
+.bhr-up-btn.secondary,.bhr-up-card button.secondary{
+ background:transparent;color:var(--gold2);border-color:var(--line)
+}
+.bhr-up-input,.bhr-up-select,.bhr-up-textarea{
+ width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;
+ background:var(--panel);color:var(--text);font:inherit;margin:5px 0 12px
+}
+.bhr-up-textarea{min-height:100px;resize:vertical}
+.bhr-up-label{display:block;color:var(--muted);font-size:13px}
+.bhr-up-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.bhr-up-row>*{flex:1;min-width:120px}
+.bhr-up-status{font-size:12px;color:var(--muted);margin-top:10px}
+.bhr-up-gold{color:var(--gold2)!important}
+.bhr-up-list{display:grid;gap:9px}
+.bhr-up-item{
+ padding:12px;border:1px solid var(--line);border-radius:12px;
+ background:var(--panel);color:var(--text)
+}
+.bhr-up-item button{margin-top:8px}
+.bhr-up-hidden{display:none!important}
+.bhr-chapter{
+ display:flex;justify-content:space-between;align-items:center;gap:10px;
+ width:100%;text-align:right;padding:13px;margin:7px 0;
+ border:1px solid var(--line);border-radius:12px;background:var(--panel);
+ color:var(--text);cursor:pointer;font:inherit
+}
+.bhr-chapter.active{border-color:var(--gold2);background:var(--goldGlow)}
+#bhrLessonBody{line-height:2;color:var(--text)}
+#bhrLessonBody h3,#bhrLessonBody h4{color:var(--gold2)}
+#bhrLessonBody li{margin:7px 0}
+.bhr-glossary-term{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.bhr-glossary-term strong{color:var(--gold2)}
+.bhr-stat{font-size:23px;font-weight:900;color:var(--gold2)}
+.bhr-warning{
+ padding:12px 14px;border:1px solid #c89b3c66;border-radius:12px;
+ background:#a8791b12;color:var(--muted);font-size:13px;margin:12px 0
+}
+#bhr-support-launcher{
+ position:fixed;right:22px;bottom:22px;z-index:9998;width:58px;height:58px;
+ border-radius:50%;border:1px solid var(--gold2);
+ background:linear-gradient(145deg,#f2d98b,#9c7025);color:#17130a;
+ font-size:25px;box-shadow:0 5px 25px #0008;cursor:pointer
+}
+#bhr-support-panel{
+ position:fixed;right:20px;bottom:92px;z-index:9999;
+ width:min(370px,calc(100vw - 30px));max-height:75vh;overflow:auto;
+ padding:17px;border:1px solid var(--line);border-radius:18px;
+ background:var(--bg);color:var(--text);box-shadow:0 15px 50px #000b
+}
+#bhr-support-panel h3{color:var(--gold2);margin:0 0 8px}
+#bhr-support-messages{
+ height:190px;overflow:auto;padding:10px;margin:10px 0;
+ border:1px solid var(--line);border-radius:12px;background:var(--panel)
+}
+.bhr-chat-msg{padding:8px 10px;margin:6px 0;border-radius:10px;background:#b58b3522;font-size:13px}
+.bhr-chat-msg.mine{background:#d7b45a30}
+#bhr-auth-panel{
+ position:fixed;inset:0;z-index:10000;background:#000b;
+ display:none;place-items:center;padding:15px
+}
+#bhr-auth-panel.open{display:grid}
+#bhr-auth-box{
+ width:min(420px,100%);padding:22px;border:1px solid var(--line);
+ border-radius:18px;background:var(--bg);color:var(--text)
+}
+#bhr-auth-box h3{color:var(--gold2);margin-top:0}
+#bhr-upgrade :focus-visible{outline:2px solid var(--gold2);outline-offset:3px}
+:root[data-theme="light"] #bhr-upgrade .bhr-up-card,
+:root[data-theme="light"] #bhr-support-panel,
+:root[data-theme="light"] #bhr-auth-box{
+ background:#fffdf7;color:#191711
+}
+:root[data-theme="light"] #bhr-upgrade .bhr-up-input,
+:root[data-theme="light"] #bhr-upgrade .bhr-up-select,
+:root[data-theme="light"] #bhr-upgrade .bhr-up-textarea,
+:root[data-theme="light"] .bhr-chapter{
+ background:#fff;color:#191711;border-color:#b99a58
+}
+@media(max-width:760px){
+ .bhr-up-grid{grid-template-columns:1fr}
+ .bhr-section{padding:25px 0}
+ .bhr-section-title{font-size:23px}
+ #bhr-support-launcher{right:14px;bottom:14px}
+ #bhr-support-panel{right:12px;bottom:82px}
+}
+</style>
 
+<div id="bhr-upgrade">
+
+<section class="bhr-section" id="bhr-academy">
+ <h2 class="bhr-section-title">آکادمی رایگان والیوم تریدینگ</h2>
+ <p class="bhr-section-sub">آموزش مرحله‌به‌مرحله جریان سفارش، حجم معاملات و تحلیل حرفه‌ای بازار</p>
+ <div class="bhr-up-grid">
+  <div class="bhr-up-card">
+   <h3>مسیر یادگیری</h3>
+   <p>۹ فصل آموزشی از مبانی حجم تا طراحی ستاپ و کار عملی با نینجاتریدر.</p>
+   <div class="bhr-stat" id="bhrAcademyProgress">۰٪</div>
+   <div class="bhr-up-status" id="bhrAcademyProgressText">هنوز درسی تکمیل نشده است.</div>
+  </div>
+  <div class="bhr-up-card">
+   <h3>آموزش کاملاً رایگان</h3>
+   <p>تمام فصل‌ها برای همه بازدیدکنندگان باز است و برای مطالعه نیاز به عضویت نیست.</p>
+  </div>
+  <div class="bhr-up-card">
+   <h3>منبع تکمیلی</h3>
+   <p>برای مطالعه بیشتر می‌توانی منابع تخصصی والیوم تریدینگ را هم بررسی کنی.</p>
+   <a class="bhr-up-btn secondary" href="https://javadtrader.com/" target="_blank" rel="noopener">مشاهده منبع آموزشی</a>
+  </div>
+ </div>
+ <div class="bhr-up-grid" style="margin-top:18px">
+  <div class="bhr-up-card">
+   <h3>فهرست فصل‌ها</h3>
+   <div id="bhrChapterList"></div>
+  </div>
+  <div class="bhr-up-card" style="grid-column:span 2">
+   <h3 id="bhrLessonTitle">برای شروع، فصل اول را انتخاب کن</h3>
+   <div id="bhrLessonBody">درس‌های آکادمی در این قسمت نمایش داده می‌شوند.</div>
+   <div class="bhr-up-row" style="margin-top:15px">
+    <button type="button" id="bhrLessonDone">علامت‌گذاری به‌عنوان مطالعه‌شده</button>
+    <button type="button" class="secondary" id="bhrLessonNext">درس بعدی</button>
+   </div>
+   <div class="bhr-up-status" id="bhrLessonStatus"></div>
+  </div>
+ </div>
+</section>
+
+<section class="bhr-section" id="bhr-trading-tools">
+ <h2 class="bhr-section-title">ابزارهای تخصصی معامله‌گری</h2>
+ <p class="bhr-section-sub">ماشین‌حساب ریسک، ژورنال معاملاتی، هشدار و فرهنگ لغات تخصصی</p>
+ <div class="bhr-up-grid">
+  <div class="bhr-up-card">
+   <h3>ماشین‌حساب حجم معامله</h3>
+   <label class="bhr-up-label">موجودی حساب</label>
+   <input class="bhr-up-input" id="bhrAccount" type="number" min="0" placeholder="مثلاً 5000">
+   <label class="bhr-up-label">درصد ریسک</label>
+   <input class="bhr-up-input" id="bhrRiskPercent" type="number" min="0.01" max="100" step="0.1" value="1">
+   <label class="bhr-up-label">فاصله حد ضرر به واحد قیمت</label>
+   <input class="bhr-up-input" id="bhrStopDistance" type="number" min="0.000001" step="any" placeholder="مثلاً 5">
+   <label class="bhr-up-label">ارزش هر واحد حرکت برای یک لات</label>
+   <input class="bhr-up-input" id="bhrPointValue" type="number" min="0.000001" step="any" value="1">
+   <button type="button" id="bhrCalcRisk">محاسبه حجم</button>
+   <div class="bhr-up-status" id="bhrCalcResult">نتیجه محاسبه اینجا نمایش داده می‌شود.</div>
+  </div>
+
+  <div class="bhr-up-card">
+   <h3>ژورنال معاملاتی</h3>
+   <label class="bhr-up-label">نماد</label>
+   <input class="bhr-up-input" id="bhrJournalSymbol" placeholder="مثلاً XAUUSD">
+   <label class="bhr-up-label">نتیجه معامله به واحد پول حساب</label>
+   <input class="bhr-up-input" id="bhrJournalPnL" type="number" step="any" placeholder="سود مثبت / زیان منفی">
+   <label class="bhr-up-label">توضیح معامله</label>
+   <textarea class="bhr-up-textarea" id="bhrJournalNote" placeholder="دلیل ورود، ستاپ و نکته‌های معامله..."></textarea>
+   <button type="button" id="bhrJournalAdd">ثبت معامله</button>
+   <div class="bhr-up-status" id="bhrJournalStats">هنوز معامله‌ای ثبت نشده است.</div>
+   <div class="bhr-up-list" id="bhrJournalList"></div>
+  </div>
+
+  <div class="bhr-up-card">
+   <h3>هشدار قیمت</h3>
+   <label class="bhr-up-label">نماد</label>
+   <input class="bhr-up-input" id="bhrAlertSymbol" placeholder="مثلاً BTCUSDT">
+   <label class="bhr-up-label">سطح قیمت</label>
+   <input class="bhr-up-input" id="bhrAlertPrice" type="number" step="any" placeholder="قیمت موردنظر">
+   <select class="bhr-up-select" id="bhrAlertDirection">
+    <option value="above">وقتی قیمت بالاتر رفت</option>
+    <option value="below">وقتی قیمت پایین‌تر رفت</option>
+   </select>
+   <button type="button" id="bhrAlertAdd">ثبت هشدار</button>
+   <div class="bhr-up-status" id="bhrAlertStatus">هشدارها فعلاً در همین مرورگر ذخیره می‌شوند؛ پایش خودکار قیمت به اتصال API نیاز دارد.</div>
+   <div class="bhr-up-list" id="bhrAlertList"></div>
+  </div>
+ </div>
+ <div class="bhr-up-card" style="margin-top:16px">
+  <h3>فرهنگ لغات والیوم تریدینگ و اسمارت مانی</h3>
+  <input class="bhr-up-input" id="bhrGlossarySearch" type="search" placeholder="جستجوی اصطلاح؛ مثل Absorption یا Delta">
+  <div class="bhr-up-list" id="bhrGlossaryList"></div>
+ </div>
+</section></section>
+
+<section class="bhr-section" id="bhr-command-center">
+ <h2 class="bhr-section-title">Trading Command Center</h2>
+ <p class="bhr-section-sub">مرکز پیگیری بازار، واچ‌لیست، رویدادهای اقتصادی و سناریوهای معاملاتی</p>
+
+ <div class="bhr-up-grid">
+  <div class="bhr-up-card">
+   <h3>واچ‌لیست شخصی</h3>
+   <label class="bhr-up-label">نماد موردنظر</label>
+   <input class="bhr-up-input" id="bhrWatchSymbol" placeholder="مثلاً XAUUSD">
+   <button type="button" id="bhrWatchAdd">افزودن به واچ‌لیست</button>
+   <div class="bhr-up-list" id="bhrWatchList" style="margin-top:12px"></div>
+  </div>
+
+  <div class="bhr-up-card">
+   <h3>تقویم اقتصادی</h3>
+   <p>رویدادهای مهمی که باید پیش از معامله بررسی شوند:</p>
+   <div class="bhr-up-item">
+    <strong>تورم آمریکا — CPI</strong>
+    <div class="bhr-up-status">زمان انتشار و مقدار واقعی هنوز به منبع تقویم متصل نشده است.</div>
+   </div>
+   <div class="bhr-up-item">
+    <strong>اشتغال آمریکا — NFP</strong>
+    <div class="bhr-up-status">زمان انتشار و مقدار واقعی هنوز به منبع تقویم متصل نشده است.</div>
+   </div>
+   <div class="bhr-up-item">
+    <strong>تصمیم نرخ بهره — FOMC</strong>
+    <div class="bhr-up-status">زمان جلسه و نتیجه تصمیم هنوز به منبع تقویم متصل نشده است.</div>
+   </div>
+   <div class="bhr-warning">این موارد فهرست رویدادهای مهم هستند، نه تقویم زنده. برای نمایش زمان و داده واقعی باید API اقتصادی متصل شود.</div>
+  </div>
+
+  <div class="bhr-up-card">
+   <h3>اخبار و وضعیت داده‌ها</h3>
+   <div class="bhr-up-item">
+    <strong>اخبار اقتصادی</strong>
+    <div class="bhr-up-status">منبع خبری هنوز متصل نشده است.</div>
+   </div>
+   <div class="bhr-up-item">
+    <strong>وضعیت داده بازار</strong>
+    <div class="bhr-up-status">قیمت‌های بنر اصلی از سرویس فعلی سایت دریافت می‌شوند؛ سایر داده‌ها باید جداگانه متصل شوند.</div>
+   </div>
+   <div class="bhr-up-item">
+    <strong>آخرین به‌روزرسانی</strong>
+    <div class="bhr-up-status" id="bhrCommandUpdate">زمان دریافت داده‌های جدید در این بخش ثبت خواهد شد.</div>
+   </div>
+  </div>
+ </div>
+
+ <div class="bhr-up-card" style="margin-top:16px">
+  <h3>سناریوهای معاملاتی من</h3>
+  <div class="bhr-up-row">
+   <input class="bhr-up-input" id="bhrScenarioSymbol" placeholder="نماد؛ مثلاً XAUUSD">
+   <select class="bhr-up-select" id="bhrScenarioSide">
+    <option value="صعودی">سناریوی صعودی</option>
+    <option value="نزولی">سناریوی نزولی</option>
+   </select>
+  </div>
+  <textarea class="bhr-up-textarea" id="bhrScenarioText" placeholder="شرایط فعال شدن سناریو، ناحیه ورود و دلیل تحلیل..."></textarea>
+  <button type="button" id="bhrScenarioAdd">ذخیره سناریو در این مرورگر</button>
+  <div class="bhr-up-list" id="bhrScenarioList" style="margin-top:12px"></div>
+ </div>
+</section>
+
+<section class="bhr-section" id="bhr-community">
+ <h2 class="bhr-section-title">تحلیل کاربران</h2>
+ <p class="bhr-section-sub">ثبت ایده معاملاتی، سناریوی ورود و بررسی نتیجه تحلیل‌ها</p>
+
+ <div class="bhr-warning">
+  نسخه فعلی این قسمت اطلاعات را فقط در مرورگر همین دستگاه نگه می‌دارد.
+  انتشار عمومی تحلیل‌ها، نظر دادن و امتیازدهی بین کاربران تا راه‌اندازی حساب کاربری و پایگاه داده فعال نیست.
+ </div>
+
+ <div class="bhr-up-card">
+  <h3>ثبت تحلیل جدید</h3>
+  <label class="bhr-up-label">نام تحلیل‌گر</label>
+  <input class="bhr-up-input" id="bhrAnalysisAuthor" placeholder="نام شما">
+  <label class="bhr-up-label">نماد معاملاتی</label>
+  <input class="bhr-up-input" id="bhrAnalysisSymbol" placeholder="مثلاً XAUUSD">
+  <label class="bhr-up-label">جهت تحلیل</label>
+  <select class="bhr-up-select" id="bhrAnalysisSide">
+   <option value="صعودی">صعودی</option>
+   <option value="نزولی">نزولی</option>
+   <option value="خنثی">خنثی / انتظار</option>
+  </select>
+  <div class="bhr-up-row">
+   <div>
+    <label class="bhr-up-label">قیمت ورود</label>
+    <input class="bhr-up-input" id="bhrAnalysisEntry" type="number" step="any" placeholder="Entry">
+   </div>
+   <div>
+    <label class="bhr-up-label">حد ضرر</label>
+    <input class="bhr-up-input" id="bhrAnalysisStop" type="number" step="any" placeholder="Stop Loss">
+   </div>
+   <div>
+    <label class="bhr-up-label">هدف</label>
+    <input class="bhr-up-input" id="bhrAnalysisTarget" type="number" step="any" placeholder="Target">
+   </div>
+  </div>
+  <label class="bhr-up-label">شرح تحلیل و شرایط اعتبار سناریو</label>
+  <textarea class="bhr-up-textarea" id="bhrAnalysisText" placeholder="ساختار بازار، ناحیه نقدینگی، دلتا، والیوم و دلیل ورود را توضیح بده..."></textarea>
+  <label class="bhr-up-label">تصویر چارت (اختیاری)</label>
+  <input class="bhr-up-input" id="bhrAnalysisImage" type="file" accept="image/*">
+  <button type="button" id="bhrAnalysisSubmit">ثبت تحلیل در این دستگاه</button>
+  <div class="bhr-up-status" id="bhrAnalysisStatus"></div>
+ </div>
+
+ <div class="bhr-up-card" style="margin-top:16px">
+  <h3>تحلیل‌های ذخیره‌شده در این مرورگر</h3>
+  <div class="bhr-up-list" id="bhrAnalysisList"></div>
+ </div>
+</section>
+
+<section class="bhr-section" id="bhr-about">
+ <h2 class="bhr-section-title">درباره اتاق شکار بهنام</h2>
+ <div class="bhr-up-card">
+  <h3>TRADE • LEARN • PROFIT</h3>
+  <p>
+   اتاق شکار بهنام با تمرکز بر تحلیل ساختار بازار، جریان سفارش،
+   والیوم تریدینگ و مدیریت ریسک طراحی شده است.
+   هدف این مجموعه، ارائه ابزار و آموزش برای تصمیم‌گیری آگاهانه‌تر در بازارهای مالی است.
+  </p>
+  <p class="bhr-up-status">
+   این معرفی عمومی است؛ سوابق شخصی و حرفه‌ای فقط پس از تأیید صاحب سایت منتشر می‌شود.
+  </p>
+ </div>
+</section>
+
+</div>
+
+<div id="bhr-auth-panel" aria-hidden="true">
+ <div id="bhr-auth-box">
+  <div class="bhr-up-row">
+   <h3 id="bhrAuthTitle">ورود / عضویت</h3>
+   <button type="button" class="secondary" id="bhrAuthClose">بستن</button>
+  </div>
+  <label class="bhr-up-label">شماره موبایل</label>
+  <input class="bhr-up-input" id="bhrAuthPhone" type="tel" inputmode="tel" placeholder="09xxxxxxxxx">
+  <label class="bhr-up-label">نام و نام خانوادگی (برای عضویت)</label>
+  <input class="bhr-up-input" id="bhrAuthName" placeholder="نام و نام خانوادگی">
+  <button type="button" id="bhrAuthSubmit">ادامه</button>
+  <div class="bhr-warning">
+   ورود پیامکی هنوز فعال نیست. برای ارسال و تأیید واقعی کد یک‌بارمصرف،
+   اتصال سرویس پیامک، سرور احراز هویت و پایگاه داده لازم است.
+   این فرم به‌تنهایی حساب کاربری ایجاد نمی‌کند.
+  </div>
+  <div class="bhr-up-status" id="bhrAuthStatus"></div>
+ </div>
+</div>
+
+<button id="bhr-support-launcher" type="button" aria-label="پشتیبانی">✉</button>
+<div id="bhr-support-panel" class="bhr-up-hidden">
+ <div class="bhr-up-row">
+  <h3>پشتیبانی اتاق شکار</h3>
+  <button type="button" class="secondary" id="bhrSupportClose">×</button>
+ </div>
+ <div id="bhrSupportIntro">
+  <p>برای شروع گفت‌وگو، لطفاً مشخصات خود را وارد کنید.</p>
+  <p>در اسرع وقت پاسخگوی شما خواهم بود.</p>
+  <label class="bhr-up-label">شماره موبایل</label>
+  <input class="bhr-up-input" id="bhrSupportPhone" type="tel" inputmode="tel" placeholder="09xxxxxxxxx">
+  <label class="bhr-up-label">نام و نام خانوادگی</label>
+  <input class="bhr-up-input" id="bhrSupportName" placeholder="نام و نام خانوادگی">
+  <button type="button" id="bhrSupportStart">تأیید و شروع مکالمه</button>
+ </div>
+ <div id="bhrSupportChat" class="bhr-up-hidden">
+  <div id="bhr-support-messages"></div>
+  <textarea class="bhr-up-textarea" id="bhrSupportMessage" rows="3" placeholder="پیام خود را بنویس..."></textarea>
+  <button type="button" id="bhrSupportSend">ارسال پیام</button>
+ </div>
+ <div class="bhr-up-status" id="bhrSupportStatus"></div>
+</div><script>
+(function(){
+"use strict";
+
+const $ = id => document.getElementById(id);
+const readStore = (key, fallback=[]) => {
+ try { return JSON.parse(localStorage.getItem(key)) ?? fallback; }
+ catch(e){ return fallback; }
+};
+const writeStore = (key, value) => {
+ try { localStorage.setItem(key, JSON.stringify(value)); return true; }
+ catch(e){ return false; }
+};
+const money = n => new Intl.NumberFormat("fa-IR",{maximumFractionDigits:2}).format(n);
+const safeText = v => String(v ?? "");
+
+const chapters = [
+ {title:"۱. مبانی والیوم تریدینگ و داده بازار",body:`
+  <h3>حجم معاملات چیست؟</h3>
+  <p>حجم معاملات تعداد یا ارزش معاملاتی است که در یک بازه زمانی انجام شده است. حجم به‌تنهایی جهت حرکت قیمت را مشخص نمی‌کند؛ باید آن را در کنار محل وقوع معامله و واکنش قیمت بررسی کرد.</p>
+  <h4>مفاهیم پایه</h4><ul>
+  <li><b>Volume:</b> مقدار معاملات انجام‌شده در بازه انتخابی.</li>
+  <li><b>Bid:</b> سفارش‌های خرید در سمت پیشنهاد خرید.</li>
+  <li><b>Ask:</b> سفارش‌های فروش در سمت پیشنهاد فروش.</li>
+  <li><b>Tick Volume:</b> تعداد تغییرات قیمت؛ لزوماً حجم واقعی معامله نیست.</li>
+  </ul>
+  <h4>نکته معاملاتی</h4><p>افزایش حجم در شکست یک سطح مهم، زمانی ارزشمندتر است که قیمت بتواند بیرون سطح تثبیت شود. حجم بالا بدون پیشروی قیمت می‌تواند نشانه جذب سفارش باشد.</p>`},
+ {title:"۲. Market Structure و روندشناسی",body:`
+  <h3>ساختار بازار</h3><p>ساختار بازار از سقف‌ها و کف‌های نوسانی تشکیل می‌شود. در روند صعودی معمولاً سقف و کف بالاتر و در روند نزولی سقف و کف پایین‌تر شکل می‌گیرد.</p>
+  <ul><li><b>HH:</b> سقف بالاتر از سقف قبلی.</li><li><b>HL:</b> کف بالاتر از کف قبلی.</li><li><b>LH:</b> سقف پایین‌تر.</li><li><b>LL:</b> کف پایین‌تر.</li><li><b>BOS:</b> شکست ساختار در جهت روند.</li><li><b>CHOCH:</b> تغییر احتمالی رفتار ساختار.</li></ul>
+  <p>شکست سایه به‌تنهایی همیشه تأیید کافی نیست. محل بسته‌شدن کندل، تایم‌فریم و واکنش بعد از شکست را بررسی کن.</p>`},
+ {title:"۳. Volume Profile و نواحی ارزش",body:`
+  <h3>حجم بر اساس قیمت</h3><p>Volume Profile حجم معامله‌شده در سطوح مختلف قیمت را نشان می‌دهد، نه در طول زمان.</p>
+  <ul><li><b>POC:</b> سطحی با بیشترین حجم معامله‌شده.</li><li><b>VAH:</b> مرز بالایی ناحیه ارزش.</li><li><b>VAL:</b> مرز پایینی ناحیه ارزش.</li><li><b>HVN:</b> ناحیه پذیرش و حجم بالا.</li><li><b>LVN:</b> ناحیه حجم کم و عبور سریع‌تر احتمالی.</li></ul>
+  <p>POC و ناحیه ارزش را به‌عنوان نواحی واکنش احتمالی ببین، نه حمایت و مقاومت قطعی.</p>`},
+ {title:"۴. Market Profile و TPO",body:`
+  <h3>زمان و پذیرش قیمت</h3><p>Market Profile توزیع زمان حضور بازار در قیمت‌ها را نمایش می‌دهد. در نمایش TPO هر بلوک نشان‌دهنده حضور قیمت در یک بازه زمانی است.</p>
+  <ul><li><b>Initial Balance:</b> محدوده اولیه جلسه.</li><li><b>Single Prints:</b> نواحی کم‌تراکم در پروفایل.</li><li><b>Excess:</b> رد قیمت در انتهای محدوده.</li><li><b>Balanced Day:</b> روز با رفتار متعادل و چرخشی.</li></ul>
+  <p>پروفایل را با ساختار روز و سطوح روز قبل مقایسه کن.</p>`},
+ {title:"۵. Footprint و Bid × Ask",body:`
+  <h3>خواندن فوت‌پرینت</h3><p>Footprint معاملات انجام‌شده در هر سطح قیمت را تفکیک می‌کند. در بسیاری از پلتفرم‌ها حجم Ask و Bid به‌صورت دو ستون نمایش داده می‌شود.</p>
+  <ul><li><b>Ask Volume:</b> معاملات اجراشده روی سمت Ask.</li><li><b>Bid Volume:</b> معاملات اجراشده روی سمت Bid.</li><li><b>Imbalance:</b> عدم تعادل معنادار بین دو سمت در قیمت‌های متناظر.</li><li><b>Stacked Imbalance:</b> چند عدم تعادل متوالی.</li></ul>
+  <p>عدم تعادل را در محل مهم بازار بررسی کن؛ یک عدد بزرگ در وسط محدوده لزوماً سیگنال ورود نیست.</p>`},
+ {title:"۶. Delta و Cumulative Delta",body:`
+  <h3>دلتا چیست؟</h3><p>Delta اختلاف حجم معاملات اجراشده روی Ask و Bid است. دلتا مثبت یعنی حجم تهاجمی سمت خرید بیشتر بوده و دلتا منفی یعنی سمت فروش بیشتر بوده است.</p>
+  <ul><li><b>Bar Delta:</b> دلتا در یک کندل یا بار.</li><li><b>Cumulative Delta:</b> جمع انباشته دلتا در بازه انتخابی.</li><li><b>Delta Divergence:</b> واگرایی رفتار قیمت و دلتا.</li></ul>
+  <p>اگر قیمت سقف جدید بسازد ولی دلتا تأیید نکند، احتمال ضعف حرکت را بررسی کن؛ این وضعیت به‌تنهایی سیگنال برگشت نیست.</p>`},
+ {title:"۷. VWAP، DOM و جریان سفارش",body:`
+  <h3>ابزارهای جریان سفارش</h3><ul>
+  <li><b>VWAP:</b> میانگین قیمت وزنی بر اساس حجم.</li>
+  <li><b>DOM:</b> نمایش سفارش‌های محدود در سطوح قیمت.</li>
+  <li><b>Liquidity:</b> نقدشوندگی و امکان اجرای سفارش.</li>
+  <li><b>Absorption:</b> جذب سفارش‌های تهاجمی بدون پیشروی متناسب قیمت.</li>
+  <li><b>Spoofing:</b> ثبت سفارش‌های بزرگ با قصد احتمالی ایجاد تصور نادرست؛ تشخیص آن قطعی و ساده نیست.</li>
+  </ul><p>سفارش‌های DOM ممکن است لغو شوند؛ معاملات اجراشده و واکنش قیمت را هم بررسی کن.</p>`},
+ {title:"۸. طراحی ستاپ و مدیریت ریسک",body:`
+  <h3>ساخت یک پلن معاملاتی</h3><ol>
+  <li>جهت و ساختار تایم‌فریم بالاتر را مشخص کن.</li>
+  <li>سطح یا ناحیه‌ای را که انتظار واکنش داری علامت بزن.</li>
+  <li>برای ورود، نشانه مشخصی از قیمت و جریان سفارش تعریف کن.</li>
+  <li>حد ضرر را در نقطه ابطال سناریو قرار بده.</li>
+  <li>حجم معامله را بر اساس مقدار ریسک محاسبه کن.</li>
+  <li>قبل از ورود، نسبت سود به زیان و شرایط لغو معامله را بنویس.</li>
+  </ol><p>ریسک هر معامله باید از قبل مشخص باشد. افزایش حجم برای جبران زیان، جایگزین مدیریت ریسک نیست.</p>`},
+ {title:"۹. NinjaTrader و تمرین عملی",body:`
+  <h3>آماده‌سازی تمرین</h3><ul>
+  <li>نماد و منبع داده را بررسی کن.</li>
+  <li>تایم‌زون و ساعات جلسه معاملاتی را درست تنظیم کن.</li>
+  <li>Footprint، Delta و VWAP را روی یک بازار مشخص بررسی کن.</li>
+  <li>چند نمونه Absorption، Imbalance و شکست ناموفق ثبت کن.</li>
+  <li>هر تمرین را با تصویر چارت و توضیح نتیجه در ژورنال نگه دار.</li>
+  </ul><p>ابتدا در Replay یا حساب آزمایشی تمرین کن. تفاوت منبع داده و نوع قرارداد می‌تواند اعداد حجم را تغییر دهد.</p>`}
+];
+
+let currentChapter = 0;
+let completed = readStore("bhr-academy-done",[]);
+function renderAcademy(){
+ const list=$("bhrChapterList");
+ if(!list)return;
+ list.innerHTML="";
+ chapters.forEach((c,i)=>{
+  const b=document.createElement("button");
+  b.type="button";b.className="bhr-chapter"+(i===currentChapter?" active":"");
+  const t=document.createElement("span");t.textContent=c.title;
+  const s=document.createElement("small");s.textContent=completed.includes(i)?"✓ مطالعه شد":"مشاهده درس";
+  b.append(t,s);b.addEventListener("click",()=>showChapter(i));list.appendChild(b);
+ });
+ const pct=Math.round(completed.length/chapters.length*100);
+ $("bhrAcademyProgress").textContent=money(pct)+"٪";
+ $("bhrAcademyProgressText").textContent=completed.length+" درس از "+chapters.length+" درس مطالعه شده است.";
+}
+function showChapter(i){
+ currentChapter=Math.max(0,Math.min(chapters.length-1,i));
+ $("bhrLessonTitle").textContent=chapters[currentChapter].title;
+ $("bhrLessonBody").innerHTML=chapters[currentChapter].body;
+ $("bhrLessonStatus").textContent=completed.includes(currentChapter)?"این درس قبلاً مطالعه شده است.":"پس از مطالعه، آن را تکمیل‌شده علامت بزن.";
+ renderAcademy();
+}
+$("bhrLessonDone")?.addEventListener("click",()=>{
+ if(!completed.includes(currentChapter))completed.push(currentChapter);
+ writeStore("bhr-academy-done",completed);
+ $("bhrLessonStatus").textContent="وضعیت مطالعه این درس ذخیره شد.";
+ renderAcademy();
+});
+$("bhrLessonNext")?.addEventListener("click",()=>showChapter((currentChapter+1)%chapters.length));
+renderAcademy();showChapter(0);
+
+/* Trading glossary */
+const glossary=[
+ ["Absorption","جذب سفارش","وقتی سفارش‌های تهاجمی خرید یا فروش جذب می‌شوند اما قیمت متناسب با حجم پیشروی نمی‌کند.","در مقاومت، حجم خرید بالا می‌رود اما قیمت از سطح عبور نمی‌کند؛ احتمال حضور فروشنده جذب‌کننده را بررسی کن."],
+ ["Delta","دلتا","اختلاف حجم معاملات اجراشده روی Ask و Bid.","دلتا مثبت نشان‌دهنده غلبه معاملات تهاجمی خرید در آن بازه است."],
+ ["Cumulative Delta","دلتا تجمعی","جمع دلتا در طول بازه انتخابی.","برای مقایسه فشار خرید و فروش در طول جلسه استفاده می‌شود."],
+ ["Imbalance","عدم تعادل","برتری معنادار حجم یک سمت نسبت به سمت دیگر در سطوح متناظر.","عدم تعادل خرید در چند سطح متوالی می‌تواند نشانه فشار خرید باشد."],
+ ["Stacked Imbalance","عدم تعادل متوالی","چند عدم تعادل هم‌جهت در سطوح قیمت مجاور.","در شکست سقف، چند سطح عدم تعادل خرید را همراه با تثبیت قیمت بررسی کن."],
+ ["POC","نقطه کنترل","قیمتی که بیشترین حجم در آن معامله شده است.","بازگشت قیمت به POC می‌تواند محل بررسی واکنش باشد."],
+ ["VAH","مرز بالای ارزش","لبه بالایی ناحیه ارزش در Volume Profile.","پذیرش بالای VAH را از شکست لحظه‌ای جدا کن."],
+ ["VAL","مرز پایین ارزش","لبه پایینی ناحیه ارزش در Volume Profile.","بازگشت به داخل Value Area می‌تواند نشانه رد قیمت‌های پایین‌تر باشد."],
+ ["HVN","ناحیه حجم بالا","محدوده‌ای که حجم زیادی در آن معامله شده است.","می‌تواند ناحیه پذیرش و تعادل قیمت باشد."],
+ ["LVN","ناحیه حجم پایین","محدوده‌ای با حجم کم در پروفایل.","گاهی قیمت با سرعت بیشتری از LVN عبور می‌کند."],
+ ["VWAP","میانگین قیمت وزنی","میانگین قیمت با وزن‌دهی بر اساس حجم معاملات.","موقعیت قیمت نسبت به VWAP را همراه با ساختار بازار بررسی کن."],
+ ["DOM","عمق بازار","نمایش سفارش‌های محدود خرید و فروش در سطوح قیمت.","سفارش‌های نمایش‌داده‌شده ممکن است قبل از اجرا لغو شوند."],
+ ["Liquidity","نقدشوندگی","امکان خرید یا فروش با اثر محدودتر بر قیمت.","نواحی تجمع سفارش و سقف‌ها و کف‌های واضح را برای بررسی نقدینگی علامت بزن."],
+ ["Footprint","فوت‌پرینت","نمایش حجم معاملات اجراشده در سطوح قیمت داخل هر کندل.","برای بررسی دلتا، عدم تعادل و جذب سفارش استفاده می‌شود."],
+ ["TPO","زمان حضور قیمت","نمایش مدت حضور بازار در قیمت‌های مختلف.","برای شناخت نواحی پذیرش قیمت در Market Profile کاربرد دارد."],
+ ["BOS","شکست ساختار","عبور قیمت از سطح ساختاری مهم در جهت حرکت.","شکست را با بسته‌شدن کندل و رفتار پس از آن ارزیابی کن."],
+ ["CHOCH","تغییر رفتار ساختار","نشانه احتمالی تغییر جهت یا رفتار روند.","برای تأیید، ساختار جدید و نقاط ابطال را مشخص کن."],
+ ["R:R","نسبت سود به زیان","نسبت سود بالقوه به زیان احتمالی معامله.","ریسک ۱۰۰ و هدف ۲۰۰ یعنی نسبت ۱ به ۲."],
+ ["Slippage","لغزش قیمت","اختلاف قیمت مورد انتظار با قیمت اجرای واقعی.","در خبرهای مهم و بازار کم‌عمق احتمال لغزش بیشتر است."]
+];
+function renderGlossary(term=""){
+ const list=$("bhrGlossaryList");if(!list)return;
+ const q=term.trim().toLowerCase();
+ const found=glossary.filter(x=>x.join(" ").toLowerCase().includes(q));
+ list.innerHTML="";
+ found.forEach(x=>{
+  const box=document.createElement("div");box.className="bhr-up-item";
+  const head=document.createElement("div");head.className="bhr-glossary-term";
+  const strong=document.createElement("strong");strong.textContent=x[0];
+  const fa=document.createElement("span");fa.textContent=x[1];
+  head.append(strong,fa);
+  const def=document.createElement("p");def.textContent=x[2];
+  const ex=document.createElement("div");ex.className="bhr-up-status";ex.textContent="مثال معاملاتی: "+x[3];
+  box.append(head,def,ex);list.appendChild(box);
+ });
+ if(!found.length){const p=document.createElement("p");p.textContent="اصطلاحی پیدا نشد.";list.appendChild(p);}
+}
+$("bhrGlossarySearch")?.addEventListener("input",e=>renderGlossary(e.target.value));
+renderGlossary();
+
+/* Risk calculator */
+$("bhrCalcRisk")?.addEventListener("click",()=>{
+ const balance=Number($("bhrAccount").value);
+ const pct=Number($("bhrRiskPercent").value);
+ const distance=Number($("bhrStopDistance").value);
+ const point=Number($("bhrPointValue").value);
+ const out=$("bhrCalcResult");
+ if(!(balance>0&&pct>0&&pct<=100&&distance>0&&point>0)){
+  out.textContent="لطفاً همه مقادیر را به‌درستی وارد کن.";return;
+ }
+ const risk=balance*pct/100;
+ const lossPerLot=distance*point;
+ const size=risk/lossPerLot;
+ out.textContent="مقدار ریسک: "+money(risk)+" | زیان هر لات تا حد ضرر: "+money(lossPerLot)+" | حجم محاسباتی: "+size.toFixed(4)+" لات";
+});
+
+/* Journal */
+function renderJournal(){
+ const data=readStore("bhr-journal",[]);
+ const list=$("bhrJournalList");if(!list)return;
+ list.innerHTML="";
+ let wins=0,losses=0,profit=0,loss=0,total=0;
+ data.forEach((x,i)=>{
+  total+=x.pnl;if(x.pnl>0){wins++;profit+=x.pnl;}else if(x.pnl<0){losses++;loss+=Math.abs(x.pnl);}
+  const box=document.createElement("div");box.className="bhr-up-item";
+  const title=document.createElement("strong");title.textContent=x.symbol+" | "+money(x.pnl);
+  const note=document.createElement("p");note.textContent=x.note||"بدون توضیح";
+  const date=document.createElement("small");date.textContent=x.date;
+  const del=document.createElement("button");del.className="secondary";del.textContent="حذف";
+  del.addEventListener("click",()=>{data.splice(i,1);writeStore("bhr-journal",data);renderJournal();});
+  box.append(title,note,date,del);list.appendChild(box);
+ });
+ const pf=loss?profit/loss:(profit>0?"∞":"—");
+ const wr=data.length?wins/data.length*100:0;
+ $("bhrJournalStats").textContent="تعداد: "+data.length+" | سود/زیان خالص: "+money(total)+" | Win Rate: "+money(wr)+"٪ | Profit Factor: "+pf;
+}
+$("bhrJournalAdd")?.addEventListener("click",()=>{
+ const symbol=$("bhrJournalSymbol").value.trim().toUpperCase();
+ const pnl=Number($("bhrJournalPnL").value);
+ const note=$("bhrJournalNote").value.trim();
+ if(!symbol||$("bhrJournalPnL").value===""){alert("نماد و نتیجه معامله را وارد کن.");return;}
+ const data=readStore("bhr-journal",[]);
+ data.unshift({symbol,pnl,note,date:new Date().toLocaleString("fa-IR")});
+ if(!writeStore("bhr-journal",data)){alert("فضای ذخیره‌سازی مرورگر کافی نیست.");return;}
+ $("bhrJournalSymbol").value="";$("bhrJournalPnL").value="";$("bhrJournalNote").value="";
+ renderJournal();
+});
+renderJournal();
+
+/* Price alert list: save-only until a market feed is connected */
+function renderAlerts(){
+ const data=readStore("bhr-alerts",[]),list=$("bhrAlertList");if(!list)return;
+ list.innerHTML="";
+ data.forEach((x,i)=>{
+  const box=document.createElement("div");box.className="bhr-up-item";
+  const t=document.createElement("span");t.textContent=x.symbol+" | "+(x.direction==="above"?"بالاتر از ":"پایین‌تر از ")+x.price;
+  const b=document.createElement("button");b.className="secondary";b.textContent="حذف";
+  b.addEventListener("click",()=>{data.splice(i,1);writeStore("bhr-alerts",data);renderAlerts();});
+  box.append(t,b);list.appendChild(box);
+ });
+}
+$("bhrAlertAdd")?.addEventListener("click",()=>{
+ const symbol=$("bhrAlertSymbol").value.trim().toUpperCase();
+ const price=Number($("bhrAlertPrice").value);
+ if(!symbol||!(price>0)){alert("نماد و قیمت معتبر وارد کن.");return;}
+ const data=readStore("bhr-alerts",[]);
+ data.push({symbol,price,direction:$("bhrAlertDirection").value});
+ writeStore("bhr-alerts",data);$("bhrAlertPrice").value="";renderAlerts();
+});
+renderAlerts();
+
+/* Watchlist */
+function renderWatch(){
+ const data=readStore("bhr-watchlist",[]),list=$("bhrWatchList");if(!list)return;
+ list.innerHTML="";
+ data.forEach((s,i)=>{
+  const box=document.createElement("div");box.className="bhr-up-item";
+  const t=document.createElement("strong");t.textContent=s;
+  const b=document.createElement("button");b.className="secondary";b.textContent="حذف";
+  b.addEventListener("click",()=>{data.splice(i,1);writeStore("bhr-watchlist",data);renderWatch();});
+  box.append(t,b);list.appendChild(box);
+ });
+}
+$("bhrWatchAdd")?.addEventListener("click",()=>{
+ const s=$("bhrWatchSymbol").value.trim().toUpperCase();
+ if(!s)return;
+ const data=readStore("bhr-watchlist",[]);
+ if(!data.includes(s))data.push(s);
+ writeStore("bhr-watchlist",data);$("bhrWatchSymbol").value="";renderWatch();
+});
+renderWatch();
+
+/* Personal scenarios */
+function renderScenarios(){
+ const data=readStore("bhr-scenarios",[]),list=$("bhrScenarioList");if(!list)return;
+ list.innerHTML="";
+ data.forEach((x,i)=>{
+  const box=document.createElement("div");box.className="bhr-up-item";
+  const h=document.createElement("strong");h.textContent=x.symbol+" | "+x.side;
+  const p=document.createElement("p");p.textContent=x.text;
+  const b=document.createElement("button");b.className="secondary";b.textContent="حذف";
+  b.addEventListener("click",()=>{data.splice(i,1);writeStore("bhr-scenarios",data);renderScenarios();});
+  box.append(h,p,b);list.appendChild(box);
+ });
+}
+$("bhrScenarioAdd")?.addEventListener("click",()=>{
+ const symbol=$("bhrScenarioSymbol").value.trim().toUpperCase();
+ const text=$("bhrScenarioText").value.trim();
+ if(!symbol||!text){alert("نماد و شرح سناریو را وارد کن.");return;}
+ const data=readStore("bhr-scenarios",[]);
+ data.unshift({symbol,side:$("bhrScenarioSide").value,text});
+ writeStore("bhr-scenarios",data);$("bhrScenarioText").value="";renderScenarios();
+});
+renderScenarios();
+
+/* Community analysis: local device storage only */
+function renderAnalyses(){
+ const data=readStore("bhr-analyses",[]),list=$("bhrAnalysisList");if(!list)return;
+ list.innerHTML="";
+ data.forEach((x,i)=>{
+  const box=document.createElement("div");box.className="bhr-up-item";
+  const h=document.createElement("strong");h.textContent=x.symbol+" | "+x.side+" | "+x.author;
+  const p=document.createElement("p");p.textContent=x.text;
+  const levels=document.createElement("small");
+  levels.textContent="Entry: "+(x.entry||"—")+" | SL: "+(x.stop||"—")+" | TP: "+(x.target||"—");
+  box.append(h,p,levels);
+  if(x.image){
+   const img=document.createElement("img");img.src=x.image;img.alt="تصویر تحلیل";
+   img.style.cssText="display:block;max-width:100%;max-height:300px;margin-top:10px;border-radius:10px";
+   box.appendChild(img);
+  }
+  const del=document.createElement("button");del.className="secondary";del.textContent="حذف تحلیل";
+  del.addEventListener("click",()=>{data.splice(i,1);writeStore("bhr-analyses",data);renderAnalyses();});
+  box.appendChild(del);list.appendChild(box);
+ });
+}
+$("bhrAnalysisSubmit")?.addEventListener("click",()=>{
+ const author=$("bhrAnalysisAuthor").value.trim()||"کاربر";
+ const symbol=$("bhrAnalysisSymbol").value.trim().toUpperCase();
+ const text=$("bhrAnalysisText").value.trim();
+ if(!symbol||!text){$("bhrAnalysisStatus").textContent="نماد و شرح تحلیل را وارد کن.";return;}
+ const file=$("bhrAnalysisImage").files[0];
+ if(file&&file.size>1500000){$("bhrAnalysisStatus").textContent="حجم تصویر باید کمتر از ۱٫۵ مگابایت باشد.";return;}
+ const save=image=>{
+  const data=readStore("bhr-analyses",[]);
+  data.unshift({
+   author,symbol,side:$("bhrAnalysisSide").value,
+   entry:$("bhrAnalysisEntry").value,stop:$("bhrAnalysisStop").value,
+   target:$("bhrAnalysisTarget").value,text,image,
+   date:new Date().toLocaleString("fa-IR")
+  });
+  if(!writeStore("bhr-analyses",data)){
+   $("bhrAnalysisStatus").textContent="ذخیره انجام نشد؛ احتمالاً فضای مرورگر کافی نیست.";return;
+  }
+  $("bhrAnalysisStatus").textContent="تحلیل فقط در همین مرورگر ذخیره شد.";
+  $("bhrAnalysisText").value="";$("bhrAnalysisImage").value="";
+  renderAnalyses();
+ };
+ if(file){
+  const reader=new FileReader();
+  reader.onload=()=>save(reader.result);
+  reader.onerror=()=>{$("bhrAnalysisStatus").textContent="خواندن تصویر ناموفق بود.";};
+  reader.readAsDataURL(file);
+ }else save("");
+});
+renderAnalyses();
+
+})();
+</script><script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+
+/* Navigation links */
+const nav=document.querySelector("header nav");
+if(nav){
+ const links=[
+  ["bhr-academy","آکادمی رایگان"],
+  ["bhr-trading-tools","ابزارهای ترید"],
+  ["bhr-command-center","مرکز بازار"],
+  ["bhr-community","تحلیل کاربران"],
+  ["bhr-about","درباره ما"]
+ ];
+ links.forEach(([id,label])=>{
+  if(document.querySelector('header nav a[href="#'+id+'"]'))return;
+  const a=document.createElement("a");
+  a.href="#"+id;a.textContent=label;nav.appendChild(a);
+ });
+}
+
+/* Login and signup buttons */
+const tools=document.querySelector("header .header-tools");
+if(tools){
+ ["ورود","عضویت"].forEach(label=>{
+  const b=document.createElement("button");
+  b.type="button";b.className="theme-btn";b.textContent=label;
+  b.addEventListener("click",()=>{
+   $("bhrAuthTitle").textContent=label;
+   $("bhr-auth-panel").classList.add("open");
+   $("bhr-auth-panel").setAttribute("aria-hidden","false");
+  });
+  tools.appendChild(b);
+ });
+}
+$("bhrAuthClose")?.addEventListener("click",()=>{
+ $("bhr-auth-panel").classList.remove("open");
+ $("bhr-auth-panel").setAttribute("aria-hidden","true");
+});
+$("bhr-auth-panel")?.addEventListener("click",e=>{
+ if(e.target.id==="bhr-auth-panel"){
+  $("bhr-auth-panel").classList.remove("open");
+  $("bhr-auth-panel").setAttribute("aria-hidden","true");
+ }
+});
+$("bhrAuthSubmit")?.addEventListener("click",()=>{
+ const phone=$("bhrAuthPhone").value.trim();
+ const name=$("bhrAuthName").value.trim();
+ if(!/^09\d{9}$/.test(phone)){
+  $("bhrAuthStatus").textContent="شماره موبایل معتبر ایران را وارد کن.";
+  return;
+ }
+ if($("bhrAuthTitle").textContent==="عضویت"&&!name){
+  $("bhrAuthStatus").textContent="نام و نام خانوادگی را وارد کن.";
+  return;
+ }
+ $("bhrAuthStatus").textContent=
+  "اطلاعات وارد شد، اما ارسال و تأیید کد پیامکی هنوز فعال نیست. اتصال سرور احراز هویت و سرویس پیامک لازم است.";
+});
+
+/* Support chat: existing Cloudflare Worker */
+const SUPPORT_ENDPOINT="https://tiny-unit-4ed3.behnamhuntingroom.workers.dev/";
+let supportUser=null;
+let lastSendAt=0;
+
+$("bhr-support-launcher")?.addEventListener("click",()=>{
+ $("bhr-support-panel").classList.toggle("bhr-up-hidden");
+});
+$("bhrSupportClose")?.addEventListener("click",()=>{
+ $("bhr-support-panel").classList.add("bhr-up-hidden");
+});
+
+function addChatMessage(message,mine){
+ const box=document.createElement("div");
+ box.className="bhr-chat-msg"+(mine?" mine":"");
+ box.textContent=message;
+ $("bhr-support-messages").appendChild(box);
+ $("bhr-support-messages").scrollTop=$("bhr-support-messages").scrollHeight;
+}
+
+async function sendToSupport(message){
+ const now=Date.now();
+ if(now-lastSendAt<4000){
+  $("bhrSupportStatus").textContent="لطفاً چند ثانیه صبر کن و دوباره بفرست.";
+  return false;
+ }
+ lastSendAt=now;
+ $("bhrSupportStatus").textContent="در حال ارسال پیام...";
+ try{
+  const response=await fetch(SUPPORT_ENDPOINT,{
+   method:"POST",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({
+    name:supportUser.name,
+    phone:supportUser.phone,
+    message:message
+   })
+  });
+  if(!response.ok)throw new Error("HTTP "+response.status);
+  $("bhrSupportStatus").textContent="پیام به سرویس پشتیبانی ارسال شد.";
+  return true;
+ }catch(error){
+  $("bhrSupportStatus").textContent=
+   "ارسال پیام انجام نشد. اتصال Worker، مجوز CORS و قالب درخواست باید بررسی شود.";
+  lastSendAt=0;
+  return false;
+ }
+}
+
+$("bhrSupportStart")?.addEventListener("click",async()=>{
+ const phone=$("bhrSupportPhone").value.trim();
+ const name=$("bhrSupportName").value.trim();
+ if(!/^09\d{9}$/.test(phone)){
+  $("bhrSupportStatus").textContent="شماره موبایل معتبر ایران را وارد کن.";
+  return;
+ }
+ if(name.length<3){
+  $("bhrSupportStatus").textContent="نام و نام خانوادگی را وارد کن.";
+  return;
+ }
+ supportUser={name,phone};
+ const welcome="شروع گفت‌وگو با پشتیبانی | نام: "+name+" | موبایل: "+phone;
+ const ok=await sendToSupport(welcome);
+ if(ok){
+  $("bhrSupportIntro").classList.add("bhr-up-hidden");
+  $("bhrSupportChat").classList.remove("bhr-up-hidden");
+  addChatMessage("گفت‌وگو شروع شد. پیام خود را بنویس.",false);
+ }
+});
+
+$("bhrSupportSend")?.addEventListener("click",async()=>{
+ if(!supportUser)return;
+ const input=$("bhrSupportMessage");
+ const message=input.value.trim();
+ if(!message)return;
+ const ok=await sendToSupport(message);
+ if(ok){
+  addChatMessage(message,true);
+  input.value="";
+ }
+});
+$("bhrSupportMessage")?.addEventListener("keydown",e=>{
+ if(e.key==="Enter"&&!e.shiftKey){
+  e.preventDefault();$("bhrSupportSend").click();
+ }
+});
+
+/* Show current local date in command center */
+const update=$("bhrCommandUpdate");
+if(update)update.textContent="صفحه در "+new Date().toLocaleString("fa-IR")+" باز شده است.";
+
+/* Prevent accidental form submission / page reload */
+document.querySelectorAll("#bhr-upgrade button").forEach(b=>{
+ if(!b.type)b.type="button";
+});
+
+})();
+</script>
 </body>
 </html>
