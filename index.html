@@ -1115,24 +1115,72 @@ document.getElementById("marketSearch").addEventListener("keydown", function(eve
  background:#a8791b12;color:var(--muted);font-size:13px;margin:12px 0
 }
 #bhr-support-launcher{
- position:fixed;right:22px;bottom:22px;z-index:9998;width:58px;height:58px;
- border-radius:50%;border:1px solid var(--gold2);
- background:linear-gradient(145deg,#f2d98b,#9c7025);color:#17130a;
- font-size:25px;box-shadow:0 5px 25px #0008;cursor:pointer
+ position:fixed;right:22px;bottom:22px;z-index:9998;width:60px;height:60px;
+ display:grid;place-items:center;border-radius:50%;border:1px solid #f5df9a;
+ background:linear-gradient(145deg,#f7e4a7 0%,#d0a64b 55%,#93651e 100%);
+ color:#211807;box-shadow:0 8px 28px #0009,0 0 0 5px #d6b45a18;
+ cursor:pointer;transition:transform .2s ease,box-shadow .2s ease
 }
+#bhr-support-launcher:hover{transform:translateY(-3px);box-shadow:0 12px 32px #000b,0 0 0 7px #d6b45a20}
+#bhr-support-launcher svg{width:27px;height:27px}
 #bhr-support-panel{
- position:fixed;right:20px;bottom:92px;z-index:9999;
- width:min(370px,calc(100vw - 30px));max-height:75vh;overflow:auto;
- padding:17px;border:1px solid var(--line);border-radius:18px;
- background:var(--bg);color:var(--text);box-shadow:0 15px 50px #000b
+ position:fixed;right:20px;bottom:96px;z-index:9999;
+ display:flex;flex-direction:column;gap:12px;
+ width:min(390px,calc(100vw - 30px));height:min(570px,78vh);max-height:78vh;
+ overflow:hidden;padding:16px;border:1px solid #c8a45188;border-radius:22px;
+ background:var(--bg);color:var(--text);box-shadow:0 18px 60px #000c,0 0 0 1px #d6b45a12
 }
-#bhr-support-panel h3{color:var(--gold2);margin:0 0 8px}
+#bhr-support-panel .bhr-support-head{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;
+ padding:2px 0 12px;border-bottom:1px solid var(--line)
+}
+#bhr-support-panel h3{color:var(--gold2);margin:0;font-size:16px;font-weight:800}
+#bhrSupportClose{
+ width:36px;height:36px;flex:0 0 36px;display:grid;place-items:center;
+ padding:0;border:1px solid var(--line);border-radius:12px;
+ background:var(--panel);color:var(--text);cursor:pointer;
+ transition:background .2s ease,color .2s ease,transform .2s ease
+}
+#bhrSupportClose:hover{background:#a8323220;color:#e27676;transform:rotate(90deg)}
+#bhrSupportClose svg{width:19px;height:19px}
 #bhr-support-messages{
- height:190px;overflow:auto;padding:10px;margin:10px 0;
- border:1px solid var(--line);border-radius:12px;background:var(--panel)
+ flex:1;min-height:160px;max-height:390px;overflow:auto;
+ display:flex;flex-direction:column;gap:8px;padding:12px;margin:0;
+ border:1px solid var(--line);border-radius:16px;background:var(--panel);
+ scrollbar-width:thin;scrollbar-color:#a8843d transparent
 }
-.bhr-chat-msg{padding:8px 10px;margin:6px 0;border-radius:10px;background:#b58b3522;font-size:13px}
-.bhr-chat-msg.mine{background:#d7b45a30}
+.bhr-chat-msg{
+ max-width:88%;padding:9px 12px;margin:0;border:1px solid #b58b3530;
+ border-radius:15px 15px 4px 15px;background:#b58b351c;
+ font-size:13px;line-height:1.8;overflow-wrap:anywhere;align-self:flex-start
+}
+.bhr-chat-msg.mine{
+ align-self:flex-end;border-color:#d7b45a55;border-radius:15px 15px 15px 4px;
+ background:#d7b45a2b
+}
+.bhr-chat-meta{display:flex;align-items:center;gap:9px;margin-bottom:3px;font-size:10px;color:var(--muted)}
+.bhr-chat-msg.mine .bhr-chat-meta{justify-content:flex-end}
+.bhr-chat-sender{font-weight:800;color:var(--gold2)}
+.bhr-chat-time{direction:ltr;font-variant-numeric:tabular-nums;opacity:.85}
+.bhr-chat-text{white-space:pre-wrap}
+#bhrSupportChat{display:flex;flex-direction:column;gap:9px;flex:1;min-height:0}
+#bhrSupportChat .bhr-support-compose{display:flex;align-items:flex-end;gap:8px}
+#bhrSupportMessage{
+ flex:1;min-width:0;min-height:48px;max-height:110px;resize:vertical;
+ border:1px solid var(--line);border-radius:15px;padding:11px 13px;
+ background:var(--panel);color:var(--text);font:inherit;font-size:13px;line-height:1.7
+}
+#bhrSupportMessage:focus{outline:2px solid #c9a34f66;border-color:var(--gold2)}
+#bhrSupportSend{
+ width:48px;height:48px;flex:0 0 48px;display:grid;place-items:center;
+ padding:0;border:1px solid #f1d58a;border-radius:15px;
+ background:linear-gradient(145deg,#f2d98b,#a87928);color:#211807;
+ box-shadow:0 4px 14px #0005;cursor:pointer;transition:transform .2s ease,filter .2s ease
+}
+#bhrSupportSend:hover{transform:translateY(-2px);filter:brightness(1.08)}
+#bhrSupportSend:active{transform:scale(.96)}
+#bhrSupportSend svg{width:21px;height:21px}
+#bhrSupportStatus{font-size:11px;color:var(--muted);min-height:16px}
 #bhr-auth-panel{
  position:fixed;inset:0;z-index:10000;background:#000b;
  display:none;place-items:center;padding:15px
@@ -1159,8 +1207,8 @@ document.getElementById("marketSearch").addEventListener("keydown", function(eve
  .bhr-up-grid{grid-template-columns:1fr}
  .bhr-section{padding:25px 0}
  .bhr-section-title{font-size:23px}
- #bhr-support-launcher{right:14px;bottom:14px}
- #bhr-support-panel{right:12px;bottom:82px}
+ #bhr-support-launcher{right:14px;bottom:14px;width:56px;height:56px}
+ #bhr-support-panel{right:10px;bottom:82px;width:calc(100vw - 20px);height:min(76vh,570px);max-height:76vh}
 }
 </style>
 
@@ -1405,11 +1453,15 @@ document.getElementById("marketSearch").addEventListener("keydown", function(eve
  </div>
 </div>
 
-<button id="bhr-support-launcher" type="button" aria-label="پشتیبانی">✉</button>
+<button id="bhr-support-launcher" type="button" aria-label="باز کردن گفت‌وگوی پشتیبانی" title="پشتیبانی">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-3 2v-6.5A7.5 7.5 0 1 1 20 11.5Z"/><path d="M8 11h8M8 14.5h5"/></svg>
+</button>
 <div id="bhr-support-panel" class="bhr-up-hidden">
- <div class="bhr-up-row">
+ <div class="bhr-support-head">
   <h3>پشتیبانی اتاق شکار</h3>
-  <button type="button" class="secondary" id="bhrSupportClose">×</button>
+  <button type="button" id="bhrSupportClose" aria-label="بستن گفت‌وگو" title="بستن">
+   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+  </button>
  </div>
  <div id="bhrSupportIntro">
   <p>برای شروع گفت‌وگو، لطفاً مشخصات خود را وارد کنید.</p>
@@ -1421,11 +1473,15 @@ document.getElementById("marketSearch").addEventListener("keydown", function(eve
   <button type="button" id="bhrSupportStart">تأیید و شروع مکالمه</button>
  </div>
  <div id="bhrSupportChat" class="bhr-up-hidden">
-  <div id="bhr-support-messages"></div>
-  <textarea class="bhr-up-textarea" id="bhrSupportMessage" rows="3" placeholder="پیام خود را بنویس..."></textarea>
-  <button type="button" id="bhrSupportSend">ارسال پیام</button>
+  <div id="bhr-support-messages" aria-live="polite" aria-relevant="additions"></div>
+  <div class="bhr-support-compose">
+   <textarea id="bhrSupportMessage" rows="1" aria-label="متن پیام" placeholder="پیام خود را بنویس..."></textarea>
+   <button type="button" id="bhrSupportSend" aria-label="ارسال پیام" title="ارسال پیام">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4Z"/></svg>
+   </button>
+  </div>
  </div>
- <div class="bhr-up-status" id="bhrSupportStatus"></div>
+ <div class="bhr-up-status" id="bhrSupportStatus" aria-live="polite"></div>
 </div><script>
 (function(){
 "use strict";
@@ -1816,6 +1872,9 @@ const supportSeenMessages=new Set();
 function supportConversationKey(phone){
  return "bhr-support-conversation:"+phone;
 }
+function supportHistoryKey(phone){
+ return "bhr-support-history:"+phone;
+}
 
 $("bhr-support-launcher")?.addEventListener("click",()=>{
  $("bhr-support-panel").classList.toggle("bhr-up-hidden");
@@ -1824,12 +1883,54 @@ $("bhrSupportClose")?.addEventListener("click",()=>{
  $("bhr-support-panel").classList.add("bhr-up-hidden");
 });
 
-function addChatMessage(message,mine){
+function renderChatMessage(message,mine,timestamp,id,from){
  const box=document.createElement("div");
  box.className="bhr-chat-msg"+(mine?" mine":"");
- box.textContent=message;
+ const meta=document.createElement("div");meta.className="bhr-chat-meta";
+ const sender=document.createElement("span");sender.className="bhr-chat-sender";
+ sender.textContent=from==="system"?"پیام سیستم":(mine?"شما":"پشتیبانی");
+ const time=document.createElement("time");time.className="bhr-chat-time";
+ const date=new Date(Number(timestamp)||Date.now());
+ time.dateTime=date.toISOString();
+ time.textContent=date.toLocaleTimeString("fa-IR",{hour:"2-digit",minute:"2-digit"});
+ const body=document.createElement("div");body.className="bhr-chat-text";body.textContent=message;
+ meta.append(sender,time);box.append(meta,body);
  $("bhr-support-messages").appendChild(box);
  $("bhr-support-messages").scrollTop=$("bhr-support-messages").scrollHeight;
+}
+
+function addChatMessage(message,mine,timestamp=Date.now(),id=null,from=null,persist=true){
+ const entry={
+  id:String(id||("local-"+Date.now()+"-"+Math.random().toString(36).slice(2,8))),
+  text:String(message),from:from||(mine?"visitor":"support"),
+  timestamp:Number(timestamp)||Date.now()
+ };
+ renderChatMessage(entry.text,mine,entry.timestamp,entry.id,entry.from);
+ if(persist&&supportUser){
+  try{
+   const key=supportHistoryKey(supportUser.phone);
+   const history=JSON.parse(localStorage.getItem(key)||"[]");
+   history.push(entry);
+   localStorage.setItem(key,JSON.stringify(history.slice(-150)));
+  }catch(error){}
+ }
+ return entry;
+}
+
+function restoreSupportHistory(){
+ const list=$("bhr-support-messages");list.innerHTML="";
+ supportSeenMessages.clear();
+ try{
+  const history=JSON.parse(localStorage.getItem(supportHistoryKey(supportUser.phone))||"[]");
+  if(Array.isArray(history)){
+   history.slice(-150).forEach(item=>{
+    if(!item||!item.text)return;
+    const id=String(item.id||"");
+    if(id)supportSeenMessages.add(id);
+    renderChatMessage(String(item.text),item.from==="visitor",item.timestamp,id,item.from);
+   });
+  }
+ }catch(error){}
 }
 
 async function pollSupportMessages(){
@@ -1846,7 +1947,7 @@ async function pollSupportMessages(){
    data.messages.forEach(item=>{
     if(!item||item.id==null||supportSeenMessages.has(String(item.id)))return;
     supportSeenMessages.add(String(item.id));
-    if(item.text)addChatMessage(String(item.text),false);
+    if(item.text)addChatMessage(String(item.text),false,Number(item.timestamp)||Date.now(),String(item.id),"support",true);
    });
   }
  }catch(error){
@@ -1923,7 +2024,10 @@ $("bhrSupportStart")?.addEventListener("click",async()=>{
  if(ok){
   $("bhrSupportIntro").classList.add("bhr-up-hidden");
   $("bhrSupportChat").classList.remove("bhr-up-hidden");
-  addChatMessage("گفت‌وگو شروع شد. پیام خود را بنویس.",false);
+  restoreSupportHistory();
+  if(!$("bhr-support-messages").children.length){
+   addChatMessage("گفت‌وگو شروع شد. پیام خود را بنویس.",false,Date.now(),null,"system",true);
+  }
   startSupportPolling();
  }
 });
@@ -1935,7 +2039,7 @@ $("bhrSupportSend")?.addEventListener("click",async()=>{
  if(!message)return;
  const ok=await sendToSupport(message);
  if(ok){
-  addChatMessage(message,true);
+  addChatMessage(message,true,Date.now(),null,"visitor",true);
   input.value="";
   pollSupportMessages();
  }
