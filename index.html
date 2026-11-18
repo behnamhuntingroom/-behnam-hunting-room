@@ -1008,7 +1008,7 @@ document.getElementById("marketSearch").addEventListener("keydown", function(eve
       const b=document.createElement('button');b.type='button';b.className='market-symbol-button';
       const ticker=item[0].split(':').pop().replace('1!','');
       const title=document.createElement('b');title.textContent=ticker;
-      const desc=document.createElement('span');desc.textContent=item[1];
+      const desc=document.createElement('span');desc.textContent=item[1]+'  |  '+item[0];
       b.append(title,desc);
       b.addEventListener('click',()=>{document.getElementById('marketSearch').value=ticker;searchMarket();});
       list.appendChild(b);
