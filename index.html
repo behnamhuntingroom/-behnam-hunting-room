@@ -463,6 +463,37 @@ body > footer {
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./Logo.jpg">
 <link rel="icon" href="./Logo.jpg" type="image/jpeg">
+
+<style id="bhr-cart-style">
+#bhrCartToggle{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border:1px solid var(--gold);border-radius:12px;background:linear-gradient(135deg,rgba(215,180,90,.16),rgba(255,255,255,.04));color:var(--gold2);font:inherit;font-size:13px;cursor:pointer;white-space:nowrap;transition:.2s}
+#bhrCartToggle:hover{transform:translateY(-2px);box-shadow:0 5px 18px var(--goldGlow)}
+#bhrCartToggle svg{width:18px;height:18px}
+#bhrCartCount{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 5px;border-radius:99px;background:linear-gradient(135deg,#f2d98b,#b58b35);color:#17130a;font-size:11px;font-weight:900}
+#bhrCartOverlay{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.62);backdrop-filter:blur(4px);opacity:0;visibility:hidden;transition:.25s}
+#bhrCartOverlay.open{opacity:1;visibility:visible}
+#bhrCartDrawer{position:fixed;z-index:1001;top:0;bottom:0;right:0;width:min(440px,94vw);padding:22px;background:var(--bg);color:var(--text);border-left:1px solid var(--line);box-shadow:-18px 0 55px #0008;transform:translateX(105%);transition:transform .28s ease;display:flex;flex-direction:column;gap:16px;overflow:auto}
+html[dir="ltr"] #bhrCartDrawer{right:auto;left:0;transform:translateX(-105%);border-left:0;border-right:1px solid var(--line)}
+#bhrCartDrawer.open{transform:translateX(0)}
+.bhr-cart-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.bhr-cart-head h2{margin:0;color:var(--gold2);font-size:21px}
+.bhr-cart-iconbtn{width:38px;height:38px;border:1px solid var(--line);border-radius:11px;background:var(--panel);color:var(--text);font-size:21px;cursor:pointer}
+#bhrCartItems{display:grid;gap:10px}
+.bhr-cart-empty{padding:30px 15px;text-align:center;border:1px dashed var(--line);border-radius:15px;color:var(--muted)}
+.bhr-cart-empty svg{width:42px;height:42px;color:var(--gold);margin-bottom:8px}
+.bhr-cart-item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:13px;border:1px solid var(--line);border-radius:13px;background:var(--panel)}
+.bhr-cart-item-name{font-weight:800;color:var(--gold2);overflow-wrap:anywhere}
+.bhr-cart-item-price{font-size:12px;color:var(--muted);margin-top:4px}
+.bhr-cart-controls{display:flex;align-items:center;gap:6px;margin-top:10px}
+.bhr-cart-controls button,.bhr-cart-remove{border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--text);min-width:28px;height:28px;cursor:pointer}
+.bhr-cart-remove{color:#ff9a9a;border-color:#ff9a9a55;padding:0 8px}
+.bhr-cart-summary{margin-top:auto;padding-top:16px;border-top:1px solid var(--line)}
+.bhr-cart-total{display:flex;justify-content:space-between;align-items:center;font-size:16px;font-weight:900;color:var(--gold2)}
+.bhr-cart-note{font-size:12px;color:var(--muted);line-height:1.9;margin:12px 0 0}
+.bhr-cart-clear{margin-top:12px;width:100%;padding:10px;border:1px solid #c66;border-radius:10px;background:transparent;color:#e99;cursor:pointer;font:inherit}
+@media(max-width:900px){header{flex-wrap:wrap}header nav{order:3;width:100%;justify-content:center}.header-tools{margin-right:auto}}
+@media(max-width:520px){#bhrCartToggle{padding:7px 9px;font-size:12px}.header-tools{gap:5px}.datebox{font-size:10px}}
+</style>
+
 </head>
 <body>
 <header>
@@ -474,6 +505,11 @@ body > footer {
 <a href="#contact"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg><span data-fa="تماس" data-en="Contact">تماس</span></a>
 </nav>
 <div class="header-tools">
+<button id="bhrCartToggle" type="button" aria-label="باز کردن سبد خرید" aria-controls="bhrCartDrawer" aria-expanded="false">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+<span data-fa="سبد خرید" data-en="Cart">سبد خرید</span><span id="bhrCartCount" aria-live="polite">۰</span>
+</button>
+
 <div class="datebox"><span>شمسی:</span><b id="jalaliDate">—</b><span>| میلادی:</span><b id="gregorianDate">—</b></div>
 <button class="theme-btn" id="themeBtn" type="button" aria-label="تغییر حالت روز و شب">☀️ روز</button>
 <button class="lang" id="langBtn" type="button">EN</button>
@@ -2156,6 +2192,18 @@ document.querySelectorAll("#bhr-upgrade button").forEach(b=>{
 </div>
 </section>
 
+
+<div id="bhrCartOverlay" aria-hidden="true"></div>
+<aside id="bhrCartDrawer" role="dialog" aria-modal="true" aria-labelledby="bhrCartTitle" aria-hidden="true">
+ <div class="bhr-cart-head"><h2 id="bhrCartTitle">سبد خرید شما</h2><button class="bhr-cart-iconbtn" id="bhrCartClose" type="button" aria-label="بستن سبد خرید">×</button></div>
+ <div id="bhrCartItems" aria-live="polite"></div>
+ <div class="bhr-cart-summary">
+  <div class="bhr-cart-total"><span>جمع کل</span><strong id="bhrCartTotal">۰ تومان</strong></div>
+  <p class="bhr-cart-note">سبد خرید در این مرورگر ذخیره می‌شود. پرداخت آنلاین پس از تعریف محصولات و اتصال درگاه پرداخت فعال خواهد شد.</p>
+  <button class="bhr-cart-clear" id="bhrCartClear" type="button">خالی کردن سبد خرید</button>
+ </div>
+</aside>
+
 <footer>© BEHNAM HUNTING ROOM
 <div class="bhr-enamad-badge" style="display:flex;justify-content:center;align-items:center;margin:16px auto 0;padding-top:14px;border-top:1px solid rgba(215,180,90,.18)">
   <img src="https://reg2.enamad.ir/rc/outResource/distA/img/enamad2.png" width="393" height="221" alt="نماد اعتماد الکترونیکی" loading="lazy" style="display:block;width:120px;max-width:38vw;height:auto;object-fit:contain">
@@ -2172,5 +2220,84 @@ if ("serviceWorker" in navigator && (location.protocol === "https:" || location.
   });
 }
 </script>
+
+<script id="bhr-cart-script">
+(function(){
+ "use strict";
+ const KEY="bhr-shopping-cart-v1";
+ const drawer=document.getElementById("bhrCartDrawer");
+ const overlay=document.getElementById("bhrCartOverlay");
+ const toggle=document.getElementById("bhrCartToggle");
+ const close=document.getElementById("bhrCartClose");
+ const itemsNode=document.getElementById("bhrCartItems");
+ const countNode=document.getElementById("bhrCartCount");
+ const totalNode=document.getElementById("bhrCartTotal");
+ const formatter=new Intl.NumberFormat("fa-IR",{maximumFractionDigits:0});
+ let cart=[];
+ try{
+  const saved=JSON.parse(localStorage.getItem(KEY)||"[]");
+  if(Array.isArray(saved))cart=saved.filter(x=>x&&typeof x.id==="string"&&typeof x.name==="string"&&Number.isFinite(Number(x.price))&&Number(x.price)>=0&&Number(x.quantity)>0).map(x=>({id:x.id,name:x.name,price:Number(x.price),quantity:Math.floor(Number(x.quantity))}));
+ }catch(error){cart=[]}
+ function persist(){try{localStorage.setItem(KEY,JSON.stringify(cart));return true}catch(error){return false}}
+ function openCart(){drawer.classList.add("open");overlay.classList.add("open");drawer.setAttribute("aria-hidden","false");overlay.setAttribute("aria-hidden","false");toggle.setAttribute("aria-expanded","true");close.focus()}
+ function closeCart(){drawer.classList.remove("open");overlay.classList.remove("open");drawer.setAttribute("aria-hidden","true");overlay.setAttribute("aria-hidden","true");toggle.setAttribute("aria-expanded","false");toggle.focus()}
+ function render(){
+  const count=cart.reduce((sum,item)=>sum+item.quantity,0);
+  const total=cart.reduce((sum,item)=>sum+item.price*item.quantity,0);
+  countNode.textContent=formatter.format(count);
+  totalNode.textContent=formatter.format(total)+" تومان";
+  itemsNode.replaceChildren();
+  if(!cart.length){
+   const empty=document.createElement("div");empty.className="bhr-cart-empty";
+   const icon=document.createElementNS("http://www.w3.org/2000/svg","svg");
+   icon.setAttribute("viewBox","0 0 24 24");icon.setAttribute("fill","none");icon.setAttribute("stroke","currentColor");icon.setAttribute("stroke-width","1.5");
+   const path=document.createElementNS("http://www.w3.org/2000/svg","path");path.setAttribute("d","M3 3h2l2.5 12.5a2 2 0 0 0 2 1.5h8a2 2 0 0 0 2-1.5L22 7H6");icon.append(path);
+   const title=document.createElement("div");title.textContent="سبد خرید خالی است";
+   const desc=document.createElement("small");desc.textContent="پس از انتخاب محصول، کالاهای شما در این قسمت نمایش داده می‌شوند.";
+   empty.append(icon,title,desc);itemsNode.append(empty);return;
+  }
+  cart.forEach(item=>{
+   const row=document.createElement("div");row.className="bhr-cart-item";
+   const info=document.createElement("div");
+   const name=document.createElement("div");name.className="bhr-cart-item-name";name.textContent=item.name;
+   const price=document.createElement("div");price.className="bhr-cart-item-price";price.textContent=formatter.format(item.price)+" تومان · هر عدد";
+   const controls=document.createElement("div");controls.className="bhr-cart-controls";
+   const minus=document.createElement("button");minus.type="button";minus.textContent="−";minus.setAttribute("aria-label","کاهش تعداد");minus.dataset.cartAction="minus";minus.dataset.id=item.id;
+   const qty=document.createElement("span");qty.textContent=formatter.format(item.quantity);
+   const plus=document.createElement("button");plus.type="button";plus.textContent="+";plus.setAttribute("aria-label","افزایش تعداد");plus.dataset.cartAction="plus";plus.dataset.id=item.id;
+   controls.append(minus,qty,plus);info.append(name,price,controls);
+   const remove=document.createElement("button");remove.type="button";remove.className="bhr-cart-remove";remove.textContent="حذف";remove.dataset.cartAction="remove";remove.dataset.id=item.id;
+   row.append(info,remove);itemsNode.append(row);
+  });
+ }
+ function addItem(product){
+  if(!product||product.id==null||!String(product.name||"").trim()||!Number.isFinite(Number(product.price))||Number(product.price)<0)throw new Error("اطلاعات محصول معتبر نیست.");
+  const id=String(product.id),name=String(product.name).trim(),price=Number(product.price),quantity=Math.max(1,Math.floor(Number(product.quantity)||1));
+  const found=cart.find(x=>x.id===id);
+  if(found){found.quantity+=quantity;found.name=name;found.price=price}else cart.push({id,name,price,quantity});
+  persist();render();openCart();return cart;
+ }
+ window.BHR_CART={addItem,open:openCart,getItems:()=>cart.map(x=>({...x})),clear:()=>{cart=[];persist();render()}};
+ toggle.addEventListener("click",openCart);close.addEventListener("click",closeCart);overlay.addEventListener("click",closeCart);
+ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&drawer.classList.contains("open"))closeCart()});
+ itemsNode.addEventListener("click",e=>{
+  const button=e.target.closest("button[data-cart-action]");if(!button)return;
+  const item=cart.find(x=>x.id===button.dataset.id);if(!item)return;
+  if(button.dataset.cartAction==="plus")item.quantity++;
+  if(button.dataset.cartAction==="minus")item.quantity=Math.max(1,item.quantity-1);
+  if(button.dataset.cartAction==="remove")cart=cart.filter(x=>x.id!==item.id);
+  persist();render();
+ });
+ document.getElementById("bhrCartClear").addEventListener("click",()=>{cart=[];persist();render()});
+ document.addEventListener("click",e=>{
+  const button=e.target.closest("[data-bhr-add-to-cart]");if(!button)return;
+  try{
+   addItem({id:button.dataset.productId,name:button.dataset.productName,price:button.dataset.productPrice,quantity:button.dataset.productQuantity});
+  }catch(error){alert("افزودن محصول انجام نشد؛ اطلاعات محصول را بررسی کنید.")}
+ });
+ render();
+})();
+</script>
+
 </body>
 </html>
