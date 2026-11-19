@@ -3517,19 +3517,23 @@ header .bhr-sun-letters:after{
 
 <style id="bhr-heatmap-fire-glow">
 @media(min-width:761px){
- nav a .bhr-heatmap-nav-icon{
-  display:inline-flex;align-items:center;justify-content:center;
-  width:24px;height:24px;line-height:1;
-  filter:drop-shadow(0 0 3px rgba(255,75,24,.65));
-  animation:bhrHeatFirePulse 1.8s ease-in-out infinite;
+ nav a[data-bhr-page="heatmap"]>span{
+  color:#ff7130!important;
+  background:linear-gradient(100deg,#ffb347 0%,#ff6a24 45%,#ef2920 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:bhrHeatTextFirePulse 1.8s ease-in-out infinite;
+  filter:drop-shadow(0 0 3px rgba(255,90,28,.62));
   transform-origin:center;
  }
- nav a .bhr-heatmap-nav-icon svg{display:block;width:23px;height:23px;overflow:visible}
 }
-@keyframes bhrHeatFirePulse{
- 0%,100%{filter:brightness(.82) drop-shadow(0 0 3px rgba(255,75,24,.58)) drop-shadow(0 0 6px rgba(230,25,12,.3))}
- 50%{filter:brightness(1.42) drop-shadow(0 0 5px rgba(255,120,35,.95)) drop-shadow(0 0 13px rgba(255,35,12,.72))}
+@keyframes bhrHeatTextFirePulse{
+ 0%,100%{filter:brightness(.82) drop-shadow(0 0 3px rgba(255,105,35,.55)) drop-shadow(0 0 6px rgba(225,35,20,.3))}
+ 50%{filter:brightness(1.48) drop-shadow(0 0 5px rgba(255,145,45,.95)) drop-shadow(0 0 13px rgba(245,35,20,.78))}
 }
-@media(prefers-reduced-motion:reduce){nav a .bhr-heatmap-nav-icon{animation:none!important;filter:drop-shadow(0 0 5px rgba(255,75,24,.65))!important}}
+@media(prefers-reduced-motion:reduce){
+ nav a[data-bhr-page="heatmap"]>span{animation:none!important;filter:drop-shadow(0 0 5px rgba(255,85,25,.7))!important}
+}
 </style>
 
