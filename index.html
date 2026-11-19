@@ -2884,7 +2884,8 @@ header nav .bhr-nav-cart svg{stroke:#22c55e!important}
  };
  const update=(id,message)=>{const el=document.getElementById(id);if(el)el.textContent=message;};
  const stamp=()=>new Date().toLocaleString("fa-IR",{dateStyle:"short",timeStyle:"short"});
- function mountWidget(targetId,scriptUrl,settings,statusId,label){
+ const loaded={calendar:false,news:false};
+ function mountWidget(targetId,scriptUrl,settings,statusId,key){
   const host=document.getElementById(targetId);
   if(!host)return;
   const container=document.createElement("div");
@@ -2903,9 +2904,14 @@ header nav .bhr-nav-cart svg{stroke:#22c55e!important}
    if(frame&&!frameObserved){
     frameObserved=true;
     frame.addEventListener("load",()=>{
+     loaded[key]=true;
      update(statusId,"اتصال ویجت برقرار شد؛ آخرین بارگذاری: "+stamp());
-     update("bhrMarketDataStatus","منابع TradingView بارگذاری شده‌اند. محتوای داخلی و زمان به‌روزرسانی داده‌ها در سرویس خارجی مدیریت می‌شود.");
-     update("bhrCommandUpdate","آخرین بارگذاری ویجت‌ها: "+stamp());
+     if(loaded.calendar&&loaded.news){
+      update("bhrMarketDataStatus","هر دو ویجت TradingView بارگذاری شده‌اند. محتوای داخلی و زمان به‌روزرسانی داده‌ها در سرویس خارجی مدیریت می‌شود.");
+      update("bhrCommandUpdate","آخرین بارگذاری هر دو منبع: "+stamp());
+     }else{
+      update("bhrMarketDataStatus","یکی از ویجت‌ها بارگذاری شده؛ در انتظار اتصال منبع دیگر…");
+     }
     },{once:true});
    }
   });
@@ -2925,8 +2931,8 @@ header nav .bhr-nav-cart svg{stroke:#22c55e!important}
   },15000);
  }
  function start(){
-  mountWidget("bhrEconomicCalendar","https://s3.tradingview.com/external-embedding/embed-widget-events.js",config.calendar,"bhrCalendarStatus","تقویم اقتصادی");
-  mountWidget("bhrMarketNews","https://s3.tradingview.com/external-embedding/embed-widget-timeline.js",config.news,"bhrNewsStatus","اخبار بازار");
+  mountWidget("bhrEconomicCalendar","https://s3.tradingview.com/external-embedding/embed-widget-events.js",config.calendar,"bhrCalendarStatus","calendar");
+  mountWidget("bhrMarketNews","https://s3.tradingview.com/external-embedding/embed-widget-timeline.js",config.news,"bhrNewsStatus","news");
  }
  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
 })();
