@@ -3529,8 +3529,8 @@ header .bhr-sun-letters:after{
  }
 }
 @keyframes bhrHeatTextFirePulse{
- 0%,100%{filter:brightness(.9) drop-shadow(0 0 5px rgba(255,105,35,.72)) drop-shadow(0 0 9px rgba(225,35,20,.48))}
- 50%{filter:brightness(1.9) drop-shadow(0 0 8px rgba(255,155,55,1)) drop-shadow(0 0 20px rgba(245,35,20,.95)) drop-shadow(0 0 30px rgba(245,65,15,.55))}
+ 0%,100%{filter:brightness(1.05) drop-shadow(0 0 7px rgba(255,105,35,.88)) drop-shadow(0 0 13px rgba(225,35,20,.62))}
+ 50%{filter:brightness(2.35) drop-shadow(0 0 11px rgba(255,175,65,1)) drop-shadow(0 0 27px rgba(245,35,20,1)) drop-shadow(0 0 42px rgba(245,65,15,.82))}
 }
 @media(prefers-reduced-motion:reduce){
  nav a[data-bhr-page="heatmap"]>span{animation:none!important;filter:drop-shadow(0 0 5px rgba(255,85,25,.7))!important}
@@ -3541,17 +3541,20 @@ header .bhr-sun-letters:after{
 
 <style id="bhr-chat-launcher-nudge">
 #bhr-support-launcher{
- animation:bhrChatLauncherNudge 4.2s ease-in-out infinite;
+ animation:bhrChatPingPong 2s ease-in-out infinite;
+ will-change:transform;
 }
-@keyframes bhrChatLauncherNudge{
- 0%,88%,100%{transform:translate3d(0,0,0) rotate(0)}
- 90%{transform:translate3d(-2px,0,0) rotate(-5deg)}
- 92%{transform:translate3d(2px,0,0) rotate(5deg)}
- 94%{transform:translate3d(-2px,0,0) rotate(-4deg)}
- 96%{transform:translate3d(1px,0,0) rotate(3deg)}
- 98%{transform:translate3d(0,0,0) rotate(0)}
+@keyframes bhrChatPingPong{
+ 0%,100%{transform:translateY(0) scaleX(1)}
+ 12%{transform:translateY(-7px) scaleX(.99)}
+ 25%{transform:translateY(-17px) scaleX(.97)}
+ 38%{transform:translateY(-24px) scaleX(.96)}
+ 50%{transform:translateY(-27px) scaleX(.96)}
+ 62%{transform:translateY(-23px) scaleX(.97)}
+ 75%{transform:translateY(-14px) scaleX(.98)}
+ 88%{transform:translateY(-5px) scaleX(1)}
 }
 @media(prefers-reduced-motion:reduce){
- #bhr-support-launcher{animation:none!important}
+ #bhr-support-launcher{animation:none!important;will-change:auto}
 }
 </style>
