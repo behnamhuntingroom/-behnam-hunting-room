@@ -2771,6 +2771,21 @@ const academy=makePage("bhr-academy-page","آکادمی آموزشی","آموز�
 const tools=makePage("bhr-tools-page","ابزارهای تخصصی ترید","ابزارهای مدیریت ریسک و برنامه‌ریزی معامله");
 const community=makePage("bhr-community-page","تحلیل کاربران","ثبت و مرور تحلیل‌ها و سناریوهای معاملاتی");
 const about=makePage("bhr-about-page","درباره ما","معرفی اتاق شکار بهنام و چارچوب فعالیت آن");
+const heatmap=makePage("bhr-heatmap-page","BHR MARKET HEATMAP","نقشه حرارتی بازارهای جهانی؛ سبز برای رشد و قرمز برای افت");
+heatmap.insertAdjacentHTML("beforeend", `
+ <section class="bhr-heatmap-panel">
+  <div class="bhr-heatmap-tabs" role="tablist" aria-label="انتخاب بازار">
+   <button type="button" class="active" data-bhr-heatmap="stocks" role="tab" aria-selected="true">بورس آمریکا</button>
+   <button type="button" data-bhr-heatmap="crypto" role="tab" aria-selected="false">ارزهای دیجیتال</button>
+   <button type="button" data-bhr-heatmap="forex" role="tab" aria-selected="false">فارکس</button>
+  </div>
+  <div class="bhr-heatmap-caption">نمایش تغییرات بازار به‌صورت زنده از TradingView؛ برای مشاهده جزئیات روی هر خانه بروید یا آن را انتخاب کنید.</div>
+  <div class="bhr-heatmap-widget" data-bhr-heatmap-host="stocks"></div>
+  <div class="bhr-heatmap-widget" data-bhr-heatmap-host="crypto" hidden></div>
+  <div class="bhr-heatmap-widget" data-bhr-heatmap-host="forex" hidden></div>
+  <div class="bhr-heatmap-source">منبع داده و به‌روزرسانی: TradingView · داده‌ها ممکن است با تأخیر منبع نمایش داده شوند.</div>
+ </section>`);
+
 const move=(node,target)=>{if(node&&target)target.append(node)};
 move($("home"),home);
 move(document.querySelector(".bhr-price-banner"),home);
@@ -2831,7 +2846,8 @@ if(nav){
  '<a href="#bhr-page-markets" data-bhr-page="markets">⌁ <span>مرکز بازار</span></a>'+
  '<a href="#bhr-page-tools" data-bhr-page="tools">⚙ <span>ابزارها</span></a>'+
  '<a href="#bhr-page-community" data-bhr-page="community">♧ <span>تحلیل کاربران</span></a>'+
- '<a href="#bhr-page-about" data-bhr-page="about">✦ <span>درباره ما</span></a>';
+ '<a href="#bhr-page-about" data-bhr-page="about">✦ <span>درباره ما</span></a>'+
+ '<a href="#bhr-page-heatmap" data-bhr-page="heatmap">▦ <span>نقشه حرارتی</span></a>';
 }
 const cartToggle=$("bhrCartToggle");
 if(nav&&cartToggle){
@@ -2844,7 +2860,7 @@ if(brand&&!brand.querySelector(".bhr-sun-mark")){
  mark.innerHTML='<span class="bhr-sun-letters">BHR</span>';
  brand.prepend(mark);
 }
-const pages={home,room,academy,tools,community,about};
+const pages={home,room,academy,tools,community,about,heatmap};
 function showPage(requestedKey,updateHash){
  const key=requestedKey==="markets"?"home":(pages[requestedKey]?requestedKey:"home");
  Object.entries(pages).forEach(([name,node])=>node.classList.toggle("is-active",name===key));
@@ -2852,7 +2868,7 @@ function showPage(requestedKey,updateHash){
  if(nav)nav.querySelectorAll("[data-bhr-page]").forEach(a=>{if(a.dataset.bhrPage===requestedKey)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
  window.scrollTo({top:0,behavior:"instant"});
  if(requestedKey==="markets"&&workspace)workspace.scrollIntoView({behavior:"smooth",block:"start"});
- document.title=(requestedKey==="markets"?"مرکز بازار":key==="home"?"اتاق شکار بهنام":({room:"اتاق معاملاتی",academy:"آکادمی آموزشی",tools:"ابزارهای ترید",community:"تحلیل کاربران",about:"درباره ما"}[key]))+" | BEHNAM HUNTING ROOM";
+ document.title=(requestedKey==="markets"?"مرکز بازار":key==="home"?"اتاق شکار بهنام":({room:"اتاق معاملاتی",academy:"آکادمی آموزشی",tools:"ابزارهای ترید",community:"تحلیل کاربران",about:"درباره ما",heatmap:"نقشه حرارتی بازار"}[key]))+" | BEHNAM HUNTING ROOM";
 }
 document.addEventListener("click",e=>{
  const link=e.target.closest("[data-bhr-page]");
@@ -3240,3 +3256,41 @@ header .bhr-sun-letters:after{
   header .bhr-sun-mark,header .bhr-sun-letters:after{animation:none!important}
 }
 </style>
+
+<style id="bhr-market-heatmap-styles">
+.bhr-heatmap-panel{width:min(1200px,94%);margin:0 auto;padding:18px;border:1px solid var(--line);border-radius:18px;background:var(--card);box-shadow:0 12px 32px #0003}
+.bhr-heatmap-tabs{display:flex;flex-wrap:wrap;justify-content:center;gap:9px;margin:0 0 14px}
+.bhr-heatmap-tabs button{border:1px solid var(--line);border-radius:10px;padding:10px 18px;background:#15191f;color:var(--text);font:inherit;cursor:pointer}
+.bhr-heatmap-tabs button.active{border-color:var(--gold2);color:var(--gold2);box-shadow:0 0 14px var(--goldGlow)}
+.bhr-heatmap-caption,.bhr-heatmap-source{text-align:center;color:var(--muted);font-size:12px;line-height:1.8;margin:8px 0 14px}
+.bhr-heatmap-widget{width:100%;min-height:540px;border-radius:12px;overflow:hidden}
+.bhr-heatmap-widget iframe{width:100%!important;max-width:100%!important}
+@media(max-width:600px){.bhr-heatmap-panel{width:94%;padding:10px}.bhr-heatmap-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.bhr-heatmap-tabs button{padding:9px 4px;font-size:11px}.bhr-heatmap-widget{min-height:500px}}
+</style>
+<script id="bhr-market-heatmap-loader">
+(()=>{
+ const page=document.getElementById("bhr-heatmap-page");
+ if(!page||page.dataset.heatmapReady==="1")return;
+ page.dataset.heatmapReady="1";
+ const configs={
+  stocks:{src:"https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js",config:{exchanges:[],dataSource:"SPX500",grouping:"sector",blockSize:"market_cap_basic",blockColor:"change",locale:"en",symbolUrl:"",colorTheme:"dark",hasTopBar:true,isDataSetEnabled:true,isZoomEnabled:true,hasSymbolTooltip:true,width:"100%",height:"540"}},
+  crypto:{src:"https://s3.tradingview.com/external-embedding/embed-widget-crypto-coins-heatmap.js",config:{dataSource:"Crypto",blockSize:"market_cap_calc",blockColor:"change",locale:"en",symbolUrl:"",colorTheme:"dark",hasTopBar:true,isDataSetEnabled:true,isZoomEnabled:true,hasSymbolTooltip:true,width:"100%",height:"540"}},
+  forex:{src:"https://s3.tradingview.com/external-embedding/embed-widget-forex-heat-map.js",config:{width:"100%",height:"540",currencies:["EUR","USD","JPY","GBP","CHF","AUD","CAD","NZD"],isTransparent:true,colorTheme:"dark",locale:"en"}}
+ };
+ const load=key=>{
+  const host=page.querySelector('[data-bhr-heatmap-host="'+key+'"]');
+  if(!host||host.dataset.loaded==="1")return;
+  host.dataset.loaded="1";
+  const script=document.createElement("script");script.type="text/javascript";script.async=true;
+  script.src=configs[key].src;script.textContent=JSON.stringify(configs[key].config);host.appendChild(script);
+ };
+ const tabs=page.querySelectorAll("[data-bhr-heatmap]");
+ tabs.forEach(tab=>tab.addEventListener("click",()=>{
+  const key=tab.dataset.bhrHeatmap;
+  tabs.forEach(item=>{const active=item===tab;item.classList.toggle("active",active);item.setAttribute("aria-selected",String(active));});
+  page.querySelectorAll("[data-bhr-heatmap-host]").forEach(host=>host.hidden=host.dataset.bhrHeatmapHost!==key);
+  load(key);
+ }));
+ load("stocks");
+})();
+</script>
