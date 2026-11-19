@@ -1877,6 +1877,9 @@ header .bhr-sun-letters{transform:translateZ(12px);text-shadow:0 1px 0 #8d6420,0
    <button type="button" data-bhr-assistant-prompt="یک جمع‌بندی از وضعیت خبرهای مهم بازار بده">جمع‌بندی بازار</button>
    <button type="button" data-bhr-assistant-prompt="خبرهای مرتبط با طلا و دلار را بررسی کن">طلا و دلار</button>
    <button type="button" data-bhr-assistant-prompt="وضعیت شاخص نزدک، Nasdaq 100 و قرارداد آتی NQ را از نظر اخبار و عوامل اثرگذار بررسی کن؛ تفاوت نمادها و نبود داده قیمت زنده را روشن کن">نزدک / NQ</button>
+   <button type="button" data-bhr-assistant-prompt="جفت‌ارز EURUSD (یورو/دلار) را از نظر عوامل بنیادی، اخبار مرتبط و سناریوهای احتمالی بررسی کن؛ قیمت زنده نساز">یورو / دلار</button>
+   <button type="button" data-bhr-assistant-prompt="نفت خام WTI و برنت را از نظر عرضه و تقاضا، اوپک، ذخایر نفت و اخبار مرتبط بررسی و تفاوتشان را توضیح بده؛ قیمت زنده نساز">نفت WTI / Brent</button>
+   <button type="button" data-bhr-assistant-prompt="شاخص S&P 500، قرارداد آتی ES و نمادهای CFD مانند US500 را از نظر اخبار و عوامل اثرگذار بررسی کن؛ تفاوت ابزارها را روشن کن">S&P 500 / ES</button>
    <button type="button" data-bhr-assistant-prompt="خبرهای مرتبط با ارزهای دیجیتال را بررسی کن">کریپتو</button>
    <button type="button" data-bhr-assistant-prompt="روش معاملاتی P1 P2 P3 را توضیح بده">روش P1 / P2 / P3</button>
   </div>
@@ -3359,14 +3362,18 @@ header .bhr-sun-letters:after{
   const query=q.toLowerCase(),all=headlines();
   const gold=/طلا|اونس|فلز|دلار|gold|xau|silver|fed|فدرال/.test(query);
   const crypto=/کریپتو|رمزارز|بیت.?کوین|اتریوم|bitcoin|crypto|ethereum|btc|eth/.test(query);
-  const stocks=/نزدک|nasdaq|nas.?100|nq\b|e.?mini|بورس|سهام|s&p|stock|بازار آمریکا/.test(query);
+  const stocks=/نزدک|nasdaq|nas.?100|nq\b|e.?mini|بورس|سهام|s&p|spx|es\b|us500|stock|بازار آمریکا/.test(query);
+  const euro=/یورو|eurusd|eur\/usd|euro|جفت.?ارز/.test(query);
+  const oil=/نفت|wti|brent|crude|اوپک/.test(query);
   const p123=/p1|p2|p3|پی.?1|پی.?2|پی.?3|ساختار بازار/.test(query);
   if(p123)return "چارچوب P1 / P2 / P3 در روش BHR:\\n• P1: مهم‌ترین سقف یا کف نوسانی که آغازگر روند جدید است.\\n• P2: سقف یا کف بعدی در جهت روند تازه.\\n• P3: پولبک پس از شکل‌گیری P2.\\n• تأیید روند زمانی است که پس از تشکیل P3، بدنه کندل از سطح P2 عبور کند.\\nاین توضیح آموزشی است؛ برای بررسی یک نمودار مشخص باید تصویر یا داده چارت در اختیار باشد.";
   let filtered=all;
-  if(gold)filtered=all.filter(t=>/gold|طلا|دلار|اونس|فلز|نفت|fed|فدرال|تورم|نرخ بهره|بازده|yield|silver/i.test(t));
+  if(gold)filtered=all.filter(t=>/gold|طلا|دلار|اونس|فلز|fed|فدرال|تورم|نرخ بهره|بازده|yield|silver/i.test(t));
   else if(crypto)filtered=all.filter(t=>/crypto|bitcoin|btc|ethereum|eth|کریپتو|رمزارز|بیت.?کوین|اتریوم|token/i.test(t));
-  else if(stocks)filtered=all.filter(t=>/nasdaq|nas.?100|nq\b|s&p|stock|سهام|بورس|وال.?استریت|شاخص|فدرال|fed|اقتصاد آمریکا|نرخ بهره|تورم/i.test(t));
-  const label=gold?"طلا و دلار":crypto?"ارزهای دیجیتال":stocks?"بورس آمریکا":"بازارها";
+  else if(euro)filtered=all.filter(t=>/eur|euro|یورو|ecb|بانک مرکزی اروپا|دلار|fx|forex|ارز|نرخ بهره|تورم/i.test(t));
+  else if(oil)filtered=all.filter(t=>/oil|نفت|wti|brent|crude|opec|اوپک|ذخایر|تولید|عرضه|تقاضا/i.test(t));
+  else if(stocks)filtered=all.filter(t=>/nasdaq|nas.?100|nq\b|s&p|spx|es\b|us500|stock|سهام|بورس|وال.?استریت|شاخص|فدرال|fed|اقتصاد آمریکا|نرخ بهره|تورم/i.test(t));
+  const label=gold?"طلا و دلار":crypto?"ارزهای دیجیتال":euro?"یورو/دلار":oil?"نفت":stocks?"شاخص‌های سهام آمریکا":"بازارها";
   if(/تقویم|رویداد|cpi|nfp|fomc|gdp|calendar/.test(query)){
    const cal=document.getElementById("bhrEconomicCalendar");
    const status=document.getElementById("bhrCalendarStatus");
@@ -3400,7 +3407,7 @@ header .bhr-sun-letters:after{
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({
      message:[
-      "راهنمای تحلیل تخصصی BHR: بازارهای تحت پوشش طلا XAUUSD و نزدک شامل شاخص Nasdaq-100، قرارداد آتی NQ و نمادهای CFD مانند NAS100 هستند؛ این نمادها را از نظر نوع ابزار و قیمت با هم یکی فرض نکن. اگر نماد مشخص نیست، ابهام را اعلام کن. برای هر دو بازار ساختار روند و روش اختصاصی P1/P2/P3 را بررسی کن: P1 نقطه چرخش مهم، P2 سقف/کف بعدی در جهت روند و P3 پولبک؛ تأیید روند فقط پس از تشکیل P3 و شکست سطح P2 با بدنه کندل است. در صورت وجود داده معتبر، VWAP، حجم، Order Flow و Cumulative Delta را بررسی کن؛ اگر داده یا تصویر چارت ارائه نشده، ادعا نکن آن‌ها را دیده‌ای. تحلیل را با سناریوی صعودی/نزولی، شرط فعال‌شدن، نقطه ابطال، حد ضرر و اهداف مشروط ساختاربندی کن؛ اگر داده کافی نیست، سطح ورود یا قیمت نساز و سؤال مشخص بپرس. رویدادهای اقتصادی و همبستگی دلار/بازده اوراق برای طلا و نرخ بهره/سهام فناوری برای نزدک را در صورت ارتباط لحاظ کن. پاسخ کاملاً فارسی، دقیق، بدون تکرار و بدون وعده سود باشد.",
+      "راهنمای تحلیل تخصصی BHR: بازارهای تحت پوشش شامل طلا XAUUSD؛ نزدک Nasdaq-100، قرارداد آتی NQ و CFD مانند NAS100؛ یورو/دلار EURUSD؛ نفت خام WTI و برنت؛ شاخص S&P 500، قرارداد آتی ES و CFD مانند US500 هستند. این نمادها و انواع ابزار را از نظر قیمت و مشخصات یکی فرض نکن؛ اگر نماد دقیق روشن نیست، ابهام را اعلام کن. برای همه این بازارها ساختار روند و روش اختصاصی P1/P2/P3 را بررسی کن: P1 نقطه چرخش مهم، P2 سقف/کف بعدی در جهت روند و P3 پولبک؛ تأیید روند فقط پس از تشکیل P3 و شکست سطح P2 با بدنه کندل است. در صورت وجود داده معتبر، VWAP، حجم، Order Flow و Cumulative Delta را بررسی کن؛ اگر داده یا تصویر چارت ارائه نشده، ادعا نکن آن‌ها را دیده‌ای. تحلیل را با سناریوی صعودی/نزولی، شرط فعال‌شدن، نقطه ابطال، حد ضرر و اهداف مشروط ساختاربندی کن؛ اگر داده کافی نیست، سطح ورود یا قیمت نساز و سؤال مشخص بپرس. رویدادهای اقتصادی و همبستگی دلار/بازده اوراق برای طلا و نرخ بهره/سهام فناوری برای نزدک را در صورت ارتباط لحاظ کن. پاسخ کاملاً فارسی، دقیق، بدون تکرار و بدون وعده سود باشد.",
       clean
      ].join("\n\n"),
      newsContext,calendarContext
