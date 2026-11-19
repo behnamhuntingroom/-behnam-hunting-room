@@ -3537,3 +3537,21 @@ header .bhr-sun-letters:after{
 }
 </style>
 
+
+
+<style id="bhr-chat-launcher-nudge">
+#bhr-support-launcher{
+ animation:bhrChatLauncherNudge 4.2s ease-in-out infinite;
+}
+@keyframes bhrChatLauncherNudge{
+ 0%,88%,100%{transform:translate3d(0,0,0) rotate(0)}
+ 90%{transform:translate3d(-2px,0,0) rotate(-5deg)}
+ 92%{transform:translate3d(2px,0,0) rotate(5deg)}
+ 94%{transform:translate3d(-2px,0,0) rotate(-4deg)}
+ 96%{transform:translate3d(1px,0,0) rotate(3deg)}
+ 98%{transform:translate3d(0,0,0) rotate(0)}
+}
+@media(prefers-reduced-motion:reduce){
+ #bhr-support-launcher{animation:none!important}
+}
+</style>
