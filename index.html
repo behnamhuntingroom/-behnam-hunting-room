@@ -673,7 +673,9 @@ header .brand{position:relative;display:inline-flex;align-items:center;gap:10px;
 
 <style id="bhr-home-shortcuts-sidebar-style">
 /* Replace the right-side live quotes widget with a vertical home navigation stack */
-#bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar{position:relative;top:auto;min-width:0}
+#bhr-home-market-workspace{display:block!important}
+#bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar{position:relative;top:auto;min-width:0;width:min(340px,100%);margin:0 0 0 auto}
+#bhr-home-market-workspace .market-main{width:100%;margin-top:0}
 #bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-home-shortcuts{width:100%;margin:0;display:grid;grid-template-columns:1fr;gap:10px}
 #bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-shortcut{display:grid;grid-template-columns:38px minmax(0,1fr);grid-template-rows:auto auto;align-items:center;column-gap:10px;row-gap:2px;padding:14px 13px;text-align:right}
 #bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-shortcut .bhr-shortcut-icon{grid-column:1;grid-row:1 / span 2;margin:0;font-size:24px}
@@ -2752,6 +2754,8 @@ if(marketSidebar){
 }else{
  home.append(shortcuts);
 }
+const marketMain=workspace&&workspace.querySelector(".market-main");
+if(marketMain)home.insertBefore(marketMain,methodIntro);
 move($("bhr-method"),room);
 move($("bhr-command-center"),room);
 move($("bhr-academy"),academy);
