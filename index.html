@@ -1870,12 +1870,13 @@ header .bhr-sun-letters{transform:translateZ(12px);text-shadow:0 1px 0 #8d6420,0
  <section class="bhr-up-card" id="bhr-smart-assistant" aria-label="دستیار هوشمند BHR">
   <div class="bhr-assistant-head">
    <div><span class="bhr-assistant-kicker">BHR INTELLIGENCE</span><h3>دستیار هوشمند BHR</h3><p>جمع‌بندی داده‌های بازار، اخبار و چارچوب معاملاتی BHR</p></div>
-   <span class="bhr-assistant-status">نسخه اولیه فعال</span>
+   <span class="bhr-assistant-status">هوش مصنوعی مولد فعال</span>
   </div>
-  <div class="bhr-assistant-note">این نسخه از خبرها و اطلاعات قابل‌خواندن همین صفحه و قواعد تحلیلی استفاده می‌کند؛ هنوز به مدل هوش مصنوعی مولد یا داده مستقیم لحظه‌ای قیمت متصل نیست.</div>
+  <div class="bhr-assistant-note">متصل به هوش مصنوعی مولد BHR؛ تحلیل تخصصی طلا و نزدک بر پایه اطلاعات ارسالی، اخبار قابل‌خواندن و چارچوب معاملاتی BHR. قیمت زنده و داده داخل چارت‌ها فقط در صورت اتصال منبع داده یا ارسال تصویر/اطلاعات چارت قابل بررسی است.</div>
   <div class="bhr-assistant-quick">
    <button type="button" data-bhr-assistant-prompt="یک جمع‌بندی از وضعیت خبرهای مهم بازار بده">جمع‌بندی بازار</button>
    <button type="button" data-bhr-assistant-prompt="خبرهای مرتبط با طلا و دلار را بررسی کن">طلا و دلار</button>
+   <button type="button" data-bhr-assistant-prompt="وضعیت شاخص نزدک، Nasdaq 100 و قرارداد آتی NQ را از نظر اخبار و عوامل اثرگذار بررسی کن؛ تفاوت نمادها و نبود داده قیمت زنده را روشن کن">نزدک / NQ</button>
    <button type="button" data-bhr-assistant-prompt="خبرهای مرتبط با ارزهای دیجیتال را بررسی کن">کریپتو</button>
    <button type="button" data-bhr-assistant-prompt="روش معاملاتی P1 P2 P3 را توضیح بده">روش P1 / P2 / P3</button>
   </div>
@@ -3358,13 +3359,13 @@ header .bhr-sun-letters:after{
   const query=q.toLowerCase(),all=headlines();
   const gold=/طلا|اونس|فلز|دلار|gold|xau|silver|fed|فدرال/.test(query);
   const crypto=/کریپتو|رمزارز|بیت.?کوین|اتریوم|bitcoin|crypto|ethereum|btc|eth/.test(query);
-  const stocks=/نزدک|بورس|سهام|s&p|nasdaq|stock|بازار آمریکا/.test(query);
+  const stocks=/نزدک|nasdaq|nas.?100|nq\b|e.?mini|بورس|سهام|s&p|stock|بازار آمریکا/.test(query);
   const p123=/p1|p2|p3|پی.?1|پی.?2|پی.?3|ساختار بازار/.test(query);
   if(p123)return "چارچوب P1 / P2 / P3 در روش BHR:\\n• P1: مهم‌ترین سقف یا کف نوسانی که آغازگر روند جدید است.\\n• P2: سقف یا کف بعدی در جهت روند تازه.\\n• P3: پولبک پس از شکل‌گیری P2.\\n• تأیید روند زمانی است که پس از تشکیل P3، بدنه کندل از سطح P2 عبور کند.\\nاین توضیح آموزشی است؛ برای بررسی یک نمودار مشخص باید تصویر یا داده چارت در اختیار باشد.";
   let filtered=all;
   if(gold)filtered=all.filter(t=>/gold|طلا|دلار|اونس|فلز|نفت|fed|فدرال|تورم|نرخ بهره|بازده|yield|silver/i.test(t));
   else if(crypto)filtered=all.filter(t=>/crypto|bitcoin|btc|ethereum|eth|کریپتو|رمزارز|بیت.?کوین|اتریوم|token/i.test(t));
-  else if(stocks)filtered=all.filter(t=>/nasdaq|s&p|stock|سهام|بورس|وال.?استریت|شاخص|فدرال|fed|اقتصاد آمریکا/i.test(t));
+  else if(stocks)filtered=all.filter(t=>/nasdaq|nas.?100|nq\b|s&p|stock|سهام|بورس|وال.?استریت|شاخص|فدرال|fed|اقتصاد آمریکا|نرخ بهره|تورم/i.test(t));
   const label=gold?"طلا و دلار":crypto?"ارزهای دیجیتال":stocks?"بورس آمریکا":"بازارها";
   if(/تقویم|رویداد|cpi|nfp|fomc|gdp|calendar/.test(query)){
    const cal=document.getElementById("bhrEconomicCalendar");
@@ -3397,7 +3398,13 @@ header .bhr-sun-letters:after{
    const response=await fetch("https://tiny-unit-4ed3.behnamhuntingroom.workers.dev/ai",{
     method:"POST",
     headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({message:clean,newsContext,calendarContext})
+    body:JSON.stringify({
+     message:[
+      "راهنمای تحلیل تخصصی BHR: بازارهای تحت پوشش طلا XAUUSD و نزدک شامل شاخص Nasdaq-100، قرارداد آتی NQ و نمادهای CFD مانند NAS100 هستند؛ این نمادها را از نظر نوع ابزار و قیمت با هم یکی فرض نکن. اگر نماد مشخص نیست، ابهام را اعلام کن. برای هر دو بازار ساختار روند و روش اختصاصی P1/P2/P3 را بررسی کن: P1 نقطه چرخش مهم، P2 سقف/کف بعدی در جهت روند و P3 پولبک؛ تأیید روند فقط پس از تشکیل P3 و شکست سطح P2 با بدنه کندل است. در صورت وجود داده معتبر، VWAP، حجم، Order Flow و Cumulative Delta را بررسی کن؛ اگر داده یا تصویر چارت ارائه نشده، ادعا نکن آن‌ها را دیده‌ای. تحلیل را با سناریوی صعودی/نزولی، شرط فعال‌شدن، نقطه ابطال، حد ضرر و اهداف مشروط ساختاربندی کن؛ اگر داده کافی نیست، سطح ورود یا قیمت نساز و سؤال مشخص بپرس. رویدادهای اقتصادی و همبستگی دلار/بازده اوراق برای طلا و نرخ بهره/سهام فناوری برای نزدک را در صورت ارتباط لحاظ کن. پاسخ کاملاً فارسی، دقیق، بدون تکرار و بدون وعده سود باشد.",
+      clean
+     ].join("\n\n"),
+     newsContext,calendarContext
+    })
    });
    const data=await response.json().catch(()=>({}));
    if(!response.ok||!data.ok||!data.answer){
