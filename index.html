@@ -642,6 +642,34 @@ header .brand{position:relative;display:inline-flex;align-items:center;gap:10px;
   }
 }
 </style>
+
+<style id="bhr-user-panel-style">
+#bhrUserPanelOpen{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:12px;padding:10px 13px;background:linear-gradient(145deg,#292316,#111);color:var(--gold2);font:inherit;font-size:13px;cursor:pointer}
+#bhrUserPanelOpen:hover{border-color:var(--gold2);transform:translateY(-1px)}
+#bhr-user-panel{position:fixed;inset:0;z-index:10001;background:#000b;display:none;place-items:center;padding:16px}
+#bhr-user-panel.open{display:grid}
+#bhr-user-panel-box{width:min(920px,100%);max-height:min(88vh,780px);overflow:auto;border:1px solid var(--line);border-radius:20px;background:#101110;color:var(--text);box-shadow:0 20px 70px #0009;padding:22px}
+#bhr-user-panel-box .bhr-panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding-bottom:14px}
+#bhr-user-panel-box h2,#bhr-user-panel-box h3{color:var(--gold2);margin:0}
+#bhr-user-panel-box button{font:inherit;cursor:pointer}
+#bhrUserPanelClose{border:1px solid var(--line);border-radius:10px;padding:8px 13px;background:transparent;color:inherit}
+.bhr-panel-layout{display:grid;grid-template-columns:190px 1fr;gap:18px;margin-top:18px}
+.bhr-panel-tabs{display:grid;align-content:start;gap:8px}
+.bhr-panel-tab{border:1px solid var(--line);border-radius:10px;padding:11px;text-align:right;background:#ffffff08;color:var(--text)}
+.bhr-panel-tab.active{background:#d7b45a20;border-color:var(--gold);color:var(--gold2)}
+.bhr-panel-content{min-width:0}
+.bhr-panel-card{border:1px solid var(--line);border-radius:14px;background:#ffffff08;padding:17px;margin-bottom:12px}
+.bhr-panel-card p{color:var(--muted);line-height:1.9;margin:8px 0 0}
+.bhr-panel-status{display:inline-block;border:1px solid #c69b4c66;border-radius:30px;padding:4px 10px;color:var(--gold2);font-size:12px}
+.bhr-panel-empty{padding:22px;text-align:center;border:1px dashed var(--line);border-radius:12px;color:var(--muted);line-height:1.9}
+.bhr-panel-stat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+.bhr-panel-stat{padding:14px;border:1px solid var(--line);border-radius:12px;background:#0002}
+.bhr-panel-stat strong{display:block;color:var(--gold2);font-size:20px;margin-bottom:4px}
+.bhr-panel-stat span{font-size:12px;color:var(--muted)}
+:root[data-theme="light"] #bhr-user-panel-box{background:#fffdf7;color:#191711}
+:root[data-theme="light"] .bhr-panel-tab{color:#191711;background:#00000005}
+@media(max-width:760px){#bhrUserPanelOpen{padding:8px;font-size:12px}.bhr-panel-layout{grid-template-columns:1fr}.bhr-panel-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.bhr-panel-stat-grid{grid-template-columns:1fr}#bhr-user-panel-box{padding:15px}}
+</style>
 </head>
 <body>
 <header>
@@ -653,6 +681,11 @@ header .brand{position:relative;display:inline-flex;align-items:center;gap:10px;
 <a href="#contact"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg><span data-fa="تماس" data-en="Contact">تماس</span></a>
 </nav>
 <div class="header-tools">
+<button id="bhrUserPanelOpen" type="button" aria-haspopup="dialog" aria-controls="bhr-user-panel">
+<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+<span>پنل کاربری</span>
+</button>
+
 <button id="bhrCartToggle" type="button" aria-label="باز کردن سبد خرید" aria-controls="bhrCartDrawer" aria-expanded="false">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
 <span data-fa="سبد خرید" data-en="Cart">سبد خرید</span><span id="bhrCartCount" aria-live="polite">۰</span>
@@ -1828,6 +1861,40 @@ header .bhr-sun-letters{transform:translateZ(12px);text-shadow:0 1px 0 #8d6420,0
 
 </div>
 
+
+<div id="bhr-user-panel" aria-hidden="true">
+ <section id="bhr-user-panel-box" role="dialog" aria-modal="true" aria-labelledby="bhrUserPanelTitle">
+  <div class="bhr-panel-head">
+   <div><h2 id="bhrUserPanelTitle">پنل کاربری اتاق شکار</h2><small style="color:var(--muted)">BEHNAM HUNTING ROOM</small></div>
+   <button type="button" id="bhrUserPanelClose">بستن ✕</button>
+  </div>
+  <div class="bhr-panel-layout">
+   <nav class="bhr-panel-tabs" aria-label="بخش‌های پنل کاربری">
+    <button type="button" class="bhr-panel-tab active" data-bhr-panel-tab="overview">نمای کلی</button>
+    <button type="button" class="bhr-panel-tab" data-bhr-panel-tab="profile">پروفایل من</button>
+    <button type="button" class="bhr-panel-tab" data-bhr-panel-tab="history">تاریخچه گفتگوها</button>
+    <button type="button" class="bhr-panel-tab" data-bhr-panel-tab="settings">تنظیمات حساب</button>
+   </nav>
+   <div class="bhr-panel-content">
+    <div data-bhr-panel-view="overview">
+     <div class="bhr-panel-card"><span class="bhr-panel-status">حالت آزمایشی · بدون ورود</span><h3 style="margin-top:12px">به پنل کاربری خوش آمدی</h3><p>ساختار پنل آماده شده است. برای حفظ امنیت، اطلاعات شخصی و تاریخچه گفتگوها تا زمان فعال‌سازی ورود واقعی نمایش داده نمی‌شوند.</p>
+      <div class="bhr-panel-stat-grid"><div class="bhr-panel-stat"><strong>۰</strong><span>گفتگوی ذخیره‌شده</span></div><div class="bhr-panel-stat"><strong>غیرفعال</strong><span>وضعیت حساب</span></div><div class="bhr-panel-stat"><strong>آماده</strong><span>زیرساخت پنل</span></div></div>
+     </div>
+    </div>
+    <div data-bhr-panel-view="profile" hidden>
+     <div class="bhr-panel-card"><h3>پروفایل من</h3><div class="bhr-panel-empty">برای مشاهده یا ویرایش نام و اطلاعات پروفایل، ابتدا باید ورود امن کاربران فعال شود.<br>در حال حاضر هیچ اطلاعات شخصی از بازدیدکننده دریافت یا ذخیره نمی‌شود.</div></div>
+    </div>
+    <div data-bhr-panel-view="history" hidden>
+     <div class="bhr-panel-card"><h3>تاریخچه گفتگوها</h3><div class="bhr-panel-empty">هنوز گفتگویی در حساب کاربری ذخیره نشده است.<br>ذخیره و بازیابی گفتگوها پس از فعال‌سازی احراز هویت و اتصال امن به پایگاه داده راه‌اندازی می‌شود.</div></div>
+    </div>
+    <div data-bhr-panel-view="settings" hidden>
+     <div class="bhr-panel-card"><h3>تنظیمات حساب</h3><div class="bhr-panel-empty">تنظیمات حساب پس از فعال‌شدن ورود در دسترس قرار می‌گیرد.<br>ورود پیامکی فعلاً فعال نیست و هیچ عملیات ورود یا خروجی انجام نمی‌شود.</div></div>
+    </div>
+   </div>
+  </div>
+ </section>
+</div>
+
 <div id="bhr-auth-panel" aria-hidden="true">
  <div id="bhr-auth-box">
   <div class="bhr-up-row">
@@ -2714,6 +2781,28 @@ window.addEventListener("popstate",()=>{
 });
 const initial=location.hash.startsWith("#bhr-page-")?location.hash.slice(10):"home";
 showPage(initial,false);
+})();
+</script>
+
+
+<script id="bhr-user-panel-script">
+(()=>{
+ const panel=document.getElementById("bhr-user-panel");
+ const openBtn=document.getElementById("bhrUserPanelOpen");
+ const closeBtn=document.getElementById("bhrUserPanelClose");
+ if(!panel||!openBtn||!closeBtn)return;
+ const close=()=>{panel.classList.remove("open");panel.setAttribute("aria-hidden","true");openBtn.focus();};
+ openBtn.addEventListener("click",()=>{panel.classList.add("open");panel.setAttribute("aria-hidden","false");});
+ closeBtn.addEventListener("click",close);
+ panel.addEventListener("click",e=>{if(e.target===panel)close();});
+ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&panel.classList.contains("open"))close();});
+ const tabs=panel.querySelectorAll("[data-bhr-panel-tab]");
+ const views=panel.querySelectorAll("[data-bhr-panel-view]");
+ tabs.forEach(tab=>tab.addEventListener("click",()=>{
+  const key=tab.dataset.bhrPanelTab;
+  tabs.forEach(item=>item.classList.toggle("active",item===tab));
+  views.forEach(view=>view.hidden=view.dataset.bhrPanelView!==key);
+ }));
 })();
 </script>
 
