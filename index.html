@@ -735,6 +735,21 @@ header .brand .bhr-brand-behnam{color:#22c55e!important}
 header .brand .bhr-brand-hunting{color:#ffffff!important}
 header .brand .bhr-brand-room{color:#ef4444!important}
 </style>
+
+<style id="bhr-desktop-market-pulse-style">
+/* Desktop-only live market pulse. Mobile layout and styles remain untouched. */
+#bhr-live-dashboard{display:none;width:min(1120px,92%);margin:18px auto 28px;padding:18px 20px;border:1px solid rgba(215,180,90,.42);border-radius:18px;background:radial-gradient(ellipse at 50% 0,rgba(215,180,90,.13),transparent 70%),linear-gradient(145deg,#17150f,#090a0a 75%);box-shadow:0 14px 36px #0007,inset 0 1px 0 rgba(242,217,139,.1);color:#f5f1e7;box-sizing:border-box}
+#bhr-live-dashboard *{box-sizing:border-box}
+#bhr-live-dashboard .bhr-live-dashboard-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:12px}
+#bhr-live-dashboard h2{margin:0;color:#f2d98b;font-size:18px;font-weight:900}
+#bhr-live-dashboard .bhr-live-dashboard-sub{margin:5px 0 0;color:#aaa18e;font-size:11px;line-height:1.8}
+#bhr-live-dashboard .bhr-live-dashboard-tag{flex:0 0 auto;padding:6px 10px;border:1px solid rgba(215,180,90,.32);border-radius:999px;color:#8bd6a2;background:rgba(139,214,162,.07);font-size:10px;font-weight:800}
+#bhr-live-dashboard .bhr-live-dashboard-widget{width:100%;min-height:245px;overflow:hidden;border:1px solid rgba(215,180,90,.16);border-radius:12px;background:rgba(0,0,0,.18)}
+#bhr-live-dashboard .tradingview-widget-container__widget{width:100%;min-height:245px}
+#bhr-live-dashboard .bhr-live-dashboard-note{margin:9px 2px 0;color:#8f8878;font-size:10px;line-height:1.8}
+@media(min-width:761px){#bhr-live-dashboard{display:block}}
+@media(max-width:760px){#bhr-live-dashboard{display:none!important}}
+</style>
 </head>
 <body>
 <header>
@@ -779,6 +794,39 @@ header .brand .bhr-brand-room{color:#ef4444!important}
   </div>
   <div class="bhr-price-status"><span id="bhrPriceUpdated">در حال اتصال به منبع قیمت...</span><span>منبع: <a href="https://nerkhara.com/" target="_blank" rel="noopener">NerkhAra</a> · به‌روزرسانی منبع حدود هر ۱۰ دقیقه</span></div>
 </section>
+<section id="bhr-live-dashboard" aria-label="داشبورد زنده بازار">
+  <div class="bhr-live-dashboard-head">
+    <div><h2> BHR MARKET PULSE | نبض زنده بازار</h2><p class="bhr-live-dashboard-sub">قیمت، درصد تغییر و جهت حرکت طلا، بیت‌کوین، اتریوم و نزدک در یک نگاه</p></div>
+    <span class="bhr-live-dashboard-tag">● LIVE MARKET DATA</span>
+  </div>
+  <div class="bhr-live-dashboard-widget tradingview-widget-container">
+    <div class="tradingview-widget-container__widget"></div>
+  </div>
+  <p class="bhr-live-dashboard-note">منبع داده: TradingView · تغییرات مثبت و منفی با رنگ‌های سبز و قرمز نمایش داده می‌شوند. زمان به‌روزرسانی و تأخیر احتمالی به منبع و نماد معاملاتی وابسته است.</p>
+</section>
+<script id="bhr-desktop-market-pulse-loader">
+(() => {
+  if (!window.matchMedia || !window.matchMedia('(min-width: 761px)').matches) return;
+  const host = document.querySelector('#bhr-live-dashboard .bhr-live-dashboard-widget');
+  if (!host || host.dataset.loaded === '1') return;
+  host.dataset.loaded = '1';
+  const widget = document.createElement('script');
+  widget.type = 'text/javascript';
+  widget.async = true;
+  widget.src = 'https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js';
+  widget.textContent = JSON.stringify({
+    width: '100%', height: 245,
+    symbolsGroups: [{name: 'BHR WATCHLIST', originalName: 'BHR WATCHLIST', symbols: [
+      {name: 'OANDA:XAUUSD', displayName: 'Gold'},
+      {name: 'BINANCE:BTCUSDT', displayName: 'Bitcoin'},
+      {name: 'BINANCE:ETHUSDT', displayName: 'Ethereum'},
+      {name: 'NASDAQ:NDX', displayName: 'Nasdaq 100'}
+    ]}],
+    showSymbolLogo: true, isTransparent: true, colorTheme: 'dark', locale: 'en'
+  });
+  host.appendChild(widget);
+})();
+</script>
 <section id="markets">
 <div class="wrap">
 <h2 class="section-title" data-fa="خدمات اتاق شکار" data-en="Hunting Room Services">خدمات اتاق شکار</h2>
