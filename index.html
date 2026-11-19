@@ -2979,7 +2979,7 @@ header nav .bhr-nav-cart svg{stroke:#22c55e!important}
   const translate=async title=>{
    const key=title.toLowerCase();if(cache[key])return cache[key];
    let used=Number(localStorage.getItem(dailyKey)||"0");
-   if(used>=25)return title;
+   if(used>=4000)return title;
    try{
     const url="https://api.mymemory.translated.net/get?"+new URLSearchParams({q:title.slice(0,450),langpair:"en|fa"});
     const response=await fetch(url);if(!response.ok)throw new Error("translation http "+response.status);
