@@ -3291,6 +3291,7 @@ header .bhr-sun-letters:after{
   page.querySelectorAll("[data-bhr-heatmap-host]").forEach(host=>host.hidden=host.dataset.bhrHeatmapHost!==key);
   load(key);
  }));
- load("stocks");
+ if(page.classList.contains("is-active"))load("stocks");
+ else{const observer=new MutationObserver(()=>{if(page.classList.contains("is-active")){load("stocks");observer.disconnect();}});observer.observe(page,{attributes:true,attributeFilter:["class"]});}
 })();
 </script>
