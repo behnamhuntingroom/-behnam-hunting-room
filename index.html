@@ -722,6 +722,11 @@ header .brand{position:relative;display:inline-flex;align-items:center;gap:10px;
  #bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-shortcut strong{font-size:10px!important}
  #bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-shortcut small{font-size:8px!important}
 }
+
+/* Hide the redundant six shortcut cards on mobile only; desktop remains unchanged */
+@media(max-width:600px){
+ #bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar{display:none!important}
+}
 </style>
 
 </head>
