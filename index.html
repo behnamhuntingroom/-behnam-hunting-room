@@ -2833,8 +2833,8 @@ shortcuts.innerHTML=
  '<a class="bhr-shortcut" href="#bhr-page-markets" data-bhr-page="markets"><span class="bhr-shortcut-icon">⌁</span><strong>مرکز بازار</strong><small>مشاهده بازارها در صفحه اصلی</small></a>'+
  '<a class="bhr-shortcut" href="#bhr-page-tools" data-bhr-page="tools"><span class="bhr-shortcut-icon">⚙</span><strong>ابزارهای ترید</strong><small>ماشین‌حساب و ابزارهای مدیریت معامله</small></a>'+
  '<a class="bhr-shortcut" href="#bhr-page-community" data-bhr-page="community"><span class="bhr-shortcut-icon">♧</span><strong>تحلیل کاربران</strong><small>ثبت و بررسی تحلیل‌ها</small></a>'+
- '<a class="bhr-shortcut" href="#bhr-page-about" data-bhr-page="about"><span class="bhr-shortcut-icon">✦</span><strong>درباره ما</strong><small>آشنایی با برند BHR</small></a>'+
- '<a class="bhr-shortcut bhr-shortcut-assistant" href="#bhr-page-assistant" data-bhr-page="assistant"><span class="bhr-shortcut-icon">✧</span><strong>دستیار هوشمند BHR</strong><small>تحلیل و پاسخ‌گویی هوشمند بازارها</small></a>';
+ '<a class="bhr-shortcut bhr-shortcut-assistant" href="#bhr-page-assistant" data-bhr-page="assistant"><span class="bhr-shortcut-icon">✧</span><strong>دستیار هوشمند BHR</strong><small>تحلیل و پاسخ‌گویی هوشمند بازارها</small></a>'+
+ '<a class="bhr-shortcut" href="#bhr-page-about" data-bhr-page="about"><span class="bhr-shortcut-icon">✦</span><strong>درباره ما</strong><small>آشنایی با برند BHR</small></a>';
 const methodIntro=document.createElement("section");
 methodIntro.className="bhr-home-method-intro";
 methodIntro.innerHTML=
@@ -3348,7 +3348,17 @@ header .bhr-sun-letters:after{
 </style>
 <style id="bhr-assistant-shortcut-placement">
 .bhr-shortcut-assistant{display:none}
-@media(min-width:761px){.bhr-shortcut-assistant{display:block}}
+@media(min-width:761px){
+ .bhr-shortcut-assistant{display:block;border-color:rgba(65,210,112,.48);background:linear-gradient(145deg,rgba(10,58,30,.72),rgba(8,25,17,.96));animation:bhrAssistantGreenPulse 3.2s ease-in-out infinite}
+ .bhr-shortcut-assistant .bhr-shortcut-icon,.bhr-shortcut-assistant strong{color:#76f5a0;text-shadow:0 0 9px rgba(72,235,126,.42)}
+ .bhr-shortcut-assistant small{color:#b7e9c7}
+ .bhr-shortcut-assistant:hover{border-color:#65f394;box-shadow:0 10px 30px rgba(46,220,108,.2),0 0 22px rgba(46,220,108,.18)}
+}
+@keyframes bhrAssistantGreenPulse{
+ 0%,100%{border-color:rgba(65,210,112,.34);box-shadow:0 8px 22px rgba(20,120,58,.10),0 0 7px rgba(46,220,108,.08);filter:brightness(.94)}
+ 50%{border-color:rgba(90,255,145,.78);box-shadow:0 10px 28px rgba(20,170,75,.2),0 0 20px rgba(46,220,108,.25);filter:brightness(1.12)}
+}
+@media(prefers-reduced-motion:reduce){.bhr-shortcut-assistant{animation:none!important;filter:none!important}}
 #bhr-assistant-page #bhr-smart-assistant{width:min(1120px,92%);margin:0 auto 24px}
 </style>
 <script id="bhr-smart-assistant-engine">
