@@ -3161,3 +3161,52 @@ header nav .bhr-nav-cart svg{stroke:#22c55e!important}
 
 </body>
 </html>
+
+
+<style id="bhr-emblem-motion-upgrade">
+/* BHR emblem: visible 3D motion and moving gold highlight */
+header .bhr-sun-mark{
+  transform-style:preserve-3d!important;
+  transform-origin:center center!important;
+  animation:bhr-mark-3d 3.2s ease-in-out infinite,bhr-mark-glow 1.6s ease-in-out infinite alternate!important;
+  will-change:transform,filter,box-shadow;
+}
+header .bhr-sun-letters{
+  position:relative!important;
+  display:inline-block;
+  overflow:visible;
+}
+header .bhr-sun-letters:after{
+  content:"";
+  position:absolute;
+  top:-3px;
+  bottom:-3px;
+  left:-12px;
+  width:5px;
+  border-radius:50%;
+  background:linear-gradient(180deg,transparent,rgba(255,250,220,.98),transparent);
+  box-shadow:0 0 7px 2px rgba(255,225,145,.75);
+  transform:skewX(-18deg);
+  pointer-events:none;
+  animation:bhr-letter-shine 2.7s ease-in-out infinite;
+}
+@keyframes bhr-mark-3d{
+  0%,100%{transform:perspective(420px) rotateY(-32deg) rotateZ(-7deg) scale(1)}
+  25%{transform:perspective(420px) rotateY(0deg) rotateZ(0deg) scale(1.09)}
+  50%{transform:perspective(420px) rotateY(32deg) rotateZ(7deg) scale(1)}
+  75%{transform:perspective(420px) rotateY(0deg) rotateZ(0deg) scale(1.09)}
+}
+@keyframes bhr-mark-glow{
+  from{filter:brightness(1);box-shadow:inset 2px 2px 4px #fff8,inset -3px -3px 6px #1b1208,0 3px 0 #684817,0 7px 13px #0009,0 0 14px rgba(215,180,90,.28)!important}
+  to{filter:brightness(1.3);box-shadow:inset 2px 2px 5px #fff9,inset -3px -3px 6px #1b1208,0 3px 0 #684817,0 7px 16px #0009,0 0 30px rgba(255,211,105,.72)!important}
+}
+@keyframes bhr-letter-shine{
+  0%,18%{left:-12px;opacity:0}
+  30%{opacity:1}
+  62%{left:calc(100% + 8px);opacity:0}
+  100%{left:calc(100% + 8px);opacity:0}
+}
+@media(prefers-reduced-motion:reduce){
+  header .bhr-sun-mark,header .bhr-sun-letters:after{animation:none!important}
+}
+</style>
