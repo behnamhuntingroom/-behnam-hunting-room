@@ -2944,6 +2944,29 @@ header nav .bhr-nav-cart svg{stroke:#22c55e!important}
  .bhr-live-news .bhr-news-item a{font-size:11px}
 }
 
+
+/* Trading room: compact brief above the Persian live-news feed */
+#bhr-command-center .bhr-up-grid{
+ display:grid!important;
+ grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+ align-items:start;
+}
+#bhr-command-center .bhr-news-brief{grid-column:1;grid-row:1}
+#bhr-command-center .bhr-live-news{grid-column:1;grid-row:2}
+#bhr-command-center .bhr-live-calendar{grid-column:2;grid-row:1 / span 2}
+#bhr-command-center .bhr-news-brief>p{margin:3px 0 7px!important;font-size:11px;line-height:1.5}
+#bhr-command-center .bhr-news-brief .bhr-news-list{gap:5px}
+#bhr-command-center .bhr-news-brief .bhr-news-item{padding:7px 9px}
+#bhr-command-center .bhr-news-brief .bhr-news-item a{font-size:11px;line-height:1.5}
+#bhr-command-center .bhr-news-brief .bhr-news-meta{margin-top:3px;font-size:9px}
+#bhr-command-center .bhr-news-brief .bhr-news-item:nth-child(n+4){display:none}
+@media(max-width:800px){
+ #bhr-command-center .bhr-up-grid{grid-template-columns:minmax(0,1fr)!important}
+ #bhr-command-center .bhr-news-brief{grid-column:1;grid-row:1}
+ #bhr-command-center .bhr-live-news{grid-column:1;grid-row:2}
+ #bhr-command-center .bhr-live-calendar{grid-column:1;grid-row:3}
+}
+
 </style>
 <script id="bhr-tradingview-widgets">
 (()=>{
