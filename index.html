@@ -3541,17 +3541,20 @@ header .bhr-sun-letters:after{
 
 <style id="bhr-chat-launcher-nudge">
 #bhr-support-launcher{
- animation:bhrChatPingPong 2s ease-in-out infinite;
+ transform-origin:50% 12%;
+ animation:bhrChatBellVibrate 3s ease-in-out infinite;
  will-change:transform;
 }
-@keyframes bhrChatPingPong{
- 0%,12%{transform:translateY(0) scaleX(1)}
- 24%{transform:translateY(-7px) scaleX(.99)}
- 36%{transform:translateY(-17px) scaleX(.97)}
- 44%,58%{transform:translateY(-27px) scaleX(.96)}
- 70%{transform:translateY(-17px) scaleX(.97)}
- 82%{transform:translateY(-7px) scaleX(.99)}
- 92%,100%{transform:translateY(0) scaleX(1)}
+@keyframes bhrChatBellVibrate{
+ 0%,82%,100%{transform:rotate(0deg)}
+ 84%{transform:rotate(-9deg)}
+ 86%{transform:rotate(9deg)}
+ 88%{transform:rotate(-7deg)}
+ 90%{transform:rotate(7deg)}
+ 92%{transform:rotate(-4deg)}
+ 94%{transform:rotate(4deg)}
+ 96%{transform:rotate(-1.5deg)}
+ 98%{transform:rotate(1.5deg)}
 }
 @media(prefers-reduced-motion:reduce){
  #bhr-support-launcher{animation:none!important;will-change:auto}
