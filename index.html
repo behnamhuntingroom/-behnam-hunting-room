@@ -687,6 +687,41 @@ header .brand{position:relative;display:inline-flex;align-items:center;gap:10px;
 @media(max-width:600px){
  #bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-home-shortcuts{grid-template-columns:1fr}
 }
+
+/* Mobile-only compact layout for the six home shortcut cards; navigation menu is untouched */
+@media(max-width:600px){
+ #bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar{
+  width:100%!important;max-width:100%!important;margin:22px auto 0!important;
+  position:relative!important;inset:auto!important;transform:none!important;
+ }
+ #bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-home-shortcuts{
+  width:100%!important;margin:0!important;
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:8px!important;align-items:stretch;
+ }
+ #bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-shortcut{
+  min-width:0;min-height:78px;padding:9px 8px!important;
+  grid-template-columns:25px minmax(0,1fr)!important;
+  column-gap:6px!important;row-gap:1px!important;
+  border-radius:12px;text-align:right;
+ }
+ #bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-shortcut .bhr-shortcut-icon{
+  font-size:18px!important;grid-column:1!important;grid-row:1 / span 2!important;
+ }
+ #bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-shortcut strong{
+  font-size:11px!important;line-height:1.5;overflow-wrap:anywhere;
+ }
+ #bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-shortcut small{
+  font-size:9px!important;line-height:1.45!important;overflow-wrap:anywhere;
+ }
+}
+@media(max-width:360px){
+ #bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-home-shortcuts{gap:6px!important}
+ #bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-shortcut{padding:8px 6px!important;grid-template-columns:21px minmax(0,1fr)!important}
+ #bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-shortcut .bhr-shortcut-icon{font-size:16px!important}
+ #bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-shortcut strong{font-size:10px!important}
+ #bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-shortcut small{font-size:8px!important}
+}
 </style>
 
 </head>
