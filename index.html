@@ -3529,8 +3529,8 @@ header .bhr-sun-letters:after{
  }
 }
 @keyframes bhrHeatTextFirePulse{
- 0%,100%{filter:brightness(1.05) drop-shadow(0 0 7px rgba(255,105,35,.88)) drop-shadow(0 0 13px rgba(225,35,20,.62))}
- 50%{filter:brightness(2.35) drop-shadow(0 0 11px rgba(255,175,65,1)) drop-shadow(0 0 27px rgba(245,35,20,1)) drop-shadow(0 0 42px rgba(245,65,15,.82))}
+ 0%,100%{filter:brightness(.62) drop-shadow(0 0 2px rgba(255,75,20,.32)) drop-shadow(0 0 5px rgba(190,20,10,.22))}
+ 50%{filter:brightness(3.15) drop-shadow(0 0 15px rgba(255,190,75,1)) drop-shadow(0 0 34px rgba(255,45,15,1)) drop-shadow(0 0 58px rgba(245,35,10,.98))}
 }
 @media(prefers-reduced-motion:reduce){
  nav a[data-bhr-page="heatmap"]>span{animation:none!important;filter:drop-shadow(0 0 5px rgba(255,85,25,.7))!important}
@@ -3545,14 +3545,13 @@ header .bhr-sun-letters:after{
  will-change:transform;
 }
 @keyframes bhrChatPingPong{
- 0%,100%{transform:translateY(0) scaleX(1)}
- 12%{transform:translateY(-7px) scaleX(.99)}
- 25%{transform:translateY(-17px) scaleX(.97)}
- 38%{transform:translateY(-24px) scaleX(.96)}
- 50%{transform:translateY(-27px) scaleX(.96)}
- 62%{transform:translateY(-23px) scaleX(.97)}
- 75%{transform:translateY(-14px) scaleX(.98)}
- 88%{transform:translateY(-5px) scaleX(1)}
+ 0%,12%{transform:translateY(0) scaleX(1)}
+ 24%{transform:translateY(-7px) scaleX(.99)}
+ 36%{transform:translateY(-17px) scaleX(.97)}
+ 44%,58%{transform:translateY(-27px) scaleX(.96)}
+ 70%{transform:translateY(-17px) scaleX(.97)}
+ 82%{transform:translateY(-7px) scaleX(.99)}
+ 92%,100%{transform:translateY(0) scaleX(1)}
 }
 @media(prefers-reduced-motion:reduce){
  #bhr-support-launcher{animation:none!important;will-change:auto}
