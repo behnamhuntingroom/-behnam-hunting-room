@@ -1867,6 +1867,26 @@ header .bhr-sun-letters{transform:translateZ(12px);text-shadow:0 1px 0 #8d6420,0
   </div>
  </div>
 
+ <section class="bhr-up-card" id="bhr-smart-assistant" aria-label="دستیار هوشمند BHR">
+  <div class="bhr-assistant-head">
+   <div><span class="bhr-assistant-kicker">BHR INTELLIGENCE</span><h3>دستیار هوشمند BHR</h3><p>جمع‌بندی داده‌های بازار، اخبار و چارچوب معاملاتی BHR</p></div>
+   <span class="bhr-assistant-status">نسخه اولیه فعال</span>
+  </div>
+  <div class="bhr-assistant-note">این نسخه از خبرها و اطلاعات قابل‌خواندن همین صفحه و قواعد تحلیلی استفاده می‌کند؛ هنوز به مدل هوش مصنوعی مولد یا داده مستقیم لحظه‌ای قیمت متصل نیست.</div>
+  <div class="bhr-assistant-quick">
+   <button type="button" data-bhr-assistant-prompt="یک جمع‌بندی از وضعیت خبرهای مهم بازار بده">جمع‌بندی بازار</button>
+   <button type="button" data-bhr-assistant-prompt="خبرهای مرتبط با طلا و دلار را بررسی کن">طلا و دلار</button>
+   <button type="button" data-bhr-assistant-prompt="خبرهای مرتبط با ارزهای دیجیتال را بررسی کن">کریپتو</button>
+   <button type="button" data-bhr-assistant-prompt="روش معاملاتی P1 P2 P3 را توضیح بده">روش P1 / P2 / P3</button>
+  </div>
+  <div class="bhr-assistant-chat" id="bhrAssistantChat" aria-live="polite">
+   <div class="bhr-assistant-message bhr-assistant-bot">سلام! من دستیار تحلیلی BHR هستم. می‌توانم خبرهای موجود در اتاق معاملاتی را دسته‌بندی و روش معاملاتی BHR را توضیح بدهم. سوالت را بنویس یا یکی از میانبرها را انتخاب کن.</div>
+  </div>
+  <form class="bhr-assistant-form" id="bhrAssistantForm">
+   <input id="bhrAssistantInput" type="text" maxlength="500" autocomplete="off" placeholder="مثلاً وضعیت خبرهای طلا و دلار را جمع‌بندی کن..." aria-label="سوال از دستیار BHR">
+   <button type="submit">تحلیل کن</button>
+  </form>
+ </section>
  <div class="bhr-up-card" style="margin-top:16px">
   <h3>سناریوهای معاملاتی من</h3>
   <div class="bhr-up-row">
@@ -3293,5 +3313,74 @@ header .bhr-sun-letters:after{
  }));
  if(page.classList.contains("is-active"))load("stocks");
  else{const observer=new MutationObserver(()=>{if(page.classList.contains("is-active")){load("stocks");observer.disconnect();}});observer.observe(page,{attributes:true,attributeFilter:["class"]});}
+})();
+</script>
+
+<style id="bhr-smart-assistant-styles">
+#bhr-smart-assistant{display:none}
+@media(min-width:761px){
+ #bhr-smart-assistant{display:block;margin:16px 0;padding:20px;border:1px solid rgba(215,180,90,.35);background:linear-gradient(145deg,rgba(30,27,20,.98),rgba(12,15,18,.98));box-shadow:0 14px 34px #0005}
+ .bhr-assistant-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}
+ .bhr-assistant-kicker{font-size:10px;letter-spacing:2px;color:var(--gold2);font-weight:900}
+ #bhr-smart-assistant .bhr-assistant-head h3{font-size:21px;color:var(--gold2);margin:5px 0}
+ #bhr-smart-assistant .bhr-assistant-head p{font-size:12px;color:var(--muted);margin:0}
+ .bhr-assistant-status{font-size:11px;color:#9fe0ad;border:1px solid #4a9b5c66;border-radius:20px;padding:6px 10px;white-space:nowrap}
+ .bhr-assistant-note{font-size:11px;line-height:1.9;color:var(--muted);padding:9px 12px;margin:14px 0;border-right:2px solid var(--gold2);background:#ffffff06}
+ .bhr-assistant-quick{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+ .bhr-assistant-quick button,.bhr-assistant-form button{font:inherit;cursor:pointer;border:1px solid #b99a4b66;border-radius:9px;background:#d7b45a12;color:var(--gold2);padding:8px 12px;font-size:12px}
+ .bhr-assistant-quick button:hover,.bhr-assistant-form button:hover{background:#d7b45a25}
+ .bhr-assistant-chat{height:230px;overflow:auto;display:flex;flex-direction:column;gap:9px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#080b0e}
+ .bhr-assistant-message{max-width:88%;padding:10px 13px;border-radius:11px;font-size:12px;line-height:2;white-space:pre-wrap;overflow-wrap:anywhere}
+ .bhr-assistant-bot{align-self:flex-start;background:#202329;color:var(--text);border:1px solid #ffffff12}
+ .bhr-assistant-user{align-self:flex-end;background:#4b3d1c44;color:#f3e5bb;border:1px solid #d7b45a44}
+ .bhr-assistant-form{display:flex;gap:9px;margin-top:10px}
+ .bhr-assistant-form input{flex:1;min-width:0;border:1px solid var(--line);border-radius:9px;background:#0c1014;color:var(--text);padding:11px 13px;font:inherit;font-size:12px;outline:none}
+ .bhr-assistant-form input:focus{border-color:var(--gold2)}
+ .bhr-assistant-form button{padding:9px 20px;font-weight:800}
+}
+</style>
+<script id="bhr-smart-assistant-engine">
+(()=>{
+ const root=document.getElementById("bhr-smart-assistant");
+ if(!root||!window.matchMedia||!window.matchMedia("(min-width: 761px)").matches)return;
+ const form=root.querySelector("#bhrAssistantForm"),input=root.querySelector("#bhrAssistantInput"),chat=root.querySelector("#bhrAssistantChat");
+ if(!form||!input||!chat)return;
+ const add=(text,kind)=>{
+  const node=document.createElement("div");node.className="bhr-assistant-message "+(kind==="user"?"bhr-assistant-user":"bhr-assistant-bot");node.textContent=text;chat.appendChild(node);chat.scrollTop=chat.scrollHeight;
+ };
+ const headlines=()=>{
+  const nodes=[...document.querySelectorAll("#bhrMarketNews .bhr-news-item a,#bhrNewsBrief .bhr-news-item a")];
+  const seen=new Set(),items=[];
+  nodes.forEach(a=>{const t=(a.textContent||"").trim();if(t&&!seen.has(t)){seen.add(t);items.push(t);}});
+  return items;
+ };
+ const explain=(q)=>{
+  const query=q.toLowerCase(),all=headlines();
+  const gold=/طلا|اونس|فلز|دلار|gold|xau|silver|fed|فدرال/.test(query);
+  const crypto=/کریپتو|رمزارز|بیت.?کوین|اتریوم|bitcoin|crypto|ethereum|btc|eth/.test(query);
+  const stocks=/نزدک|بورس|سهام|s&p|nasdaq|stock|بازار آمریکا/.test(query);
+  const p123=/p1|p2|p3|پی.?1|پی.?2|پی.?3|ساختار بازار/.test(query);
+  if(p123)return "چارچوب P1 / P2 / P3 در روش BHR:\\n• P1: مهم‌ترین سقف یا کف نوسانی که آغازگر روند جدید است.\\n• P2: سقف یا کف بعدی در جهت روند تازه.\\n• P3: پولبک پس از شکل‌گیری P2.\\n• تأیید روند زمانی است که پس از تشکیل P3، بدنه کندل از سطح P2 عبور کند.\\nاین توضیح آموزشی است؛ برای بررسی یک نمودار مشخص باید تصویر یا داده چارت در اختیار باشد.";
+  let filtered=all;
+  if(gold)filtered=all.filter(t=>/gold|طلا|دلار|اونس|فلز|نفت|fed|فدرال|تورم|نرخ بهره|بازده|yield|silver/i.test(t));
+  else if(crypto)filtered=all.filter(t=>/crypto|bitcoin|btc|ethereum|eth|کریپتو|رمزارز|بیت.?کوین|اتریوم|token/i.test(t));
+  else if(stocks)filtered=all.filter(t=>/nasdaq|s&p|stock|سهام|بورس|وال.?استریت|شاخص|فدرال|fed|اقتصاد آمریکا/i.test(t));
+  const label=gold?"طلا و دلار":crypto?"ارزهای دیجیتال":stocks?"بورس آمریکا":"بازارها";
+  if(/تقویم|رویداد|cpi|nfp|fomc|gdp|calendar/.test(query)){
+   const cal=document.getElementById("bhrEconomicCalendar");
+   const status=document.getElementById("bhrCalendarStatus");
+   const visible=(cal?.innerText||"").trim();
+   return "وضعیت تقویم اقتصادی:\\n"+(visible&&visible.length>45?visible.slice(0,900):"جزئیات رویدادها از ویجت تقویم TradingView بارگذاری می‌شود و محتوای داخل ویجت ممکن است برای دستیار قابل‌خواندن نباشد.")+"\\n"+(status?.textContent||"");
+  }
+  if(!filtered.length)return "در خبرهای فعلیِ قابل‌خواندن سایت، تیتر مرتبط و کافی برای «"+label+"» پیدا نکردم. وضعیت اتصال را در باکس اخبار زنده بررسی کن. این دستیار به قیمت لحظه‌ای چارت یا داده داخل ویجت‌های خارجی دسترسی مستقیم ندارد.";
+  const positives=/افزایش|رشد|صعود|تقویت|رکورد|جهش|بالا رفت|gains|rises|surge|higher|stronger|rally|beat/i;
+  const negatives=/کاهش|افت|ریزش|ضعف|سقوط|پایین آمد|زیان|loss|falls|drop|decline|lower|weak|selloff/i;
+  let pos=0,neg=0;filtered.forEach(t=>{if(positives.test(t))pos++;if(negatives.test(t))neg++;});
+  const tone=pos>neg?"در تیترهای قابل‌خواندن، واژه‌های مثبت بیشتر دیده می‌شود":neg>pos?"در تیترهای قابل‌خواندن، واژه‌های منفی بیشتر دیده می‌شود":"از روی تیترها جهت غالب روشنی به دست نمی‌آید";
+  return "جمع‌بندی خبرهای "+label+":\\n"+filtered.slice(0,6).map((t,i)=>(i+1)+". "+t).join("\\n")+"\\n\\nبرداشت اولیه: "+tone+". این فقط دسته‌بندی واژگانی تیترهاست، نه سنجش قطعی جهت قیمت. برای تصمیم معاملاتی، نمودار، ساختار قیمت، حجم و مدیریت ریسک را جداگانه بررسی کن.";
+ };
+ const ask=q=>{const clean=q.trim();if(!clean)return;add(clean,"user");add(explain(clean),"bot");};
+ form.addEventListener("submit",e=>{e.preventDefault();ask(input.value);input.value="";input.focus();});
+ root.querySelectorAll("[data-bhr-assistant-prompt]").forEach(btn=>btn.addEventListener("click",()=>ask(btn.dataset.bhrAssistantPrompt||"")));
 })();
 </script>
