@@ -1756,12 +1756,11 @@ header .bhr-sun-letters{transform:translateZ(12px);text-shadow:0 1px 0 #8d6420,0
  <p class="bhr-section-sub">مرکز پیگیری بازار، واچ‌لیست، رویدادهای اقتصادی و سناریوهای معاملاتی</p>
 
  <div class="bhr-up-grid">
-  <div class="bhr-up-card">
-   <h3>واچ‌لیست شخصی</h3>
-   <label class="bhr-up-label">نماد موردنظر</label>
-   <input class="bhr-up-input" id="bhrWatchSymbol" placeholder="مثلاً XAUUSD">
-   <button type="button" id="bhrWatchAdd">افزودن به واچ‌لیست</button>
-   <div class="bhr-up-list" id="bhrWatchList" style="margin-top:12px"></div>
+  <div class="bhr-up-card bhr-news-brief">
+   <h3>خلاصه اخبار مهم بازار</h3>
+   <p>منتخب تیترهای مهم ارز، طلا، کالاها و رمزارزها به زبان فارسی</p>
+   <div class="bhr-news-list" id="bhrNewsBrief"><div class="bhr-economic-empty">در حال دریافت خبرهای بازار…</div></div>
+   <div class="bhr-up-status" id="bhrNewsBriefStatus" role="status">در انتظار دریافت خبرها…</div>
   </div>
 
   <div class="bhr-up-card bhr-live-calendar">
@@ -1775,15 +1774,13 @@ header .bhr-sun-letters{transform:translateZ(12px);text-shadow:0 1px 0 #8d6420,0
 
   <div class="bhr-up-card bhr-live-news">
    <h3>اخبار زنده بازار</h3>
-   <p>آخرین خبرها و تیترهای بازارهای مالی از TradingView</p>
-   <div class="bhr-tv-widget" id="bhrMarketNews">
-    <div class="bhr-tv-placeholder">در حال اتصال به اخبار بازار…</div>
-   </div>
-   <div class="bhr-up-status" id="bhrNewsStatus" role="status">در انتظار بارگذاری منبع اخبار…</div>
+   <p>خبرهای تازه بازارهای جهانی با تیتر فارسی؛ به‌روزرسانی خودکار هر ۱۵ دقیقه</p>
+   <div class="bhr-news-list" id="bhrMarketNews"><div class="bhr-economic-empty">در حال دریافت خبرهای بازار…</div></div>
+   <div class="bhr-up-status" id="bhrNewsStatus" role="status">در انتظار دریافت خبرها…</div>
    <div class="bhr-up-item" style="margin-top:12px">
     <strong>وضعیت منابع داده</strong>
-    <div class="bhr-up-status" id="bhrMarketDataStatus">در حال بررسی اتصال ویجت‌های TradingView…</div>
-    <div class="bhr-up-status" id="bhrCommandUpdate">زمان بارگذاری منابع پس از اتصال ثبت می‌شود.</div>
+    <div class="bhr-up-status" id="bhrMarketDataStatus">در حال اتصال به فیدهای خبری Investing.com…</div>
+    <div class="bhr-up-status" id="bhrCommandUpdate">زمان آخرین دریافت پس از اتصال ثبت می‌شود.</div>
    </div>
   </div>
  </div>
@@ -2175,27 +2172,7 @@ $("bhrAlertAdd")?.addEventListener("click",()=>{
 });
 renderAlerts();
 
-/* Watchlist */
-function renderWatch(){
- const data=readStore("bhr-watchlist",[]),list=$("bhrWatchList");if(!list)return;
- list.innerHTML="";
- data.forEach((s,i)=>{
-  const box=document.createElement("div");box.className="bhr-up-item";
-  const t=document.createElement("strong");t.textContent=s;
-  const b=document.createElement("button");b.className="secondary";b.textContent="حذف";
-  b.addEventListener("click",()=>{data.splice(i,1);writeStore("bhr-watchlist",data);renderWatch();});
-  box.append(t,b);list.appendChild(box);
- });
-}
-$("bhrWatchAdd")?.addEventListener("click",()=>{
- const s=$("bhrWatchSymbol").value.trim().toUpperCase();
- if(!s)return;
- const data=readStore("bhr-watchlist",[]);
- if(!data.includes(s))data.push(s);
- writeStore("bhr-watchlist",data);$("bhrWatchSymbol").value="";renderWatch();
-});
-renderWatch();
-
+/* Watchlist removed: replaced by Persian market headlines. */
 /* Personal scenarios */
 function renderScenarios(){
  const data=readStore("bhr-scenarios",[]),list=$("bhrScenarioList");if(!list)return;
@@ -2873,15 +2850,22 @@ header nav .bhr-nav-cart svg{stroke:#22c55e!important}
 .bhr-economic-source{padding:0 12px 12px;font-size:11px;color:var(--muted);line-height:1.9}
 .bhr-economic-source a{color:var(--gold2);text-decoration:underline}
 .bhr-economic-empty{padding:22px;text-align:center;color:var(--muted);font-size:13px}
-.bhr-live-news .bhr-tv-widget{height:560px}
+.bhr-news-brief{min-width:0}
+.bhr-news-list{display:grid;gap:9px;min-width:0}
+.bhr-news-item{padding:12px;border:1px solid var(--line);border-radius:11px;background:var(--card);min-width:0}
+.bhr-news-item a{color:var(--text);font-weight:700;text-decoration:none;line-height:1.8}
+.bhr-news-item a:hover{color:var(--gold2)}
+.bhr-news-meta{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:7px;color:var(--muted);font-size:11px}
+.bhr-news-tag{color:var(--gold2);font-weight:700}
+.bhr-news-brief .bhr-news-item:nth-child(n+6){display:none}
 .bhr-tv-placeholder{min-height:180px;display:flex;align-items:center;justify-content:center;padding:20px;text-align:center;color:var(--muted);font-size:13px}
 @media(max-width:800px){
  .bhr-live-calendar{grid-column:1/-1}
- .bhr-live-news .bhr-tv-widget{height:520px}
+
 }
 @media(max-width:520px){
  .bhr-tv-widget{min-height:400px}
- .bhr-live-news .bhr-tv-widget{height:470px}
+
 }
 </style>
 <script id="bhr-tradingview-widgets">
@@ -2971,26 +2955,81 @@ header nav .bhr-nav-cart svg{stroke:#22c55e!important}
    update("bhrMarketDataStatus","وضعیت منبع تقویم اقتصادی: خطا در دریافت داده؛ منبع اخبار جداگانه بررسی می‌شود.");
   }
  }
- function mountNews(){
-  const host=document.getElementById("bhrMarketNews");if(!host)return;
-  const settings={feedMode:"all_symbols",isTransparent:false,displayMode:"regular",colorTheme:"dark",locale:"en",width:"100%",height:"560"};
-  const container=document.createElement("div");container.className="tradingview-widget-container";container.style.width="100%";container.style.height="100%";
-  const widget=document.createElement("div");widget.className="tradingview-widget-container__widget";widget.style.width="100%";widget.style.height="100%";container.append(widget);host.replaceChildren(container);
-  let checked=false;
-  const observer=new MutationObserver(()=>{
-   const frame=container.querySelector("iframe");
-   if(frame&&!checked){checked=true;frame.addEventListener("load",()=>{
-    update("bhrNewsStatus","اتصال اخبار TradingView برقرار شد؛ آخرین بارگذاری: "+stamp());
-    update("bhrMarketDataStatus","تقویم اقتصادی فارسی و ویجت اخبار TradingView بارگذاری شده‌اند.");
-   },{once:true});}
-  });
-  observer.observe(container,{childList:true,subtree:true});
-  const script=document.createElement("script");script.async=true;script.src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js";script.text=JSON.stringify(settings);
-  script.onerror=()=>update("bhrNewsStatus","بارگذاری اخبار انجام نشد؛ اتصال اینترنت یا دسترسی به TradingView را بررسی کنید.");
-  container.append(script);
-  window.setTimeout(()=>{if(!checked)update("bhrNewsStatus","هنوز پاسخی از ویجت اخبار دریافت نشده است.");},15000);
+ async function mountNews(){
+  const brief=document.getElementById("bhrNewsBrief"),host=document.getElementById("bhrMarketNews");
+  if(!brief&&!host)return;
+  const feeds=[
+   {name:"فارکس و ارز",url:"https://www.investing.com/rss/news_1.rss"},
+   {name:"طلا و کالاها",url:"https://www.investing.com/rss/news_11.rss"},
+   {name:"رمزارزها",url:"https://www.investing.com/rss/news_301.rss"},
+   {name:"اقتصاد جهانی",url:"https://www.investing.com/rss/news_14.rss"}
+  ];
+  const cacheKey="bhr-fa-news-translations-v1",dailyKey="bhr-fa-news-count-"+new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Tehran"}).format(new Date());
+  let cache={};try{cache=JSON.parse(localStorage.getItem(cacheKey)||"{}")}catch(_){}
+  const clean=value=>String(value||"").replace(/<[^>]*>/g," ").replace(/&amp;/g,"&").replace(/&#39;|&apos;/g,"'").replace(/&quot;/g,'"').replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/\s+/g," ").trim();
+  const parseFeed=xml=>{
+   const doc=new DOMParser().parseFromString(xml,"text/xml");
+   return [...doc.querySelectorAll("item")].map(item=>({
+    title:clean(item.querySelector("title")?.textContent),
+    link:item.querySelector("link")?.textContent?.trim()||"",
+    date:item.querySelector("pubDate")?.textContent||"",
+    source:clean(item.querySelector("source")?.textContent)||"Investing.com"
+   })).filter(x=>x.title&&x.link);
+  };
+  const translate=async title=>{
+   const key=title.toLowerCase();if(cache[key])return cache[key];
+   let used=Number(localStorage.getItem(dailyKey)||"0");
+   if(used>=25)return title;
+   try{
+    const url="https://api.mymemory.translated.net/get?"+new URLSearchParams({q:title.slice(0,450),langpair:"en|fa"});
+    const response=await fetch(url);if(!response.ok)throw new Error("translation http "+response.status);
+    const data=await response.json();const result=data?.responseData?.translatedText;
+    if(!result||data.responseStatus!==200)throw new Error("translation unavailable");
+    cache[key]=clean(result);localStorage.setItem(cacheKey,JSON.stringify(cache));
+    localStorage.setItem(dailyKey,String(used+title.slice(0,450).length));
+    return cache[key];
+   }catch(_){return title;}
+  };
+  const render=(target,items)=>{
+   if(!target)return;target.replaceChildren();
+   if(!items.length){const empty=document.createElement("div");empty.className="bhr-economic-empty";empty.textContent="فعلاً خبری از منبع دریافت نشد؛ کمی بعد دوباره تلاش می‌کنیم.";target.append(empty);return;}
+   items.forEach(item=>{
+    const card=document.createElement("article");card.className="bhr-news-item";
+    const a=document.createElement("a");a.href=item.link;a.target="_blank";a.rel="noopener noreferrer";a.textContent=item.faTitle||item.title;
+    const meta=document.createElement("div");meta.className="bhr-news-meta";
+    const tag=document.createElement("span");tag.className="bhr-news-tag";tag.textContent=item.category;
+    const date=document.createElement("span");const d=new Date(item.date);date.textContent=Number.isNaN(d.getTime())?"زمان انتشار نامشخص":new Intl.DateTimeFormat("fa-IR",{dateStyle:"short",timeStyle:"short",timeZone:"Asia/Tehran"}).format(d)+" (تهران)";
+    meta.append(tag,date);card.append(a,meta);target.append(card);
+   });
+  };
+  try{
+   const results=await Promise.all(feeds.map(async feed=>{
+    const response=await fetch("https://proxy.cors.dev/"+feed.url,{cache:"no-store"});
+    if(!response.ok)throw new Error("RSS "+response.status);
+    const xml=await response.text();return parseFeed(xml).map(item=>({...item,category:feed.name}));
+   }));
+   const seen=new Set(),items=results.flat().filter(item=>{
+    const key=item.link||item.title;if(seen.has(key))return false;seen.add(key);return true;
+   }).sort((a,b)=>new Date(b.date).getTime()-new Date(a.date).getTime()).slice(0,15);
+   const count=Number(localStorage.getItem(dailyKey)||"0");
+   for(const item of items){
+    const cached=cache[item.title.toLowerCase()];
+    item.faTitle=cached||await translate(item.title);
+   }
+   render(brief,items.slice(0,5));render(host,items);
+   const now=stamp();
+   const status=items.length?"خبرها دریافت شد؛ آخرین به‌روزرسانی: "+now:"فیدها پاسخ دادند اما خبر تازه‌ای موجود نیست.";
+   update("bhrNewsStatus",status);update("bhrNewsBriefStatus","خلاصه خبرها به‌روزرسانی شد: "+now);
+   update("bhrMarketDataStatus","منبع خبر: RSS رسمی Investing.com؛ ترجمه خودکار تیترها با MyMemory. سقف ترجمه رایگان روزانه رعایت می‌شود.");
+   update("bhrCommandUpdate","آخرین دریافت: "+now+" | مصرف ترجمه امروز: "+Number(localStorage.getItem(dailyKey)||"0")+" کاراکتر از ۵۰۰۰");
+  }catch(error){
+   const message="دریافت فید خبری فعلاً ناموفق بود؛ اتصال اینترنت یا دسترسی به منبع RSS را بررسی کنید.";
+   update("bhrNewsStatus",message);update("bhrNewsBriefStatus",message);update("bhrMarketDataStatus","اتصال به فید خبری برقرار نشد؛ با تلاش بعدی دوباره بررسی می‌شود.");
+   if(brief&&!brief.childElementCount){const e=document.createElement("div");e.className="bhr-economic-empty";e.textContent=message;brief.append(e);}
+   if(host&&!host.childElementCount){const e=document.createElement("div");e.className="bhr-economic-empty";e.textContent=message;host.append(e);}
+  }
  }
- function start(){loadPersianCalendar();window.setInterval(loadPersianCalendar,60*60*1000);mountNews();}
+ function start(){loadPersianCalendar();window.setInterval(loadPersianCalendar,60*60*1000);mountNews();window.setInterval(mountNews,15*60*1000);}
  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
 })();
 </script>
