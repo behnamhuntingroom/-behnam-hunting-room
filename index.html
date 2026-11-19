@@ -689,14 +689,6 @@ header .brand{position:relative;display:inline-flex;align-items:center;gap:10px;
 }
 </style>
 
-<style id="bhr-home-top-spacing-fix">
-/* Bring the brand and Iranian market prices closer to the top */
-body>header{top:0!important;margin-top:0!important}
-#bhrPageViews{margin-top:0!important}
-.bhr-page-view{padding-top:6px!important}
-.bhr-page-heading{margin-top:0!important;margin-bottom:10px!important}
-.bhr-price-banner{margin-top:0!important;margin-bottom:14px!important}
-</style>
 </head>
 <body>
 <header>
@@ -2763,7 +2755,7 @@ if(marketSidebar){
  home.append(shortcuts);
 }
 const marketMain=workspace&&workspace.querySelector(".market-main");
-if(marketMain)home.insertBefore(methodIntro,marketMain);
+if(marketMain)home.insertBefore(marketMain,methodIntro);
 move($("bhr-method"),room);
 move($("bhr-command-center"),room);
 move($("bhr-academy"),academy);
