@@ -983,8 +983,8 @@ style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index
     ctx.clearRect(0, 0, w, h);
 
     // Faster pointer tracking so the network reacts almost immediately.
-    mouse.x += (target.x - mouse.x) * 0.72;
-    mouse.y += (target.y - mouse.y) * 0.72;
+    mouse.x += (target.x - mouse.x) * 0.88;
+    mouse.y += (target.y - mouse.y) * 0.88;
 
     particles.forEach(p => {
       const dx = p.x - mouse.x;
@@ -993,12 +993,12 @@ style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index
 
       if (distance < influenceRadius && distance > 0) {
         const strength = 1 - distance / influenceRadius;
-        const force = strength * 1.35;
+        const force = strength * 2.0;
         p.vx += (dx / distance) * force;
         p.vy += (dy / distance) * force;
         // A little extra impulse makes nearby points dart away from the cursor.
-        p.vx += (dx / distance) * strength * 0.42;
-        p.vy += (dy / distance) * strength * 0.42;
+        p.vx += (dx / distance) * strength * 0.72;
+        p.vy += (dy / distance) * strength * 0.72;
       }
 
       // When the pointer is idle, add a gentle flowing drift to the whole network.
@@ -1015,7 +1015,7 @@ style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index
       p.vy *= 0.975;
 
       const speed = Math.hypot(p.vx, p.vy);
-      const maxSpeed = 6.2;
+      const maxSpeed = 9.0;
       if (speed > maxSpeed) {
         p.vx = (p.vx / speed) * maxSpeed;
         p.vy = (p.vy / speed) * maxSpeed;
