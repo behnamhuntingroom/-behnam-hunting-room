@@ -2967,6 +2967,19 @@ header nav .bhr-nav-cart svg{stroke:#22c55e!important}
  #bhr-command-center .bhr-live-calendar{grid-column:1;grid-row:3}
 }
 
+
+/* Remove the empty desktop gap between the two market-news panels */
+@media(min-width:801px){
+ #bhr-command-center .bhr-news-brief{grid-column:1!important;grid-row:1!important}
+ #bhr-command-center .bhr-live-news{grid-column:2!important;grid-row:1!important}
+ #bhr-command-center .bhr-live-calendar{grid-column:1 / -1!important;grid-row:2!important}
+}
+@media(max-width:800px){
+ #bhr-command-center .bhr-news-brief{grid-column:1!important;grid-row:1!important}
+ #bhr-command-center .bhr-live-news{grid-column:1!important;grid-row:2!important}
+ #bhr-command-center .bhr-live-calendar{grid-column:1!important;grid-row:3!important}
+}
+
 </style>
 <script id="bhr-tradingview-widgets">
 (()=>{
