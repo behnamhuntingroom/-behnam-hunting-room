@@ -2856,6 +2856,27 @@ showPage(initial,false);
   padding-top:0!important;
   margin-top:-490px!important;
 }
+/* Keep the home logo image below its heading on mobile; desktop positioning stays intact */
+@media(max-width:600px){
+ #bhr-page-home>.hero{
+  margin-top:0!important;
+  padding-top:14px!important;
+  position:relative!important;
+  z-index:2!important;
+ }
+ #bhr-page-home>.bhr-page-heading{
+  position:relative!important;
+  z-index:3!important;
+ }
+ #bhr-page-home>.hero img{
+  position:relative!important;
+  z-index:2!important;
+  display:block!important;
+  max-width:100%!important;
+  height:auto!important;
+ }
+}
+
 </style>
 <style id="bhr-cart-icon-green">
 header nav .bhr-nav-cart svg{stroke:#22c55e!important}
