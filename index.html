@@ -1764,37 +1764,26 @@ header .bhr-sun-letters{transform:translateZ(12px);text-shadow:0 1px 0 #8d6420,0
    <div class="bhr-up-list" id="bhrWatchList" style="margin-top:12px"></div>
   </div>
 
-  <div class="bhr-up-card">
-   <h3>تقویم اقتصادی</h3>
-   <p>رویدادهای مهمی که باید پیش از معامله بررسی شوند:</p>
-   <div class="bhr-up-item">
-    <strong>تورم آمریکا — CPI</strong>
-    <div class="bhr-up-status">زمان انتشار و مقدار واقعی هنوز به منبع تقویم متصل نشده است.</div>
+  <div class="bhr-up-card bhr-live-calendar">
+   <h3>تقویم اقتصادی زنده</h3>
+   <p>رویدادها و شاخص‌های اقتصادی مهم جهان؛ اطلاعات از ویجت رسمی TradingView نمایش داده می‌شود.</p>
+   <div class="bhr-tv-widget" id="bhrEconomicCalendar">
+    <div class="bhr-tv-placeholder">در حال اتصال به تقویم اقتصادی TradingView…</div>
    </div>
-   <div class="bhr-up-item">
-    <strong>اشتغال آمریکا — NFP</strong>
-    <div class="bhr-up-status">زمان انتشار و مقدار واقعی هنوز به منبع تقویم متصل نشده است.</div>
-   </div>
-   <div class="bhr-up-item">
-    <strong>تصمیم نرخ بهره — FOMC</strong>
-    <div class="bhr-up-status">زمان جلسه و نتیجه تصمیم هنوز به منبع تقویم متصل نشده است.</div>
-   </div>
-   <div class="bhr-warning">این موارد فهرست رویدادهای مهم هستند، نه تقویم زنده. برای نمایش زمان و داده واقعی باید API اقتصادی متصل شود.</div>
+   <div class="bhr-up-status" id="bhrCalendarStatus" role="status">در انتظار بارگذاری منبع تقویم…</div>
   </div>
 
-  <div class="bhr-up-card">
-   <h3>اخبار و وضعیت داده‌ها</h3>
-   <div class="bhr-up-item">
-    <strong>اخبار اقتصادی</strong>
-    <div class="bhr-up-status">منبع خبری هنوز متصل نشده است.</div>
+  <div class="bhr-up-card bhr-live-news">
+   <h3>اخبار زنده بازار</h3>
+   <p>آخرین خبرها و تیترهای بازارهای مالی از TradingView</p>
+   <div class="bhr-tv-widget" id="bhrMarketNews">
+    <div class="bhr-tv-placeholder">در حال اتصال به اخبار بازار…</div>
    </div>
-   <div class="bhr-up-item">
-    <strong>وضعیت داده بازار</strong>
-    <div class="bhr-up-status">قیمت‌های بنر اصلی از سرویس فعلی سایت دریافت می‌شوند؛ سایر داده‌ها باید جداگانه متصل شوند.</div>
-   </div>
-   <div class="bhr-up-item">
-    <strong>آخرین به‌روزرسانی</strong>
-    <div class="bhr-up-status" id="bhrCommandUpdate">زمان دریافت داده‌های جدید در این بخش ثبت خواهد شد.</div>
+   <div class="bhr-up-status" id="bhrNewsStatus" role="status">در انتظار بارگذاری منبع اخبار…</div>
+   <div class="bhr-up-item" style="margin-top:12px">
+    <strong>وضعیت منابع داده</strong>
+    <div class="bhr-up-status" id="bhrMarketDataStatus">در حال بررسی اتصال ویجت‌های TradingView…</div>
+    <div class="bhr-up-status" id="bhrCommandUpdate">زمان بارگذاری منابع پس از اتصال ثبت می‌شود.</div>
    </div>
   </div>
  </div>
@@ -2865,5 +2854,83 @@ header nav .bhr-nav-cart svg{stroke:#22c55e!important}
  header>nav>a{font-size:10px;padding:9px 4px!important}
 }
 </style>
+<style id="bhr-tradingview-widgets-style">
+.bhr-live-calendar{grid-column:span 2}
+.bhr-tv-widget{width:100%;min-width:0;min-height:430px;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+.bhr-tv-widget iframe{display:block;width:100%!important;max-width:100%;border:0}
+.bhr-live-calendar .bhr-tv-widget{height:560px}
+.bhr-live-news .bhr-tv-widget{height:560px}
+.bhr-tv-placeholder{min-height:180px;display:flex;align-items:center;justify-content:center;padding:20px;text-align:center;color:var(--muted);font-size:13px}
+@media(max-width:800px){
+ .bhr-live-calendar{grid-column:1/-1}
+ .bhr-live-calendar .bhr-tv-widget,.bhr-live-news .bhr-tv-widget{height:520px}
+}
+@media(max-width:520px){
+ .bhr-tv-widget{min-height:400px}
+ .bhr-live-calendar .bhr-tv-widget,.bhr-live-news .bhr-tv-widget{height:470px}
+}
+</style>
+<script id="bhr-tradingview-widgets">
+(()=> {
+ const config={
+  calendar:{
+   colorTheme:"dark",isTransparent:false,locale:"en",width:"100%",height:"560",
+   importanceFilter:"-1,0,1",countryFilter:"us,eu,gb,jp,cn,au,ca,ch"
+  },
+  news:{
+   feedMode:"all_symbols",isTransparent:false,displayMode:"regular",
+   colorTheme:"dark",locale:"en",width:"100%",height:"560"
+  }
+ };
+ const update=(id,message)=>{const el=document.getElementById(id);if(el)el.textContent=message;};
+ const stamp=()=>new Date().toLocaleString("fa-IR",{dateStyle:"short",timeStyle:"short"});
+ function mountWidget(targetId,scriptUrl,settings,statusId,label){
+  const host=document.getElementById(targetId);
+  if(!host)return;
+  const container=document.createElement("div");
+  container.className="tradingview-widget-container";
+  container.style.width="100%";
+  container.style.height="100%";
+  const widget=document.createElement("div");
+  widget.className="tradingview-widget-container__widget";
+  widget.style.width="100%";
+  widget.style.height="100%";
+  container.appendChild(widget);
+  host.replaceChildren(container);
+  let frameObserved=false;
+  const observer=new MutationObserver(()=>{
+   const frame=container.querySelector("iframe");
+   if(frame&&!frameObserved){
+    frameObserved=true;
+    frame.addEventListener("load",()=>{
+     update(statusId,"اتصال ویجت برقرار شد؛ آخرین بارگذاری: "+stamp());
+     update("bhrMarketDataStatus","منابع TradingView بارگذاری شده‌اند. محتوای داخلی و زمان به‌روزرسانی داده‌ها در سرویس خارجی مدیریت می‌شود.");
+     update("bhrCommandUpdate","آخرین بارگذاری ویجت‌ها: "+stamp());
+    },{once:true});
+   }
+  });
+  observer.observe(container,{childList:true,subtree:true});
+  const script=document.createElement("script");
+  script.type="text/javascript";
+  script.async=true;
+  script.src=scriptUrl;
+  script.text=JSON.stringify(settings);
+  script.onerror=()=>{
+   update(statusId,"بارگذاری منبع انجام نشد؛ اتصال اینترنت یا دسترسی به TradingView را بررسی کنید.");
+   update("bhrMarketDataStatus","حداقل یکی از منابع TradingView بارگذاری نشد.");
+  };
+  container.appendChild(script);
+  window.setTimeout(()=>{
+   if(!frameObserved)update(statusId,"هنوز پاسخی از ویجت دریافت نشده؛ ممکن است اتصال شبکه یا مسدودکننده محتوا مانع بارگذاری باشد.");
+  },15000);
+ }
+ function start(){
+  mountWidget("bhrEconomicCalendar","https://s3.tradingview.com/external-embedding/embed-widget-events.js",config.calendar,"bhrCalendarStatus","تقویم اقتصادی");
+  mountWidget("bhrMarketNews","https://s3.tradingview.com/external-embedding/embed-widget-timeline.js",config.news,"bhrNewsStatus","اخبار بازار");
+ }
+ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
+})();
+</script>
+
 </body>
 </html>
