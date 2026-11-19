@@ -3513,3 +3513,31 @@ header .bhr-sun-letters:after{
 @media(prefers-reduced-motion:reduce){#bhr-assistant-page .bhr-assistant-quick button,#bhr-assistant-page .bhr-assistant-form button{transition:none}}
 </style>
 
+
+
+<style id="bhr-heatmap-fire-glow">
+@media(min-width:761px){
+ nav a .bhr-heatmap-nav-icon{
+  filter:drop-shadow(0 0 3px rgba(255,75,24,.8)) drop-shadow(0 0 7px rgba(255,35,12,.48));
+  animation:bhrHeatFirePulse 1.8s ease-in-out infinite;
+  transform-origin:center;
+ }
+ nav a .bhr-heatmap-nav-icon i{
+  background:linear-gradient(145deg,#ffb04a 0%,#ff6426 48%,#e51b16 100%)!important;
+  box-shadow:inset 0 0 2px rgba(255,235,205,.7),0 0 3px rgba(255,75,20,.5)!important;
+ }
+ nav a .bhr-heatmap-nav-icon i:nth-child(3n),
+ nav a .bhr-heatmap-nav-icon i:nth-child(3n+1){
+  background:linear-gradient(145deg,#ff7a28 0%,#f12a19 100%)!important;
+ }
+ nav a .bhr-heatmap-nav-icon i:nth-child(3n+2){
+  background:linear-gradient(145deg,#ffc05a 0%,#ff5b22 55%,#d91c16 100%)!important;
+ }
+}
+@keyframes bhrHeatFirePulse{
+ 0%,100%{filter:brightness(.88) drop-shadow(0 0 3px rgba(255,75,24,.65)) drop-shadow(0 0 6px rgba(230,25,12,.32))}
+ 50%{filter:brightness(1.42) drop-shadow(0 0 5px rgba(255,120,35,.95)) drop-shadow(0 0 12px rgba(255,35,12,.72))}
+}
+@media(prefers-reduced-motion:reduce){nav a .bhr-heatmap-nav-icon{animation:none!important;filter:drop-shadow(0 0 5px rgba(255,75,24,.65))!important}}
+</style>
+
