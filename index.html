@@ -2918,7 +2918,7 @@ header nav .bhr-nav-cart svg{stroke:#22c55e!important}
 .bhr-news-item a:hover{color:var(--gold2)}
 .bhr-news-meta{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:7px;color:var(--muted);font-size:11px}
 .bhr-news-tag{color:var(--gold2);font-weight:700}
-.bhr-news-brief .bhr-news-item:nth-child(n+6){display:none}
+.bhr-news-brief .bhr-news-item:nth-child(n+9){display:none}
 .bhr-tv-placeholder{min-height:180px;display:flex;align-items:center;justify-content:center;padding:20px;text-align:center;color:var(--muted);font-size:13px}
 @media(max-width:800px){
  .bhr-live-calendar{grid-column:1/-1}
@@ -2959,7 +2959,7 @@ header nav .bhr-nav-cart svg{stroke:#22c55e!important}
 #bhr-command-center .bhr-news-brief .bhr-news-item{padding:7px 9px}
 #bhr-command-center .bhr-news-brief .bhr-news-item a{font-size:11px;line-height:1.5}
 #bhr-command-center .bhr-news-brief .bhr-news-meta{margin-top:3px;font-size:9px}
-#bhr-command-center .bhr-news-brief .bhr-news-item:nth-child(n+4){display:none}
+#bhr-command-center .bhr-news-brief .bhr-news-item:nth-child(n+9){display:none}
 @media(max-width:800px){
  #bhr-command-center .bhr-up-grid{grid-template-columns:minmax(0,1fr)!important}
  #bhr-command-center .bhr-news-brief{grid-column:1;grid-row:1}
@@ -3129,7 +3129,7 @@ header nav .bhr-nav-cart svg{stroke:#22c55e!important}
     const cached=cache[item.title.toLowerCase()];
     item.faTitle=cached||await translate(item.title);
    }
-   render(brief,items.slice(0,5));render(host,items);
+   render(brief,items.slice(0,8));render(host,items);
    const now=stamp();
    const status=items.length?"خبرها دریافت شد؛ آخرین به‌روزرسانی: "+now:"فیدها پاسخ دادند اما خبر تازه‌ای موجود نیست.";
    update("bhrNewsStatus",status);update("bhrNewsBriefStatus","خلاصه خبرها به‌روزرسانی شد: "+now);
