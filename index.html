@@ -2874,6 +2874,7 @@ if(nav){
  '<a href="#bhr-page-tools" data-bhr-page="tools">⚙ <span>ابزارها</span></a>'+
  '<a href="#bhr-page-community" data-bhr-page="community">♧ <span>تحلیل کاربران</span></a>'+
  '<a href="#bhr-page-heatmap" data-bhr-page="heatmap"><span>نقشه حرارتی</span></a>'+
+ '<a class="bhr-mobile-assistant-nav" href="#bhr-page-assistant" data-bhr-page="assistant">✧ <span>دستیار هوشمند</span></a>'+
  '<a href="#bhr-page-about" data-bhr-page="about">▦ <span>درباره ما</span></a>';
 }
 const cartToggle=$("bhrCartToggle");
@@ -3234,6 +3235,9 @@ header nav .bhr-nav-cart svg{stroke:#22c55e!important}
 
 
 <style id="bhr-mobile-assistant-heatmap">
+.bhr-mobile-assistant-nav{display:none!important}
+@media(max-width:760px){.bhr-mobile-assistant-nav{display:flex!important}}
+
 @media(max-width:760px){
  .bhr-shortcut-assistant{
   display:block!important;
