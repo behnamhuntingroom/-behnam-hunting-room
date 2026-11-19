@@ -2796,6 +2796,7 @@ const tools=makePage("bhr-tools-page","ابزارهای تخصصی ترید","ا
 const community=makePage("bhr-community-page","تحلیل کاربران","ثبت و مرور تحلیل‌ها و سناریوهای معاملاتی");
 const about=makePage("bhr-about-page","درباره ما","معرفی اتاق شکار بهنام و چارچوب فعالیت آن");
 const heatmap=makePage("bhr-heatmap-page","BHR MARKET HEATMAP","نقشه حرارتی بازارهای جهانی؛ سبز برای رشد و قرمز برای افت");
+const assistantPage=makePage("bhr-assistant-page","دستیار هوشمند BHR","تحلیلگر هوشمند بازارها و همراه اختصاصی روش معاملاتی BHR");
 heatmap.insertAdjacentHTML("beforeend", `
  <section class="bhr-heatmap-panel">
   <div class="bhr-heatmap-tabs" role="tablist" aria-label="انتخاب بازار">
@@ -2832,7 +2833,8 @@ shortcuts.innerHTML=
  '<a class="bhr-shortcut" href="#bhr-page-markets" data-bhr-page="markets"><span class="bhr-shortcut-icon">⌁</span><strong>مرکز بازار</strong><small>مشاهده بازارها در صفحه اصلی</small></a>'+
  '<a class="bhr-shortcut" href="#bhr-page-tools" data-bhr-page="tools"><span class="bhr-shortcut-icon">⚙</span><strong>ابزارهای ترید</strong><small>ماشین‌حساب و ابزارهای مدیریت معامله</small></a>'+
  '<a class="bhr-shortcut" href="#bhr-page-community" data-bhr-page="community"><span class="bhr-shortcut-icon">♧</span><strong>تحلیل کاربران</strong><small>ثبت و بررسی تحلیل‌ها</small></a>'+
- '<a class="bhr-shortcut" href="#bhr-page-about" data-bhr-page="about"><span class="bhr-shortcut-icon">✦</span><strong>درباره ما</strong><small>آشنایی با برند BHR</small></a>';
+ '<a class="bhr-shortcut" href="#bhr-page-about" data-bhr-page="about"><span class="bhr-shortcut-icon">✦</span><strong>درباره ما</strong><small>آشنایی با برند BHR</small></a>'+
+ '<a class="bhr-shortcut bhr-shortcut-assistant" href="#bhr-page-assistant" data-bhr-page="assistant"><span class="bhr-shortcut-icon">✧</span><strong>دستیار هوشمند BHR</strong><small>تحلیل و پاسخ‌گویی هوشمند بازارها</small></a>';
 const methodIntro=document.createElement("section");
 methodIntro.className="bhr-home-method-intro";
 methodIntro.innerHTML=
@@ -2852,6 +2854,7 @@ const marketMain=workspace&&workspace.querySelector(".market-main");
 if(marketMain)home.insertBefore(marketMain,methodIntro);
 move($("bhr-method"),room);
 move($("bhr-command-center"),room);
+move($("bhr-smart-assistant"),assistantPage);
 move($("bhr-academy"),academy);
 move($("bhr-trading-tools"),tools);
 move($("bhr-community"),community);
@@ -2884,7 +2887,7 @@ if(brand&&!brand.querySelector(".bhr-sun-mark")){
  mark.innerHTML='<span class="bhr-sun-letters">BHR</span>';
  brand.prepend(mark);
 }
-const pages={home,room,academy,tools,community,about,heatmap};
+const pages={home,room,academy,tools,community,about,heatmap,assistant:assistantPage};
 function showPage(requestedKey,updateHash){
  const key=requestedKey==="markets"?"home":(pages[requestedKey]?requestedKey:"home");
  Object.entries(pages).forEach(([name,node])=>node.classList.toggle("is-active",name===key));
@@ -2892,7 +2895,7 @@ function showPage(requestedKey,updateHash){
  if(nav)nav.querySelectorAll("[data-bhr-page]").forEach(a=>{if(a.dataset.bhrPage===requestedKey)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
  window.scrollTo({top:0,behavior:"instant"});
  if(requestedKey==="markets"&&workspace)workspace.scrollIntoView({behavior:"smooth",block:"start"});
- document.title=(requestedKey==="markets"?"مرکز بازار":key==="home"?"اتاق شکار بهنام":({room:"اتاق معاملاتی",academy:"آکادمی آموزشی",tools:"ابزارهای ترید",community:"تحلیل کاربران",about:"درباره ما",heatmap:"نقشه حرارتی بازار"}[key]))+" | BEHNAM HUNTING ROOM";
+ document.title=(requestedKey==="markets"?"مرکز بازار":key==="home"?"اتاق شکار بهنام":({room:"اتاق معاملاتی",academy:"آکادمی آموزشی",tools:"ابزارهای ترید",community:"تحلیل کاربران",about:"درباره ما",heatmap:"نقشه حرارتی بازار",assistant:"دستیار هوشمند BHR"}[key]))+" | BEHNAM HUNTING ROOM";
 }
 document.addEventListener("click",e=>{
  const link=e.target.closest("[data-bhr-page]");
@@ -3342,6 +3345,11 @@ header .bhr-sun-letters:after{
  .bhr-assistant-form input:focus{border-color:var(--gold2)}
  .bhr-assistant-form button{padding:9px 20px;font-weight:800}
 }
+</style>
+<style id="bhr-assistant-shortcut-placement">
+.bhr-shortcut-assistant{display:none}
+@media(min-width:761px){.bhr-shortcut-assistant{display:block}}
+#bhr-assistant-page #bhr-smart-assistant{width:min(1120px,92%);margin:0 auto 24px}
 </style>
 <script id="bhr-smart-assistant-engine">
 (()=>{
