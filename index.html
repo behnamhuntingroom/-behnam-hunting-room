@@ -670,6 +670,23 @@ header .brand{position:relative;display:inline-flex;align-items:center;gap:10px;
 :root[data-theme="light"] .bhr-panel-tab{color:#191711;background:#00000005}
 @media(max-width:760px){#bhrUserPanelOpen{padding:8px;font-size:12px}.bhr-panel-layout{grid-template-columns:1fr}.bhr-panel-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.bhr-panel-stat-grid{grid-template-columns:1fr}#bhr-user-panel-box{padding:15px}}
 </style>
+
+<style id="bhr-home-shortcuts-sidebar-style">
+/* Replace the right-side live quotes widget with a vertical home navigation stack */
+#bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar{position:relative;top:auto;min-width:0}
+#bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-home-shortcuts{width:100%;margin:0;display:grid;grid-template-columns:1fr;gap:10px}
+#bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-shortcut{display:grid;grid-template-columns:38px minmax(0,1fr);grid-template-rows:auto auto;align-items:center;column-gap:10px;row-gap:2px;padding:14px 13px;text-align:right}
+#bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-shortcut .bhr-shortcut-icon{grid-column:1;grid-row:1 / span 2;margin:0;font-size:24px}
+#bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-shortcut strong{grid-column:2;grid-row:1;font-size:14px}
+#bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-shortcut small{grid-column:2;grid-row:2;margin-top:0;line-height:1.6}
+@media(max-width:1050px){
+ #bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-home-shortcuts{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:600px){
+ #bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-home-shortcuts{grid-template-columns:1fr}
+}
+</style>
+
 </head>
 <body>
 <header>
@@ -2726,7 +2743,13 @@ methodIntro.innerHTML=
  '<div class="bhr-home-method-copy"><span class="bhr-home-method-eyebrow" data-fa="رویکرد اختصاصی اتاق شکار" data-en="THE BHR SIGNATURE APPROACH">رویکرد اختصاصی اتاق شکار</span><h2 data-fa="روش معاملاتی BHR؛ سه نگاه، یک تصمیم دقیق‌تر" data-en="BHR Trading Method — Three Perspectives, One Clearer Decision">روش معاملاتی BHR؛ سه نگاه، یک تصمیم دقیق‌تر</h2><p data-fa="در سبک اختصاصی BHR، والیوم تریدینگ برای سنجش قدرت و مشارکت بازار، اسمارت مانی برای شناخت نقدینگی و ساختار سفارش‌ها، و پرایس اکشن برای زمان‌بندی ورود و خروج کنار هم قرار می‌گیرند. هدف، تصمیم‌گیری بر پایه هم‌جهتی شواهد است؛ نه اتکا به یک ابزار یا سیگنال تنها." data-en="BHR combines Volume Trading to assess market participation, Smart Money to read liquidity and order structure, and Price Action to time entries and exits. The goal is to make decisions when evidence aligns—not from a single indicator or signal.">در سبک اختصاصی BHR، والیوم تریدینگ برای سنجش قدرت و مشارکت بازار، اسمارت مانی برای شناخت نقدینگی و ساختار سفارش‌ها، و پرایس اکشن برای زمان‌بندی ورود و خروج کنار هم قرار می‌گیرند. هدف، تصمیم‌گیری بر پایه هم‌جهتی شواهد است؛ نه اتکا به یک ابزار یا سیگنال تنها.</p><div class="bhr-home-method-pill-row"><span class="bhr-home-method-pill">◈ Volume Trading</span><span class="bhr-home-method-pill">◇ Smart Money</span><span class="bhr-home-method-pill">⌁ Price Action</span></div></div>'+
  '<a href="#bhr-page-room" data-bhr-page="room" class="bhr-home-method-link"><span data-fa="جزئیات روش BHR" data-en="Explore BHR Method">جزئیات روش BHR</span><span aria-hidden="true">←</span></a>';
 if(workspace)home.insertBefore(methodIntro,workspace);else home.append(methodIntro);
-home.append(shortcuts);
+const marketSidebar=workspace&&workspace.querySelector(".market-sidebar");
+if(marketSidebar){
+ marketSidebar.replaceChildren(shortcuts);
+ marketSidebar.classList.add("bhr-home-shortcuts-sidebar");
+}else{
+ home.append(shortcuts);
+}
 move($("bhr-method"),room);
 move($("bhr-command-center"),room);
 move($("bhr-academy"),academy);
