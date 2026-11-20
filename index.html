@@ -2604,7 +2604,7 @@ $("bhrSupportAttach")?.addEventListener("click",()=>supportFileInput?.click());
 supportFileInput?.addEventListener("change",()=>{
  const file=supportFileInput.files?.[0]||null;
  if(!file){supportSelectedFile=null;return;}
- if(!/\\.(pdf|jpe?g|png|txt|docx)$/i.test(file.name)){
+ if(!/\.(pdf|jpe?g|png|txt|docx)$/i.test(file.name)){
   $("bhrSupportStatus").textContent="فرمت فایل پشتیبانی نمی‌شود.";supportFileInput.value="";supportSelectedFile=null;return;
  }
  if(file.size>8*1024*1024){
@@ -2620,7 +2620,7 @@ $("bhrSupportSend")?.addEventListener("click",async()=>{
  if(!message&&!file)return;
  const ok=await sendToSupport(message,file);
  if(ok){
-  addChatMessage(message+(file?"\\n📎 "+file.name:""),true,Date.now(),null,"visitor",true);
+  addChatMessage(message+(file?"\n📎 "+file.name:""),true,Date.now(),null,"visitor",true);
   input.value="";supportSelectedFile=null;if(supportFileInput)supportFileInput.value="";
   $("bhrSupportStatus").textContent="پیام و فایل به پشتیبانی ارسال شد.";
   pollSupportMessages();
@@ -3476,7 +3476,7 @@ header .bhr-sun-letters:after{
  const fileInput=root.querySelector("#bhrAssistantFile"),attachButton=root.querySelector("#bhrAssistantAttach"),fileName=root.querySelector("#bhrAssistantFileName");
  if(!form||!input||!chat)return;
  let selectedFile=null;
- const allowedExt=/\\.(pdf|jpe?g|png|txt|docx)$/i;
+ const allowedExt=/\.(pdf|jpe?g|png|txt|docx)$/i;
  const maxFileBytes=8*1024*1024;
  const fileToDataUrl=file=>new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result||""));reader.onerror=()=>reject(new Error("خواندن فایل ناموفق بود."));reader.readAsDataURL(file);});
  const loadScript=src=>new Promise((resolve,reject)=>{const found=[...document.scripts].find(s=>s.src===src);if(found){if(found.dataset.loaded==="1")return resolve();found.addEventListener("load",resolve,{once:true});found.addEventListener("error",reject,{once:true});return;}const s=document.createElement("script");s.src=src;s.async=true;s.onload=()=>{s.dataset.loaded="1";resolve();};s.onerror=()=>reject(new Error("بارگذاری ابزار خواندن فایل انجام نشد."));document.head.appendChild(s);});
@@ -3487,7 +3487,7 @@ header .bhr-sun-letters:after{
    pdfjs.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs";
    const pdf=await pdfjs.getDocument({data:await file.arrayBuffer()}).promise;
    let out="";
-   for(let p=1;p<=Math.min(pdf.numPages,35);p++){const page=await pdf.getPage(p);const content=await page.getTextContent();out+=content.items.map(x=>x.str||"").join(" ")+"\\n";if(out.length>60000)break;}
+   for(let p=1;p<=Math.min(pdf.numPages,35);p++){const page=await pdf.getPage(p);const content=await page.getTextContent();out+=content.items.map(x=>x.str||"").join(" ")+"\n";if(out.length>60000)break;}
    return out.slice(0,60000);
   }
   if(file.name.toLowerCase().endsWith(".docx")){
@@ -3547,7 +3547,7 @@ header .bhr-sun-letters:after{
  const ask=async(q,file=selectedFile)=>{
   const clean=String(q||"").trim();
   if(!clean&&!file)return;
-  add(clean+(file?"\\n📎 "+file.name:""),"user");
+  add(clean+(file?"\n📎 "+file.name:""),"user");
   const loading=add("در حال دریافت پاسخ از هوش مصنوعی BHR…","bot");
   const newsContext=headlines().slice(0,12).join("\n").slice(0,5000);
   const calendar=document.getElementById("bhrEconomicCalendar");
@@ -3566,8 +3566,9 @@ header .bhr-sun-letters:after{
      message:[
       "راهنمای تحلیل تخصصی BHR: بازارهای تحت پوشش شامل طلا XAUUSD؛ نزدک Nasdaq-100، قرارداد آتی NQ و CFD مانند NAS100؛ یورو/دلار EURUSD؛ نفت خام WTI و برنت؛ شاخص S&P 500، قرارداد آتی ES و CFD مانند US500 هستند. این نمادها و انواع ابزار را از نظر قیمت و مشخصات یکی فرض نکن؛ اگر نماد دقیق روشن نیست، ابهام را اعلام کن. برای همه این بازارها ساختار روند و روش اختصاصی P1/P2/P3 را بررسی کن: P1 نقطه چرخش مهم، P2 سقف/کف بعدی در جهت روند و P3 پولبک؛ تأیید روند فقط پس از تشکیل P3 و شکست سطح P2 با بدنه کندل است. در صورت وجود داده معتبر، VWAP، حجم، Order Flow و Cumulative Delta را بررسی کن؛ اگر داده یا تصویر چارت ارائه نشده، ادعا نکن آن‌ها را دیده‌ای. تحلیل را با سناریوی صعودی/نزولی، شرط فعال‌شدن، نقطه ابطال، حد ضرر و اهداف مشروط ساختاربندی کن؛ اگر داده کافی نیست، سطح ورود یا قیمت نساز و سؤال مشخص بپرس. رویدادهای اقتصادی و همبستگی دلار/بازده اوراق برای طلا و نرخ بهره/سهام فناوری برای نزدک را در صورت ارتباط لحاظ کن. پاسخ کاملاً فارسی، دقیق، بدون تکرار و بدون وعده سود باشد.",
       clean
-     ].join("\n\n"),
-     newsContext,calendarContext
+     ].join("\n\n")+(file&&!/^image\\//i.test(file.type)?"\n\nمتن استخراج‌شده از فایل («"+file.name+"»):\n"+await extractDocumentText(file):""),
+     newsContext,calendarContext,
+     ...(file&&/^image\\//i.test(file.type)?{image:await fileToDataUrl(file)}:{})
     })
    });
    const data=await response.json().catch(()=>({}));
@@ -3582,7 +3583,7 @@ header .bhr-sun-letters:after{
    chat.scrollTop=chat.scrollHeight;
   }
  };
- form.addEventListener("submit",e=>{e.preventDefault();ask(input.value);input.value="";input.focus();});
+ form.addEventListener("submit",e=>{e.preventDefault();const q=input.value;const f=selectedFile;input.value="";if(fileInput)fileInput.value="";setSelectedFile(null);ask(q,f);input.focus();});
  root.querySelectorAll("[data-bhr-assistant-prompt]").forEach(btn=>btn.addEventListener("click",()=>ask(btn.dataset.bhrAssistantPrompt||"")));
 })();
 </script>
