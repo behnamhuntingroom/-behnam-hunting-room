@@ -1,0 +1,57 @@
+name: Deploy Cloudflare Worker
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Find existing CHAT_STORE namespace and deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${CLOUDFLARE_API_TOKEN}" ] || [ -z "${CF_ACCOUNT_ID}" ]; then
+            echo "::error::Add CF_API_TOKEN and CF_ACCOUNT_ID in GitHub repository Actions secrets."
+            exit 1
+          fi
+
+          KV_ID="$(curl --fail --silent --show-error \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/storage/kv/namespaces" \
+            | jq -r '.result[] | select(.title == "CHAT_STORE") | .id' | head -n 1)"
+
+          if [ -z "${KV_ID}" ] || [ "${KV_ID}" = "null" ]; then
+            echo "::error::Could not find the existing Cloudflare KV namespace named CHAT_STORE."
+            exit 1
+          fi
+
+          cat > wrangler.generated.toml <<EOF
+          name = "behnam-hunting-support"
+          main = "worker/index.js"
+          compatibility_date = "2026-11-20"
+          account_id = "${CF_ACCOUNT_ID}"
+
+          [[kv_namespaces]]
+          binding = "CHAT_STORE"
+          id = "${KV_ID}"
+
+          [ai]
+          binding = "AI"
+          EOF
+
+          npx --yes wrangler@4 deploy --config wrangler.generated.toml
