@@ -3486,6 +3486,76 @@ header nav .bhr-auth-nav-button svg{width:16px;height:16px;fill:none;stroke:curr
 }
 </style>
 
+
+<style id="bhr-mobile-layout-stability">
+/* Consistent mobile layout: prevent overflow and keep each section inside the viewport. */
+@media (max-width: 760px) {
+  html, body { width:100%; max-width:100%; overflow-x:hidden!important; }
+  body { -webkit-text-size-adjust:100%; }
+  *, *::before, *::after { box-sizing:border-box; }
+  main, section, article, header, footer, .bhr-section, .bhr-up-card,
+  .bhr-page, .page-content, .container { min-width:0; max-width:100%; }
+  img, video, canvas, svg { max-width:100%; }
+  iframe { max-width:100%!important; }
+  p, a, button, h1, h2, h3, small, strong { overflow-wrap:anywhere; }
+  .bhr-page-heading, .bhr-section-title { padding-inline:14px; }
+  .bhr-page-heading h1, .bhr-page-heading h2 { font-size:clamp(19px,5vw,27px)!important; line-height:1.5!important; }
+  .bhr-section { padding:20px 0!important; }
+  .bhr-up-grid, .bhr-news-page-grid, .market-workspace,
+  #bhr-home-market-workspace, .bhr-panel-layout {
+    width:100%!important; max-width:100%!important; min-width:0!important;
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+  #bhr-home-market-workspace .market-main,
+  #bhr-home-market-workspace .market-sidebar,
+  .market-main, .market-sidebar, .bhr-up-card,
+  .bhr-price-banner, .bhr-home-method-intro {
+    width:calc(100% - 24px)!important; max-width:calc(100% - 24px)!important;
+    min-width:0!important; margin-inline:auto!important;
+  }
+  .bhr-home-shortcuts { grid-template-columns:repeat(2,minmax(0,1fr))!important; }
+  .bhr-shortcut { min-width:0!important; }
+  .bhr-shortcut strong, .bhr-shortcut small { overflow-wrap:anywhere; }
+  .market-search, .bhr-chart-panel, .symbol-directory { width:100%!important; min-width:0!important; }
+  .bhr-chart-panel { padding:10px!important; }
+  #bhrTradingViewChart { width:100%!important; max-width:100%!important; }
+  .bhr-tv-widget, .tradingview-widget-container { width:100%!important; max-width:100%!important; min-width:0!important; }
+  .bhr-tv-widget iframe, .tradingview-widget-container iframe { width:100%!important; max-width:100%!important; }
+  .bhr-up-card, .bhr-card, .card { overflow:hidden; }
+  table { display:block; width:100%; max-width:100%; overflow-x:auto; }
+  header {
+    display:flex!important; flex-direction:column!important; align-items:stretch!important;
+    gap:9px!important; width:100%!important; padding:12px!important;
+  }
+  header>.brand { align-self:center; max-width:100%; text-align:center; }
+  header>.header-tools { width:100%; justify-content:center!important; flex-wrap:wrap!important; gap:6px!important; }
+  header>nav {
+    display:flex!important; flex-wrap:nowrap!important; justify-content:flex-start!important;
+    align-items:center!important; gap:7px!important; width:100%!important;
+    max-width:100%!important; padding:9px 2px 4px!important; margin:0!important;
+    overflow-x:auto!important; overflow-y:hidden!important; white-space:nowrap!important;
+    -webkit-overflow-scrolling:touch; scrollbar-width:none;
+  }
+  header>nav::-webkit-scrollbar { display:none; }
+  header>nav>a, header>nav>.bhr-nav-cart {
+    display:inline-flex!important; flex:0 0 auto!important; width:auto!important;
+    min-width:42px!important; max-width:none!important; margin:0!important;
+    padding:9px 11px!important; font-size:11px!important; white-space:nowrap!important;
+  }
+  header>nav>a[data-bhr-page="home"] { width:42px!important; min-width:42px!important; }
+  header>nav>a[data-bhr-page="home"] span { display:none!important; }
+  #bhr-support-panel { width:calc(100vw - 20px)!important; right:10px!important; }
+  #bhr-assistant-page #bhr-smart-assistant { width:calc(100% - 24px)!important; max-width:100%!important; }
+}
+@media (max-width:420px) {
+  .bhr-home-shortcuts { grid-template-columns:repeat(2,minmax(0,1fr))!important; gap:7px!important; }
+  .bhr-shortcut { padding:11px 7px!important; gap:7px!important; }
+  .bhr-shortcut strong { font-size:11px!important; }
+  .bhr-shortcut small { font-size:9px!important; }
+  .bhr-price-head { align-items:flex-start!important; flex-direction:column!important; }
+  .bhr-price-grid { grid-template-columns:repeat(2,minmax(0,1fr))!important; }
+}
+</style>
 </body>
 
 <style id="bhr-file-attachment-visibility-fix">
