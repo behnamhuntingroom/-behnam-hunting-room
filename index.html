@@ -723,9 +723,23 @@ header .brand{position:relative;display:inline-flex;align-items:center;gap:10px;
  #bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-shortcut small{font-size:8px!important}
 }
 
-/* Hide the redundant six shortcut cards on mobile only; desktop remains unchanged */
+/* Keep the home shortcuts available on mobile, including the dedicated News entry */
 @media(max-width:600px){
- #bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar{display:none!important}
+ #bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar{
+  display:block!important;
+  width:100%!important;
+  max-width:100%!important;
+  margin:22px auto 0!important;
+ }
+ #bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-home-shortcuts{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ }
+}
+@media(max-width:360px){
+ #bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-home-shortcuts{
+  grid-template-columns:1fr!important;
+ }
 }
 </style>
 
