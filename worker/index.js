@@ -1174,26 +1174,59 @@ export default {
       }
 
       try {
-        const upstream = await fetch(
+        const requestHeaders = {
+          "Accept": "application/json",
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36",
+          "Referer": "https://www.tsetmc.com/"
+        };
+
+        // ابتدا API رسمی نقشه بازار را امتحان می‌کنیم.
+        const mapResponse = await fetch(
           "https://cdn.tsetmc.com/api/ClosingPrice/GetMarketMap?market=0&size=1920&sector=0&typeSelected=1&hEven=0",
-          {
-            headers: {
-              "Accept": "application/json",
-              "User-Agent": "BEHNAM-HUNTING-ROOM/1.0"
-            }
-          }
+          { headers: requestHeaders }
         );
 
-        if (!upstream.ok) {
-          console.error("[BHR_MARKET_MAP_ERROR]", upstream.status);
+        if (!mapResponse.ok) {
+          console.error("[BHR_MARKET_MAP_ERROR]", "GetMarketMap", mapResponse.status);
+        } else {
+          const mapData = await mapResponse.json();
+          if (Array.isArray(mapData) && mapData.length > 0) {
+            return json(mapData, 200, {
+              ...headers,
+              "Cache-Control": "public, max-age=20"
+            });
+          }
+        }
+
+        // اگر نقشه خالی بود، از API فهرست نمادهای بازار استفاده می‌کنیم.
+        const watchUrl = "https://cdn.tsetmc.com/api/ClosingPrice/GetMarketWatch?market=0&industrialGroup=&paperTypes%5B0%5D=1&paperTypes%5B1%5D=2&paperTypes%5B2%5D=3&paperTypes%5B3%5D=4&paperTypes%5B4%5D=5&paperTypes%5B5%5D=6&paperTypes%5B6%5D=7&paperTypes%5B7%5D=8&paperTypes%5B8%5D=9&showTraded=false&withBestLimits=false&hEven=0&RefID=0";
+        const watchResponse = await fetch(watchUrl, { headers: requestHeaders });
+
+        if (!watchResponse.ok) {
+          console.error("[BHR_MARKET_MAP_ERROR]", "GetMarketWatch", watchResponse.status);
           return json({
             ok: false,
-            error: "Market data source unavailable"
+            error: "Iranian market data source unavailable",
+            source: "GetMarketWatch",
+            status: watchResponse.status
           }, 502, headers);
         }
 
-        const marketData = await upstream.json();
-        return json(marketData, 200, {
+        const watchData = await watchResponse.json();
+        const rows = Array.isArray(watchData)
+          ? watchData
+          : (watchData && Array.isArray(watchData.marketwatch) ? watchData.marketwatch : []);
+
+        if (!rows.length) {
+          return json({
+            ok: false,
+            error: "Iranian market data source returned no symbols",
+            source: "GetMarketWatch",
+            count: 0
+          }, 503, headers);
+        }
+
+        return json(rows, 200, {
           ...headers,
           "Cache-Control": "public, max-age=20"
         });
