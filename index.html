@@ -2907,8 +2907,8 @@ heatmap.insertAdjacentHTML("beforeend", `
   <div class="bhr-heatmap-caption">نمایش تغییرات بازار به‌صورت زنده از TradingView؛ برای مشاهده جزئیات روی هر خانه بروید یا آن را انتخاب کنید.</div>
   <div class="bhr-heatmap-widget" data-bhr-heatmap-host="stocks"></div>
   <div class="bhr-heatmap-widget bhr-iran-heatmap-widget" data-bhr-heatmap-host="iran" hidden>
-   <iframe src="https://fundai.ir/market-map" title="نقشه حرارتی بورس ایران" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
-   <div class="bhr-iran-heatmap-fallback">اگر نقشه در این کادر نمایش داده نشد، <a href="https://fundai.ir/market-map" target="_blank" rel="noopener noreferrer">نقشه بازار بورس ایران را در صفحه مستقل باز کنید</a>.</div>
+   <div class="bhr-iran-heatmap-fallback"><strong>نقشه بازار بورس ایران</strong><span>اگر نقشه داخل سایت بارگذاری نشد، از لینک زیر نسخه زنده و کامل را باز کن.</span><a href="https://fundai.ir/market-map" target="_blank" rel="noopener noreferrer">باز کردن نقشه زنده بورس ایران ↗</a></div>
+   <iframe src="https://fundai.ir/market-map" title="نقشه حرارتی بورس ایران" loading="eager" allow="fullscreen"></iframe>
   </div>
   <div class="bhr-heatmap-widget" data-bhr-heatmap-host="crypto" hidden></div>
   <div class="bhr-heatmap-widget" data-bhr-heatmap-host="forex" hidden></div>
@@ -3609,10 +3609,12 @@ header .bhr-sun-letters:after{
 <style id="bhr-market-heatmap-styles">
 .bhr-heatmap-panel{width:min(1200px,94%);margin:0 auto;padding:18px;border:1px solid var(--line);border-radius:18px;background:var(--card);box-shadow:0 12px 32px #0003}
 .bhr-heatmap-tabs{display:flex;flex-wrap:wrap;justify-content:center;gap:9px;margin:0 0 14px}
-.bhr-iran-heatmap-widget{height:760px;min-height:760px;overflow:hidden;background:#0b1017}
+.bhr-iran-heatmap-widget{height:auto;min-height:760px;overflow:hidden;background:#0b1017}
 .bhr-iran-heatmap-widget iframe{display:block;width:100%;height:700px;min-height:700px;border:0;background:#fff}
-.bhr-iran-heatmap-fallback{padding:10px;text-align:center;color:var(--muted);font-size:12px}
-.bhr-iran-heatmap-fallback a{color:var(--gold2);text-decoration:underline}
+.bhr-iran-heatmap-fallback{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;padding:14px;text-align:center;color:var(--muted);font-size:12px;border:1px solid rgba(215,180,90,.28);border-radius:10px;margin-bottom:10px}
+.bhr-iran-heatmap-fallback strong{color:var(--gold2);width:100%;font-size:14px}
+.bhr-iran-heatmap-fallback span{width:100%}
+.bhr-iran-heatmap-fallback a{display:inline-block;padding:9px 16px;border-radius:9px;background:var(--gold);color:#151515!important;text-decoration:none!important;font-weight:800}
 .bhr-heatmap-tabs button{border:1px solid var(--line);border-radius:10px;padding:10px 18px;background:#15191f;color:var(--text);font:inherit;cursor:pointer}
 .bhr-heatmap-tabs button.active{border-color:var(--gold2);color:var(--gold2);box-shadow:0 0 14px var(--goldGlow)}
 .bhr-heatmap-caption,.bhr-heatmap-source{text-align:center;color:var(--muted);font-size:12px;line-height:1.8;margin:8px 0 14px}
