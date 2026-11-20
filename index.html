@@ -3556,6 +3556,22 @@ header nav .bhr-auth-nav-button svg{width:16px;height:16px;fill:none;stroke:curr
   .bhr-price-grid { grid-template-columns:repeat(2,minmax(0,1fr))!important; }
 }
 </style>
+
+<style id="bhr-home-logo-position-adjustment">
+/* Reduce the unused space above the main homepage logo on desktop and mobile. */
+main > .wrap.hero#home,
+#bhr-page-home .wrap.hero#home {
+  padding-top: 8px!important;
+  margin-top: -26px!important;
+}
+@media(max-width:760px){
+  main > .wrap.hero#home,
+  #bhr-page-home .wrap.hero#home {
+    padding-top: 6px!important;
+    margin-top: -10px!important;
+  }
+}
+</style>
 </body>
 
 <style id="bhr-file-attachment-visibility-fix">
