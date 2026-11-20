@@ -1,0 +1,1514 @@
+const TELEGRAM_CHAT_ID = "55014832";
+
+
+
+const ALLOWED_ORIGINS = [
+
+  "https://behnamhuntingroom.github.io",
+
+  "https://behnamhunter.ir",
+
+  "https://www.behnamhunter.ir"
+
+];
+
+
+
+const TTL_SECONDS = 7 * 24 * 60 * 60;
+
+const AI_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
+
+const VISION_MODEL = "@cf/meta/llama-3.2-11b-vision-instruct";
+
+const MAX_ATTACHMENT_BYTES = 8 * 1024 * 1024;
+
+
+
+const ALLOWED_MIME = {
+
+  "application/pdf": [".pdf"],
+
+  "image/jpeg": [".jpg", ".jpeg"],
+
+  "image/png": [".png"],
+
+  "text/plain": [".txt"],
+
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"]
+
+};
+
+
+
+function timingLog(stage, details = {}) {
+
+  console.log("[BHR_TIMING]", JSON.stringify({
+
+    stage,
+
+    time: new Date().toISOString(),
+
+    epoch: Date.now(),
+
+    ...details
+
+  }));
+
+}
+
+
+
+function corsHeaders(origin) {
+
+  return {
+
+    "Access-Control-Allow-Origin": origin,
+
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+
+    "Access-Control-Allow-Headers": "Content-Type",
+
+    "Access-Control-Expose-Headers": "Content-Disposition",
+
+    "Vary": "Origin"
+
+  };
+
+}
+
+
+
+function json(data, status, headers = {}) {
+
+  return new Response(JSON.stringify(data), {
+
+    status,
+
+    headers: {
+
+      "Content-Type": "application/json; charset=utf-8",
+
+      "Cache-Control": "no-store",
+
+      ...headers
+
+    }
+
+  });
+
+}
+
+
+
+function safeFilename(name) {
+
+  return String(name || "attachment")
+
+    .replace(/[\\/\\\\:\*?"<>|\r\n]/g, "\_")
+
+    .slice(0, 120);
+
+}
+
+
+
+function decodeDataUrl(dataUrl) {
+
+  if (typeof dataUrl !== "string" || dataUrl.length > 12 * 1024 * 1024) {
+
+    throw new Error("Invalid or oversized attachment data");
+
+  }
+
+
+
+  const match = /^data:([^;]+);base64,([\s\S]+)$/.exec(dataUrl);
+
+  if (!match) throw new Error("Invalid data URL");
+
+
+
+  const mime = match[1].toLowerCase();
+
+  const binary = atob(match[2]);
+
+
+
+  if (binary.length > MAX_ATTACHMENT_BYTES) {
+
+    throw new Error("Attachment exceeds 8 MB");
+
+  }
+
+
+
+  const bytes = new Uint8Array(binary.length);
+
+
+
+  for (let i = 0; i < binary.length; i++) {
+
+    bytes[i] = binary.charCodeAt(i);
+
+  }
+
+
+
+  return { mime, bytes };
+
+}
+
+
+
+function validateAttachmentName(name, mime) {
+
+  const safeName = safeFilename(name);
+
+  const lowerName = safeName.toLowerCase();
+
+
+
+  const allowedExtensions = ALLOWED_MIME[mime];
+
+
+
+  if (!allowedExtensions ||
+
+      !allowedExtensions.some(ext => lowerName.endsWith(ext))) {
+
+    throw new Error("Unsupported file type");
+
+  }
+
+
+
+  return safeName;
+
+}
+
+
+
+async function telegramSend(env, text, forceReply = false) {
+
+  const response = await fetch(
+
+    `https\://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`,
+
+    {
+
+      method: "POST",
+
+      headers: { "Content-Type": "application/json" },
+
+      body: JSON.stringify({
+
+        chat_id: TELEGRAM_CHAT_ID,
+
+        text,
+
+        ...(forceReply ? {
+
+          reply_markup: {
+
+            force_reply: true,
+
+            selective: true
+
+          }
+
+        } : {})
+
+      })
+
+    }
+
+  );
+
+
+
+  return await response.json();
+
+}
+
+
+
+async function telegramSendDocument(env, caption, attachment) {
+
+  const { mime, bytes } = decodeDataUrl(attachment.data);
+
+  const filename = validateAttachmentName(attachment.name, mime);
+
+
+
+  const form = new FormData();
+
+
+
+  form.append("chat_id", TELEGRAM_CHAT_ID);
+
+  form.append("caption", caption.slice(0, 1024));
+
+
+
+  form.append("reply_markup", JSON.stringify({
+
+    force_reply: true,
+
+    selective: true
+
+  }));
+
+
+
+  form.append(
+
+    "document",
+
+    new Blob([bytes], { type: mime }),
+
+    filename
+
+  );
+
+
+
+  const response = await fetch(
+
+    `https\://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendDocument`,
+
+    {
+
+      method: "POST",
+
+      body: form
+
+    }
+
+  );
+
+
+
+  return await response.json();
+
+}
+
+
+
+async function checkAIRateLimit(request, env) {
+
+  const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+
+
+
+  const digest = await crypto.subtle.digest(
+
+    "SHA-256",
+
+    new TextEncoder().encode(ip)
+
+  );
+
+
+
+  const hash = Array.from(new Uint8Array(digest))
+
+    .map(b => b.toString(16).padStart(2, "0"))
+
+    .join("");
+
+
+
+  const minute = Math.floor(Date.now() / 60000);
+
+  const day = new Date().toISOString().slice(0, 10);
+
+
+
+  const minuteKey = `ai:minute:${hash}:${minute}`;
+
+  const dayKey = `ai:day:${hash}:${day}`;
+
+
+
+  const minuteCount = Number(await env.CHAT_STORE.get(minuteKey) || 0);
+
+  const dayCount = Number(await env.CHAT_STORE.get(dayKey) || 0);
+
+
+
+  if (minuteCount >= 8 || dayCount >= 80) return false;
+
+
+
+  await Promise.all([
+
+    env.CHAT_STORE.put(minuteKey, String(minuteCount + 1), {
+
+      expirationTtl: 120
+
+    }),
+
+    env.CHAT_STORE.put(dayKey, String(dayCount + 1), {
+
+      expirationTtl: 86400
+
+    })
+
+  ]);
+
+
+
+  return true;
+
+}
+
+
+
+async function handleAI(request, env, headers) {
+
+  if (!env.AI || !env.CHAT_STORE) {
+
+    return json({
+
+      ok: false,
+
+      error: "AI service is not configured"
+
+    }, 503, headers);
+
+  }
+
+
+
+  try {
+
+    const allowed = await checkAIRateLimit(request, env);
+
+
+
+    if (!allowed) {
+
+      return json({
+
+        ok: false,
+
+        error: "محدودیت تعداد درخواست؛ کمی بعد دوباره تلاش کن."
+
+      }, 429, headers);
+
+    }
+
+
+
+    const data = await request.json();
+
+
+
+    const message = String(data.message || "").trim();
+
+    const newsContext = String(data.newsContext || "").slice(0, 5000);
+
+    const calendarContext = String(data.calendarContext || "").slice(0, 3000);
+
+    const imageData = data.image ? String(data.image) : "";
+
+
+
+    if ((!message && !imageData) || message.length > 3000) {
+
+      return json({
+
+        ok: false,
+
+        error: "Invalid message"
+
+      }, 400, headers);
+
+    }
+
+
+
+    if (imageData) {
+
+      const { mime, bytes } = decodeDataUrl(imageData);
+
+
+
+      if (!["image/jpeg", "image/png"].includes(mime)) {
+
+        return json({
+
+          ok: false,
+
+          error: "دستیار فقط تصویر JPG یا PNG را برای تحلیل می‌پذیرد."
+
+        }, 400, headers);
+
+      }
+
+
+
+      if (bytes.length > MAX_ATTACHMENT_BYTES) {
+
+        return json({
+
+          ok: false,
+
+          error: "حجم تصویر نباید بیشتر از ۸ مگابایت باشد."
+
+        }, 413, headers);
+
+      }
+
+    }
+
+
+
+    const systemPrompt = `
+
+تو دستیار هوشمند اختصاصی BEHNAM HUNTING ROOM هستی.
+
+
+
+قوانین:
+
+\- همیشه فارسی روان و حرفه‌ای پاسخ بده.
+
+\- پاسخ‌ها دقیق و کاربردی و بدون حاشیه باشند.
+
+\- قیمت زنده بازار را حدس نزن.
+
+\- اگر داده کافی نداری، صریح بگو.
+
+\- سود قطعی یا سیگنال تضمینی وعده نده.
+
+\- تحلیل را همراه با سناریوی جایگزین و مدیریت ریسک ارائه کن.
+
+
+
+روش P1/P2/P3:
+
+P1 نقطه چرخش مهم و آغاز روند جدید است.
+
+P2 سقف یا کف بعدی در جهت روند جدید است.
+
+P3 اصلاح قیمت پس از شکل‌گیری P2 است.
+
+در روند صعودی، شکست بدنه کندل بالای سقف P2 تأیید روند است.
+
+در روند نزولی، شکست بدنه کندل زیر کف P2 تأیید روند است.
+
+عبور سایه کندل از P2 به‌تنهایی تأیید محسوب نمی‌شود.
+
+
+
+اگر تصویر دریافت کردی، فقط موارد واقعاً قابل مشاهده را تحلیل کن.
+
+اگر اعداد یا نوشته‌ها خوانا نیستند، حدس نزن.
+
+`;
+
+
+
+    const userPrompt = `
+
+اخبار سایت:
+
+${newsContext || "خبر قابل‌خواندنی در اختیار نیست."}
+
+
+
+تقویم اقتصادی:
+
+${calendarContext || "اطلاعات تقویم اقتصادی در اختیار نیست."}
+
+
+
+سؤال کاربر:
+
+${message || "لطفاً تصویر پیوست‌شده را بررسی کن."}
+
+`;
+
+
+
+    const model = imageData ? VISION_MODEL : AI_MODEL;
+
+
+
+    const modelInput = {
+
+      messages: [
+
+        { role: "system", content: systemPrompt },
+
+        { role: "user", content: userPrompt }
+
+      ],
+
+      max_tokens: 850,
+
+      temperature: 0.25
+
+    };
+
+
+
+    if (imageData) modelInput.image = imageData;
+
+
+
+    const result = await env.AI.run(model, modelInput);
+
+    const answer = String(result?.response || "").trim();
+
+
+
+    if (!answer) {
+
+      return json({
+
+        ok: false,
+
+        error: "AI returned an empty response"
+
+      }, 502, headers);
+
+    }
+
+
+
+    return json({
+
+      ok: true,
+
+      answer,
+
+      model,
+
+      timestamp: Date.now()
+
+    }, 200, headers);
+
+
+
+  } catch (error) {
+
+    console.error("[BHR_AI_ERROR]", error?.message || "Unknown error");
+
+
+
+    const detail = String(error?.message || "");
+
+
+
+    const userError = /license|accept|policy/i.test(detail)
+
+      ? "برای تحلیل تصویر، مجوز مدل بینایی Cloudflare باید فعال شود."
+
+      : "سرویس هوش مصنوعی موقتاً در دسترس نیست.";
+
+
+
+    return json({
+
+      ok: false,
+
+      error: userError
+
+    }, 500, headers);
+
+  }
+
+}
+
+
+
+/* دریافت فایل از تلگرام و ذخیره آن در KV */
+
+async function receiveTelegramAttachment(message, env) {
+
+  let fileId = "";
+
+  let filename = "";
+
+  let mime = "";
+
+  let expectedSize = 0;
+
+
+
+  if (message.document) {
+
+    fileId = message.document.file_id;
+
+    filename = safeFilename(message.document.file_name || "telegram-file");
+
+    mime = String(message.document.mime_type || "").toLowerCase();
+
+    expectedSize = Number(message.document.file_size || 0);
+
+
+
+  } else if (Array.isArray(message.photo) && message.photo.length) {
+
+    const photo = message.photo[message.photo.length - 1];
+
+
+
+    fileId = photo.file_id;
+
+    filename = `telegram-photo-${message.message_id}.jpg`;
+
+    mime = "image/jpeg";
+
+    expectedSize = Number(photo.file_size || 0);
+
+
+
+  } else {
+
+    return null;
+
+  }
+
+
+
+  if (!fileId) throw new Error("Telegram file ID missing");
+
+
+
+  if (!ALLOWED_MIME[mime]) {
+
+    const extension = filename.toLowerCase().split(".").pop();
+
+
+
+    const mimeByExtension = {
+
+      pdf: "application/pdf",
+
+      jpg: "image/jpeg",
+
+      jpeg: "image/jpeg",
+
+      png: "image/png",
+
+      txt: "text/plain",
+
+      docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+
+    };
+
+
+
+    mime = mimeByExtension[extension] || "";
+
+  }
+
+
+
+  if (!mime || !ALLOWED_MIME[mime]) {
+
+    throw new Error("Unsupported Telegram file type");
+
+  }
+
+
+
+  filename = validateAttachmentName(filename, mime);
+
+
+
+  if (expectedSize > MAX_ATTACHMENT_BYTES) {
+
+    throw new Error("Telegram attachment exceeds 8 MB");
+
+  }
+
+
+
+  const getFileResponse = await fetch(
+
+    `https\://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/getFile?file_id=${encodeURIComponent(fileId)}`
+
+  );
+
+
+
+  const getFileData = await getFileResponse.json();
+
+
+
+  if (!getFileData.ok || !getFileData.result?.file_path) {
+
+    throw new Error("Telegram getFile failed");
+
+  }
+
+
+
+  const downloadResponse = await fetch(
+
+    `https\://api.telegram.org/file/bot${env.TELEGRAM_BOT_TOKEN}/${getFileData.result.file_path}`
+
+  );
+
+
+
+  if (!downloadResponse.ok) {
+
+    throw new Error("Telegram file download failed");
+
+  }
+
+
+
+  const bytes = await downloadResponse.arrayBuffer();
+
+
+
+  if (bytes.byteLength > MAX_ATTACHMENT_BYTES) {
+
+    throw new Error("Downloaded file exceeds 8 MB");
+
+  }
+
+
+
+  const storedFileId = crypto.randomUUID();
+
+
+
+  await env.CHAT_STORE.put(
+
+    `att:${storedFileId}`,
+
+    bytes,
+
+    { expirationTtl: TTL_SECONDS }
+
+  );
+
+
+
+  return {
+
+    fileId: storedFileId,
+
+    name: filename,
+
+    mime,
+
+    size: bytes.byteLength
+
+  };
+
+}
+
+
+
+/* Telegram webhook */
+
+async function handleTelegramWebhook(request, env) {
+
+  const requestStartedAt = Date.now();
+
+  const webhookReceivedAt = Date.now();
+
+
+
+  timingLog("webhook_received");
+
+
+
+  if (request.method !== "POST") {
+
+    return new Response("Method not allowed", { status: 405 });
+
+  }
+
+
+
+  const secret = request.headers.get(
+
+    "X-Telegram-Bot-Api-Secret-Token"
+
+  );
+
+
+
+  if (!secret || secret !== env.TELEGRAM_WEBHOOK_SECRET) {
+
+    return new Response("Unauthorized", { status: 401 });
+
+  }
+
+
+
+  try {
+
+    const update = await request.json();
+
+    const message = update.message;
+
+
+
+    if (!message) {
+
+      return json({ ok: true });
+
+    }
+
+
+
+    if (String(message.chat?.id) !== TELEGRAM_CHAT_ID) {
+
+      return json({ ok: true });
+
+    }
+
+
+
+    if (!message.reply_to_message) {
+
+      timingLog("webhook_not_a_reply", {
+
+        updateId: update.update_id
+
+      });
+
+
+
+      return json({ ok: true });
+
+    }
+
+
+
+    const repliedMessageId = message.reply_to_message.message_id;
+
+
+
+    const conversationId = await env.CHAT_STORE.get(
+
+      `tgmsg:${repliedMessageId}`
+
+    );
+
+
+
+    if (!conversationId) {
+
+      timingLog("webhook_conversation_not_found", {
+
+        updateId: update.update_id,
+
+        repliedMessageId
+
+      });
+
+
+
+      return json({ ok: true, ignored: true });
+
+    }
+
+
+
+    let attachment = null;
+
+
+
+    const hasDocument = Boolean(message.document);
+
+    const hasPhoto = Array.isArray(message.photo) && message.photo.length > 0;
+
+
+
+    if (hasDocument || hasPhoto) {
+
+      try {
+
+        attachment = await receiveTelegramAttachment(message, env);
+
+      } catch (fileError) {
+
+        console.error("[BHR_TELEGRAM_FILE_ERROR]", fileError?.message || "Unknown error");
+
+
+
+        await telegramSend(
+
+          env,
+
+          "فایل دریافت شد اما قابل ذخیره نبود. فرمت مجاز: PDF، JPG، PNG، TXT و DOCX. حداکثر حجم: ۸ مگابایت."
+
+        );
+
+
+
+        return json({
+
+          ok: true,
+
+          attachmentError: true
+
+        });
+
+      }
+
+    }
+
+
+
+    const replyText = String(message.text || message.caption || "").trim();
+
+
+
+    if (!replyText && !attachment) {
+
+      return json({ ok: true });
+
+    }
+
+
+
+    const storageKey = `conv:${conversationId}`;
+
+
+
+    const oldMessages = await env.CHAT_STORE.get(
+
+      storageKey,
+
+      "json"
+
+    ) || [];
+
+
+
+    const storedAt = Date.now();
+
+
+
+    const entry = {
+
+      id: String(message.message_id),
+
+      text: replyText || (attachment ? "فایل پیوست‌شده از طرف پشتیبانی" : ""),
+
+      from: "support",
+
+      timestamp: storedAt,
+
+      webhookReceivedAt
+
+    };
+
+
+
+    if (attachment) {
+
+      entry.attachment = attachment;
+
+
+
+      await env.CHAT_STORE.put(
+
+        `attmeta:${attachment.fileId}`,
+
+        JSON.stringify({
+          conversationId,
+          name: attachment.name,
+          mime: attachment.mime,
+          size: attachment.size
+        }),
+
+        { expirationTtl: TTL_SECONDS }
+
+      );
+
+    }
+
+
+
+    oldMessages.push(entry);
+
+
+
+    await env.CHAT_STORE.put(
+
+      storageKey,
+
+      JSON.stringify(oldMessages),
+
+      { expirationTtl: TTL_SECONDS }
+
+    );
+
+
+
+    timingLog("webhook_message_stored", {
+
+      updateId: update.update_id,
+
+      telegramMessageId: message.message_id,
+
+      hasAttachment: Boolean(attachment),
+
+      totalWorkerDurationMs: Date.now() - requestStartedAt
+
+    });
+
+
+
+    return json({
+
+      ok: true,
+
+      receivedAt: webhookReceivedAt,
+
+      storedAt
+
+    });
+
+
+
+  } catch (error) {
+
+    console.error("[BHR_WEBHOOK_ERROR]", error?.message || "Unknown error");
+
+
+
+    return json({
+
+      ok: false
+
+    }, 500);
+
+  }
+
+}
+
+
+
+export default {
+
+  async fetch(request, env) {
+
+    const url = new URL(request.url);
+
+    const path = url.pathname;
+
+    const origin = request.headers.get("Origin") || "";
+
+    const headers = corsHeaders(origin);
+
+
+
+    if (path === "/telegram-webhook") {
+
+      return handleTelegramWebhook(request, env);
+
+    }
+
+
+
+    if (!ALLOWED_ORIGINS.includes(origin)) {
+
+      return new Response("Forbidden", { status: 403 });
+
+    }
+
+
+
+    if (request.method === "OPTIONS") {
+
+      return new Response(null, {
+
+        status: 204,
+
+        headers
+
+      });
+
+    }
+
+
+
+    /* دستیار هوشمند */
+
+    if (path === "/ai") {
+
+      if (request.method !== "POST") {
+
+        return new Response("Method not allowed", {
+
+          status: 405,
+
+          headers
+
+        });
+
+      }
+
+
+
+      return handleAI(request, env, headers);
+
+    }
+
+
+
+    /* دریافت پیام‌های چت */
+
+    if (request.method === "GET" && path === "/messages") {
+
+      const conversationId = url.searchParams.get("conversationId") || "";
+
+
+
+      if (!/^[a-zA-Z0-9-]{16,80}$/.test(conversationId)) {
+
+        return json({
+
+          ok: false,
+
+          error: "Invalid conversation ID"
+
+        }, 400, headers);
+
+      }
+
+
+
+      try {
+
+        const messages = await env.CHAT_STORE.get(
+
+          `conv:${conversationId}`,
+
+          "json"
+
+        ) || [];
+
+
+
+        return json({
+
+          ok: true,
+
+          messages,
+
+          serverTime: Date.now()
+
+        }, 200, headers);
+
+
+
+      } catch (error) {
+
+        console.error("[BHR_MESSAGES_ERROR]", error?.message || "Unknown error");
+
+
+
+        return json({
+
+          ok: false,
+
+          error: "Storage error"
+
+        }, 500, headers);
+
+      }
+
+    }
+
+
+
+    /* دانلود یا مشاهده فایل دریافتی از تلگرام */
+
+    if (request.method === "GET" && path === "/attachment") {
+
+      const conversationId = url.searchParams.get("conversationId") || "";
+
+      const fileId = url.searchParams.get("fileId") || "";
+
+
+
+      if (!/^[a-zA-Z0-9-]{16,80}$/.test(conversationId) ||
+
+          !/^[a-zA-Z0-9-]{16,80}$/.test(fileId)) {
+
+        return json({
+
+          ok: false,
+
+          error: "Invalid attachment request"
+
+        }, 400, headers);
+
+      }
+
+
+
+      try {
+
+        const meta = await env.CHAT_STORE.get(
+
+          `attmeta:${fileId}`,
+
+          "json"
+
+        );
+
+
+
+        if (!meta || meta.conversationId !== conversationId) {
+
+          return json({
+
+            ok: false,
+
+            error: "Attachment not found"
+
+          }, 404, headers);
+
+        }
+
+
+
+        const file = await env.CHAT_STORE.get(
+
+          `att:${fileId}`,
+
+          "arrayBuffer"
+
+        );
+
+
+
+        if (!file) {
+
+          return json({
+
+            ok: false,
+
+            error: "File expired or not found"
+
+          }, 404, headers);
+
+        }
+
+
+
+        const mime = meta.mime || "application/octet-stream";
+
+        const filename = safeFilename(meta.name || "attachment");
+
+
+
+        return new Response(file, {
+
+          status: 200,
+
+          headers: {
+
+            ...headers,
+
+            "Content-Type": mime,
+
+            "Content-Length": String(file.byteLength),
+
+            "Content-Disposition": `inline; filename="${filename.replace(/["\\]/g, "_")}"; filename*=UTF-8''${encodeURIComponent(filename)}`,
+
+            "Cache-Control": "private, no-store",
+
+            "X-Content-Type-Options": "nosniff"
+
+          }
+
+        });
+
+
+
+      } catch (error) {
+
+        console.error("[BHR_ATTACHMENT_ERROR]", error?.message || "Unknown error");
+
+
+
+        return json({
+
+          ok: false,
+
+          error: "Attachment retrieval failed"
+
+        }, 500, headers);
+
+      }
+
+    }
+
+
+
+    /* ارسال پیام یا فایل از سایت به تلگرام */
+
+    if (request.method === "POST" && path === "/") {
+
+      try {
+
+        const data = await request.json();
+
+
+
+        const message = String(data.message || "").trim();
+
+        const name = String(data.name || "بازدیدکننده").trim();
+
+        const phone = String(data.phone || "").trim();
+
+        const attachment = data.attachment || null;
+
+
+
+        if ((!message && !attachment) ||
+
+            message.length > 2000 ||
+
+            name.length > 100 ||
+
+            phone.length > 40) {
+
+          return json({
+
+            ok: false,
+
+            error: "Invalid input"
+
+          }, 400, headers);
+
+        }
+
+
+
+        let conversationId = String(data.conversationId || "");
+
+
+
+        if (!/^[a-zA-Z0-9-]{16,80}$/.test(conversationId)) {
+
+          conversationId = crypto.randomUUID();
+
+        }
+
+
+
+        const caption =
+
+          `پیام جدید از سایت اتاق شکار\n` +
+
+          `شناسه گفت‌وگو: ${conversationId}\n\n` +
+
+          `نام: ${name}\n` +
+
+          `تلفن: ${phone || "ثبت نشده"}\n\n` +
+
+          `پیام:\n${message || "فایل پیوست‌شده است."}\n\n` +
+
+          `برای پاسخ، روی همین پیام در تلگرام Reply بزنید.`;
+
+
+
+        const telegramResult = attachment
+
+          ? await telegramSendDocument(env, caption, attachment)
+
+          : await telegramSend(env, caption, true);
+
+
+
+        if (!telegramResult.ok) {
+
+          console.error(
+
+            "[BHR_TELEGRAM_SEND_ERROR]",
+
+            telegramResult.description || "Telegram send failed"
+
+          );
+
+
+
+          return json({
+
+            ok: false,
+
+            error: "Telegram delivery failed"
+
+          }, 502, headers);
+
+        }
+
+
+
+        const telegramMessageId = telegramResult.result.message_id;
+
+
+
+        await env.CHAT_STORE.put(
+
+          `tgmsg:${telegramMessageId}`,
+
+          conversationId,
+
+          { expirationTtl: TTL_SECONDS }
+
+        );
+
+
+
+        return json({
+
+          ok: true,
+
+          conversationId,
+
+          telegramMessageId
+
+        }, 200, headers);
+
+
+
+      } catch (error) {
+
+        console.error("[BHR_SUPPORT_SEND_ERROR]", error?.message || "Unknown error");
+
+
+
+        return json({
+
+          ok: false,
+
+          error: "Server error"
+
+        }, 500, headers);
+
+      }
+
+    }
+
+
+
+    return new Response("Not found", {
+
+      status: 404,
+
+      headers
+
+    });
+
+  }
+
+};
