@@ -2952,7 +2952,7 @@ const newsGrid=document.createElement("div");
 newsGrid.className="bhr-up-grid bhr-news-page-grid";
 const commandCenter=$("bhr-command-center");
 if(commandCenter){
- [".bhr-news-brief",".bhr-live-calendar",".bhr-live-news"].forEach(selector=>{
+ [".bhr-news-brief",".bhr-live-news",".bhr-live-calendar"].forEach(selector=>{
   const card=commandCenter.querySelector(selector);
   if(card)newsGrid.append(card);
  });
