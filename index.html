@@ -3064,13 +3064,13 @@ showPage(initial,false);
 /* Final home spacing adjustment: move the hero and following home content upward */
 #bhr-page-home > .hero{
   padding-top:0!important;
-  margin-top:-490px!important;
+  margin-top:-590px!important;
 }
 /* Keep the home logo image below its heading on mobile; desktop positioning stays intact */
 @media(max-width:600px){
  #bhr-page-home>.hero{
-  margin-top:0!important;
-  padding-top:14px!important;
+  margin-top:-42px!important;
+  padding-top:0!important;
   position:relative!important;
   z-index:2!important;
  }
@@ -3557,21 +3557,6 @@ header nav .bhr-auth-nav-button svg{width:16px;height:16px;fill:none;stroke:curr
 }
 </style>
 
-<style id="bhr-home-logo-position-adjustment">
-/* Reduce the unused space above the main homepage logo on desktop and mobile. */
-main > .wrap.hero#home,
-#bhr-page-home .wrap.hero#home {
-  padding-top: 8px!important;
-  margin-top: -26px!important;
-}
-@media(max-width:760px){
-  main > .wrap.hero#home,
-  #bhr-page-home .wrap.hero#home {
-    padding-top: 6px!important;
-    margin-top: -10px!important;
-  }
-}
-</style>
 </body>
 
 <style id="bhr-file-attachment-visibility-fix">
