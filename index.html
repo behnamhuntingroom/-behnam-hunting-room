@@ -2877,6 +2877,7 @@ const community=makePage("bhr-community-page","تحلیل کاربران","ثب�
 const about=makePage("bhr-about-page","درباره ما","معرفی اتاق شکار بهنام و چارچوب فعالیت آن");
 const heatmap=makePage("bhr-heatmap-page","BHR MARKET HEATMAP","نقشه حرارتی بازارهای جهانی؛ سبز برای رشد و قرمز برای افت");
 const assistantPage=makePage("bhr-assistant-page","دستیار هوشمند BHR","تحلیلگر هوشمند بازارها و همراه اختصاصی روش معاملاتی BHR");
+const newsPage=makePage("bhr-news-page","اخبار بازار","خبرهای مهم بازارهای جهانی، خلاصه خبرها و تقویم اقتصادی زنده");
 heatmap.insertAdjacentHTML("beforeend", `
  <section class="bhr-heatmap-panel">
   <div class="bhr-heatmap-tabs" role="tablist" aria-label="انتخاب بازار">
@@ -2915,7 +2916,7 @@ shortcuts.innerHTML=
  '<a class="bhr-shortcut" href="#bhr-page-community" data-bhr-page="community"><span class="bhr-shortcut-icon">♧</span><strong>تحلیل کاربران</strong><small>ثبت و بررسی تحلیل‌ها</small></a>'+
  '<a class="bhr-shortcut" href="#bhr-page-markets" data-bhr-page="markets"><span class="bhr-shortcut-icon">⌁</span><strong>مرکز بازار</strong><small>مشاهده بازارها در صفحه اصلی</small></a>'+
  '<a class="bhr-shortcut" href="#bhr-page-about" data-bhr-page="about"><span class="bhr-shortcut-icon">✦</span><strong>درباره ما</strong><small>آشنایی با برند BHR</small></a>'+
- '<a class="bhr-shortcut bhr-shortcut-news" href="#bhr-page-room" data-bhr-page="room" data-bhr-scroll="bhr-command-center"><span class="bhr-shortcut-icon">▤</span><strong>اخبار</strong><small>خبرهای مهم و زنده بازارهای جهانی</small></a>';
+ '<a class="bhr-shortcut bhr-shortcut-news" href="#bhr-page-news" data-bhr-page="news"><span class="bhr-shortcut-icon">▤</span><strong>اخبار</strong><small>خبرهای مهم و زنده بازارهای جهانی</small></a>';
 const methodIntro=document.createElement("section");
 methodIntro.className="bhr-home-method-intro";
 methodIntro.innerHTML=
@@ -2933,6 +2934,18 @@ if(marketSidebar){
 }
 const marketMain=workspace&&workspace.querySelector(".market-main");
 if(marketMain)home.insertBefore(marketMain,methodIntro);
+const newsGrid=document.createElement("div");
+newsGrid.className="bhr-up-grid bhr-news-page-grid";
+const commandCenter=$("bhr-command-center");
+if(commandCenter){
+ [".bhr-news-brief",".bhr-live-calendar",".bhr-live-news"].forEach(selector=>{
+  const card=commandCenter.querySelector(selector);
+  if(card)newsGrid.append(card);
+ });
+ if(newsGrid.children.length)newsPage.append(newsGrid);
+ const oldNewsGrid=commandCenter.querySelector(":scope > .bhr-up-grid");
+ if(oldNewsGrid&&!oldNewsGrid.children.length)oldNewsGrid.remove();
+}
 move($("bhr-method"),room);
 move($("bhr-command-center"),room);
 move($("bhr-smart-assistant"),assistantPage);
@@ -2969,7 +2982,7 @@ if(brand&&!brand.querySelector(".bhr-sun-mark")){
  mark.innerHTML='<span class="bhr-sun-letters">BHR</span>';
  brand.prepend(mark);
 }
-const pages={home,room,academy,tools,community,about,heatmap,assistant:assistantPage};
+const pages={home,room,academy,tools,community,about,heatmap,assistant:assistantPage,news:newsPage};
 function showPage(requestedKey,updateHash){
  const key=requestedKey==="markets"?"home":(pages[requestedKey]?requestedKey:"home");
  Object.entries(pages).forEach(([name,node])=>node.classList.toggle("is-active",name===key));
@@ -2977,17 +2990,10 @@ function showPage(requestedKey,updateHash){
  if(nav)nav.querySelectorAll("[data-bhr-page]").forEach(a=>{if(a.dataset.bhrPage===requestedKey)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
  window.scrollTo({top:0,behavior:"instant"});
  if(requestedKey==="markets"&&workspace)workspace.scrollIntoView({behavior:"smooth",block:"start"});
- document.title=(requestedKey==="markets"?"مرکز بازار":key==="home"?"اتاق شکار بهنام":({room:"اتاق معاملاتی",academy:"آکادمی آموزشی",tools:"ابزارهای ترید",community:"تحلیل کاربران",about:"درباره ما",heatmap:"نقشه حرارتی بازار",assistant:"دستیار هوشمند BHR"}[key]))+" | BEHNAM HUNTING ROOM";
+ document.title=(requestedKey==="markets"?"مرکز بازار":key==="home"?"اتاق شکار بهنام":({room:"اتاق معاملاتی",academy:"آکادمی آموزشی",tools:"ابزارهای ترید",community:"تحلیل کاربران",about:"درباره ما",heatmap:"نقشه حرارتی بازار",assistant:"دستیار هوشمند BHR",news:"اخبار بازار"}[key]))+" | BEHNAM HUNTING ROOM";
 }
 document.addEventListener("click",e=>{
- const newsLink=e.target.closest(".bhr-shortcut-news");
- if(newsLink){
-  e.preventDefault();
-  showPage("room",true);
-  window.setTimeout(()=>document.getElementById("bhr-command-center")?.scrollIntoView({behavior:"smooth",block:"start"}),120);
-  return;
- }
- const link=e.target.closest("[data-bhr-page]");
+  const link=e.target.closest("[data-bhr-page]");
  if(!link)return;
  e.preventDefault();showPage(link.dataset.bhrPage,true);
 });
