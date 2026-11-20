@@ -3086,9 +3086,13 @@ header nav .bhr-nav-cart svg{stroke:#22c55e!important}
   width:44px!important;height:42px!important;min-width:44px!important;
   padding:0!important;border-radius:12px;font-size:25px!important;
  }
- header>nav>a[data-bhr-page="home"] span,
- header>nav>a[data-bhr-page="heatmap"] span{display:none!important}
- header>nav>a[data-bhr-page="heatmap"]:before{font-size:22px}
+ header>nav>a[data-bhr-page="home"] span{display:none!important}
+ header>nav>a[data-bhr-page="heatmap"]{
+  width:auto!important;min-width:44px!important;padding:0 12px!important;
+  gap:7px;font-size:13px!important;white-space:nowrap
+ }
+ header>nav>a[data-bhr-page="heatmap"] span{display:inline!important}
+ header>nav>a[data-bhr-page="heatmap"]:before{font-size:20px}
 }
 </style>
 <style id="bhr-mobile-nav-spacing-fix">
