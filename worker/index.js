@@ -1161,7 +1161,49 @@ export default {
 
 
 
-    /* دریافت پیام‌های چت */
+    /* پراکسی امن نقشه حرارتی بورس ایران */
+    if (path === "/market-map") {
+      if (request.method !== "GET") {
+        return new Response("Method not allowed", {
+          status: 405,
+          headers
+        });
+      }
+
+      try {
+        const upstream = await fetch(
+          "https://cdn.tsetmc.com/api/ClosingPrice/GetMarketMap?market=0&size=1920&sector=0&typeSelected=1&hEven=0",
+          {
+            headers: {
+              "Accept": "application/json",
+              "User-Agent": "BEHNAM-HUNTING-ROOM/1.0"
+            }
+          }
+        );
+
+        if (!upstream.ok) {
+          console.error("[BHR_MARKET_MAP_ERROR]", upstream.status);
+          return json({
+            ok: false,
+            error: "Market data source unavailable"
+          }, 502, headers);
+        }
+
+        const marketData = await upstream.json();
+        return json(marketData, 200, {
+          ...headers,
+          "Cache-Control": "public, max-age=20"
+        });
+      } catch (error) {
+        console.error("[BHR_MARKET_MAP_ERROR]", error?.message || "Unknown error");
+        return json({
+          ok: false,
+          error: "Could not retrieve Iranian market data"
+        }, 502, headers);
+      }
+    }
+
+    /* دریافت پیام‌های چت */
 
     if (request.method === "GET" && path === "/messages") {
 
