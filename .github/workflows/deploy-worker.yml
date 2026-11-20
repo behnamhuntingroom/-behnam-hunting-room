@@ -2,6 +2,12 @@ name: Deploy Cloudflare Worker
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "worker/index.js"
+      - ".github/workflows/deploy-worker.yml"
 
 permissions:
   contents: read
