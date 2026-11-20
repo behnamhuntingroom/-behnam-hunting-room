@@ -3685,7 +3685,7 @@ header .bhr-sun-letters:after{
   if(!iranHost||iranBusy)return;
   iranBusy=true;
   try{
-   const url="https://cdn.tsetmc.com/api/ClosingPrice/GetMarketMap?market=0&size=1920&sector=0&typeSelected=1&hEven=0";
+   const url="https://tiny-unit-4ed3.behnamhuntingroom.workers.dev/market-map";
    const response=await fetch(url,{cache:"no-store",headers:{Accept:"application/json"}});
    if(!response.ok)throw new Error("پاسخ سرویس بازار: "+response.status);
    const data=await response.json();
