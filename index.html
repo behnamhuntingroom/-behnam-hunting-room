@@ -2518,7 +2518,7 @@ async function pollSupportMessages(){
 function startSupportPolling(){
  if(supportPollTimer)clearInterval(supportPollTimer);
  pollSupportMessages();
- supportPollTimer=setInterval(pollSupportMessages,3000);
+ supportPollTimer=setInterval(pollSupportMessages,1000);
 }
 
 async function sendToSupport(message){
