@@ -2896,11 +2896,16 @@ heatmap.insertAdjacentHTML("beforeend", `
  <section class="bhr-heatmap-panel">
   <div class="bhr-heatmap-tabs" role="tablist" aria-label="انتخاب بازار">
    <button type="button" class="active" data-bhr-heatmap="stocks" role="tab" aria-selected="true">بورس آمریکا</button>
+   <button type="button" data-bhr-heatmap="iran" role="tab" aria-selected="false">بورس ایران</button>
    <button type="button" data-bhr-heatmap="crypto" role="tab" aria-selected="false">ارزهای دیجیتال</button>
    <button type="button" data-bhr-heatmap="forex" role="tab" aria-selected="false">فارکس</button>
   </div>
   <div class="bhr-heatmap-caption">نمایش تغییرات بازار به‌صورت زنده از TradingView؛ برای مشاهده جزئیات روی هر خانه بروید یا آن را انتخاب کنید.</div>
   <div class="bhr-heatmap-widget" data-bhr-heatmap-host="stocks"></div>
+  <div class="bhr-heatmap-widget bhr-iran-heatmap-widget" data-bhr-heatmap-host="iran" hidden>
+   <iframe src="https://fundai.ir/market-map" title="نقشه حرارتی بورس ایران" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+   <div class="bhr-iran-heatmap-fallback">اگر نقشه در این کادر نمایش داده نشد، <a href="https://fundai.ir/market-map" target="_blank" rel="noopener noreferrer">نقشه بازار بورس ایران را در صفحه مستقل باز کنید</a>.</div>
+  </div>
   <div class="bhr-heatmap-widget" data-bhr-heatmap-host="crypto" hidden></div>
   <div class="bhr-heatmap-widget" data-bhr-heatmap-host="forex" hidden></div>
   <div class="bhr-heatmap-source">منبع داده و به‌روزرسانی: TradingView · داده‌ها ممکن است با تأخیر منبع نمایش داده شوند.</div>
@@ -2923,7 +2928,7 @@ if(workspace){workspace.id="bhr-home-market-workspace";move(workspace,home);}
 const shortcuts=document.createElement("div");
 shortcuts.className="bhr-home-shortcuts";
 shortcuts.innerHTML=
- '<a class="bhr-shortcut" href="#bhr-page-room" data-bhr-page="room"><span class="bhr-shortcut-icon">◈</span><strong>اتاق معاملاتی</strong><small>روش BHR و سناریوهای معاملاتی</small></a>'+
+ '<a class="bhr-shortcut bhr-shortcut-heatmap" href="#bhr-page-heatmap" data-bhr-page="heatmap"><span class="bhr-shortcut-icon bhr-heatmap-shortcut-icon" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><strong>نقشه حرارتی</strong><small>بورس ایران، بورس آمریکا، ارزهای دیجیتال و فارکس</small></a>'+
  '<a class="bhr-shortcut" href="#bhr-page-academy" data-bhr-page="academy"><span class="bhr-shortcut-icon">▤</span><strong>آکادمی آموزشی</strong><small>۹ فصل آموزش والیوم تریدینگ</small></a>'+
  '<a class="bhr-shortcut bhr-shortcut-assistant" href="#bhr-page-assistant" data-bhr-page="assistant"><span class="bhr-shortcut-icon">✧</span><strong>دستیار هوشمند BHR</strong><small>تحلیل و پاسخ‌گویی هوشمند بازارها</small></a>'+
  '<a class="bhr-shortcut" href="#bhr-page-tools" data-bhr-page="tools"><span class="bhr-shortcut-icon">⚙</span><strong>ابزارهای ترید</strong><small>ماشین‌حساب و ابزارهای مدیریت معامله</small></a>'+
@@ -2931,7 +2936,7 @@ shortcuts.innerHTML=
  '<a class="bhr-shortcut" href="#bhr-page-markets" data-bhr-page="markets"><span class="bhr-shortcut-icon">⌁</span><strong>مرکز بازار</strong><small>مشاهده بازارها در صفحه اصلی</small></a>'+
  '<a class="bhr-shortcut" href="#bhr-page-about" data-bhr-page="about"><span class="bhr-shortcut-icon">✦</span><strong>درباره ما</strong><small>آشنایی با برند BHR</small></a>'+
  '<a class="bhr-shortcut bhr-shortcut-news" href="#bhr-page-news" data-bhr-page="news"><span class="bhr-shortcut-icon">▤</span><strong>اخبار</strong><small>خبرهای مهم و زنده بازارهای جهانی</small></a>'+
- '<a class="bhr-shortcut bhr-shortcut-heatmap" href="#bhr-page-heatmap" data-bhr-page="heatmap"><span class="bhr-shortcut-icon bhr-heatmap-shortcut-icon" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><strong>نقشه حرارتی</strong><small>نمایش زنده بورس آمریکا، ارزهای دیجیتال و فارکس</small></a>';
+ '<a class="bhr-shortcut" href="#bhr-page-room" data-bhr-page="room"><span class="bhr-shortcut-icon">◈</span><strong>اتاق معاملاتی</strong><small>روش BHR و سناریوهای معاملاتی</small></a>';
 const methodIntro=document.createElement("section");
 methodIntro.className="bhr-home-method-intro";
 methodIntro.innerHTML=
@@ -3407,7 +3412,7 @@ header nav .bhr-nav-cart svg{stroke:#22c55e!important}
  #bhr-assistant-page .bhr-assistant-form input{box-sizing:border-box;width:100%;min-height:44px;min-width:0;border:1px solid #38bdf855;border-radius:11px;background:rgba(3,12,24,.9);color:#f0f9ff;padding:11px 12px;font:inherit;font-size:13px}
  #bhr-assistant-page .bhr-assistant-form button{width:100%;min-height:43px;border:1px solid #67e8f9;border-radius:11px;color:#071522;background:linear-gradient(110deg,#67e8f9,#a5b4fc 55%,#c4b5fd);font:inherit;font-weight:900}
  #bhr-heatmap-page .bhr-heatmap-panel{box-sizing:border-box;width:94%;max-width:100%;margin:12px auto 22px;padding:10px;border-radius:15px}
- #bhr-heatmap-page .bhr-heatmap-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+ #bhr-heatmap-page .bhr-heatmap-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
  #bhr-heatmap-page .bhr-heatmap-tabs button{min-width:0;padding:10px 3px;font-size:11px;line-height:1.5;white-space:normal}
  #bhr-heatmap-page .bhr-heatmap-caption,#bhr-heatmap-page .bhr-heatmap-source{font-size:10px;line-height:1.8}
  #bhr-heatmap-page .bhr-heatmap-widget{box-sizing:border-box;width:100%;min-width:0;min-height:500px;overflow:hidden}
@@ -3581,12 +3586,16 @@ header .bhr-sun-letters:after{
 <style id="bhr-market-heatmap-styles">
 .bhr-heatmap-panel{width:min(1200px,94%);margin:0 auto;padding:18px;border:1px solid var(--line);border-radius:18px;background:var(--card);box-shadow:0 12px 32px #0003}
 .bhr-heatmap-tabs{display:flex;flex-wrap:wrap;justify-content:center;gap:9px;margin:0 0 14px}
+.bhr-iran-heatmap-widget{height:760px;min-height:760px;overflow:hidden;background:#0b1017}
+.bhr-iran-heatmap-widget iframe{display:block;width:100%;height:100%;min-height:760px;border:0;background:#fff}
+.bhr-iran-heatmap-fallback{padding:10px;text-align:center;color:var(--muted);font-size:12px}
+.bhr-iran-heatmap-fallback a{color:var(--gold2);text-decoration:underline}
 .bhr-heatmap-tabs button{border:1px solid var(--line);border-radius:10px;padding:10px 18px;background:#15191f;color:var(--text);font:inherit;cursor:pointer}
 .bhr-heatmap-tabs button.active{border-color:var(--gold2);color:var(--gold2);box-shadow:0 0 14px var(--goldGlow)}
 .bhr-heatmap-caption,.bhr-heatmap-source{text-align:center;color:var(--muted);font-size:12px;line-height:1.8;margin:8px 0 14px}
 .bhr-heatmap-widget{width:100%;min-height:540px;border-radius:12px;overflow:hidden}
 .bhr-heatmap-widget iframe{width:100%!important;max-width:100%!important}
-@media(max-width:600px){.bhr-heatmap-panel{width:94%;padding:10px}.bhr-heatmap-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.bhr-heatmap-tabs button{padding:9px 4px;font-size:11px}.bhr-heatmap-widget{min-height:500px}}
+@media(max-width:600px){.bhr-heatmap-panel{width:94%;padding:10px}.bhr-heatmap-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.bhr-heatmap-tabs button{padding:9px 4px;font-size:11px}.bhr-heatmap-widget{min-height:500px}.bhr-iran-heatmap-widget,.bhr-iran-heatmap-widget iframe{height:680px;min-height:680px}}
 </style>
 <script id="bhr-market-heatmap-loader">
 (()=>{
