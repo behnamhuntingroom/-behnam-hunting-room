@@ -2907,8 +2907,10 @@ heatmap.insertAdjacentHTML("beforeend", `
   <div class="bhr-heatmap-caption">نمایش تغییرات بازار به‌صورت زنده از TradingView؛ برای مشاهده جزئیات روی هر خانه بروید یا آن را انتخاب کنید.</div>
   <div class="bhr-heatmap-widget" data-bhr-heatmap-host="stocks"></div>
   <div class="bhr-heatmap-widget bhr-iran-heatmap-widget" data-bhr-heatmap-host="iran" hidden>
-   <div class="bhr-iran-heatmap-fallback"><strong>نقشه بازار بورس ایران</strong><span>اگر نقشه داخل سایت بارگذاری نشد، از لینک زیر نسخه زنده و کامل را باز کن.</span><a href="https://fundai.ir/market-map" target="_blank" rel="noopener noreferrer">باز کردن نقشه زنده بورس ایران ↗</a></div>
-   <iframe src="https://fundai.ir/market-map" title="نقشه حرارتی بورس ایران" loading="eager" allow="fullscreen"></iframe>
+   <div class="bhr-iran-map-head"><strong>نقشه حرارتی بورس ایران</strong><span class="bhr-iran-map-status" aria-live="polite">در حال دریافت اطلاعات بازار…</span></div>
+   <div class="bhr-iran-map-summary" data-bhr-iran-summary></div>
+   <div class="bhr-iran-map-tiles" data-bhr-iran-tiles aria-live="polite"></div>
+   <div class="bhr-iran-map-foot">منبع: داده بازار TSETMC · به‌روزرسانی خودکار هر ۴۵ ثانیه در صورت دسترسی منبع</div>
   </div>
   <div class="bhr-heatmap-widget" data-bhr-heatmap-host="crypto" hidden></div>
   <div class="bhr-heatmap-widget" data-bhr-heatmap-host="forex" hidden></div>
@@ -3605,6 +3607,24 @@ header .bhr-sun-letters:after{
 }
 </style>
 
+<style id="bhr-iran-native-heatmap">
+.bhr-iran-heatmap-widget{min-height:0!important;padding:14px;background:#0b1017;border:1px solid rgba(215,180,90,.22);border-radius:14px}
+.bhr-iran-map-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;color:#f2d98b;margin:0 0 12px}
+.bhr-iran-map-head strong{font-size:17px}
+.bhr-iran-map-status{font-size:11px;color:#a9b1bb}
+.bhr-iran-map-summary{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.bhr-iran-map-summary span{padding:7px 10px;border-radius:8px;background:#171f29;color:#cbd5df;font-size:12px}
+.bhr-iran-map-summary .up{color:#6de0a0}.bhr-iran-map-summary .down{color:#ff8585}
+.bhr-iran-map-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:6px;max-height:720px;overflow:auto;padding:2px}
+.bhr-iran-tile{min-height:78px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;padding:8px 5px;border:1px solid #ffffff18;border-radius:8px;text-align:center;overflow:hidden}
+.bhr-iran-tile.positive{background:linear-gradient(145deg,#087b49,#064d32);color:#e4fff0}
+.bhr-iran-tile.negative{background:linear-gradient(145deg,#a52d39,#681c29);color:#fff0f0}
+.bhr-iran-tile.neutral{background:#46515d;color:#fff}
+.bhr-iran-tile strong{font-size:13px;font-weight:900}.bhr-iran-tile b{font-size:12px}.bhr-iran-tile small{font-size:9px;opacity:.8;max-width:100%;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
+.bhr-iran-map-foot{margin-top:10px;text-align:center;color:#8f9aa7;font-size:10px}
+.bhr-iran-map-error{grid-column:1/-1;padding:24px;text-align:center;color:#ffb0a8;background:#351d22;border-radius:10px;font-size:13px}
+@media(max-width:600px){.bhr-iran-heatmap-widget{padding:9px}.bhr-iran-map-tiles{grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:5px}.bhr-iran-tile{min-height:70px}}
+</style>
 <style id="bhr-market-heatmap-styles">
 .bhr-heatmap-panel{width:min(1200px,94%);margin:0 auto;padding:18px;border:1px solid var(--line);border-radius:18px;background:var(--card);box-shadow:0 12px 32px #0003}
 .bhr-heatmap-tabs{display:flex;flex-wrap:wrap;justify-content:center;gap:9px;margin:0 0 14px}
@@ -3631,8 +3651,53 @@ header .bhr-sun-letters:after{
   crypto:{src:"https://s3.tradingview.com/external-embedding/embed-widget-crypto-coins-heatmap.js",config:{dataSource:"Crypto",blockSize:"market_cap_calc",blockColor:"change",locale:"en",symbolUrl:"",colorTheme:"dark",hasTopBar:true,isDataSetEnabled:true,isZoomEnabled:true,hasSymbolTooltip:true,width:"100%",height:"540"}},
   forex:{src:"https://s3.tradingview.com/external-embedding/embed-widget-forex-heat-map.js",config:{width:"100%",height:"540",currencies:["EUR","USD","JPY","GBP","CHF","AUD","CAD","NZD"],isTransparent:true,colorTheme:"dark",locale:"en"}}
  };
+ const iranHost=page.querySelector('[data-bhr-heatmap-host="iran"]');
+ let iranTimer=null,iranBusy=false;
+ const fmt=n=>Number(n).toLocaleString("fa-IR",{maximumFractionDigits:2});
+ const setStatus=t=>{const el=iranHost&&iranHost.querySelector(".bhr-iran-map-status");if(el)el.textContent=t;};
+ const renderIran=rows=>{
+  const tiles=iranHost.querySelector("[data-bhr-iran-tiles]");
+  const summary=iranHost.querySelector("[data-bhr-iran-summary]");
+  if(!Array.isArray(rows)||!rows.length)throw new Error("داده‌ای از سرویس بازار دریافت نشد");
+  const valid=rows.filter(x=>x&&x.lVal18AFC);
+  if(!valid.length)throw new Error("ساختار داده دریافتی قابل نمایش نیست");
+  const up=valid.filter(x=>Number(x.percent??x.priceChangePercent)>0).length;
+  const down=valid.filter(x=>Number(x.percent??x.priceChangePercent)<0).length;
+  const flat=valid.length-up-down;
+  summary.innerHTML='<span>نمادها: <b>'+fmt(valid.length)+'</b></span><span class="up">مثبت: <b>'+fmt(up)+'</b></span><span class="down">منفی: <b>'+fmt(down)+'</b></span><span>بدون تغییر: <b>'+fmt(flat)+'</b></span>';
+  tiles.innerHTML="";
+  valid.sort((a,b)=>Math.abs(Number(b.percent??b.priceChangePercent)||0)-Math.abs(Number(a.percent??a.priceChangePercent)||0));
+  const frag=document.createDocumentFragment();
+  valid.slice(0,260).forEach(x=>{
+   const pct=Number(x.percent??x.priceChangePercent)||0;
+   const tile=document.createElement("div");
+   tile.className="bhr-iran-tile "+(pct>0?"positive":pct<0?"negative":"neutral");
+   const symbol=document.createElement("strong");symbol.textContent=x.lVal18AFC;
+   const change=document.createElement("b");change.textContent=(pct>0?"+":"")+fmt(pct)+"٪";
+   const name=document.createElement("small");name.textContent=x.lVal30||x.lSecVal||"";
+   tile.title=(x.lVal30||"")+" | آخرین قیمت: "+fmt(x.pDrCotVal||0)+" | پایانی: "+fmt(x.pClosing||0);
+   tile.append(symbol,change,name);frag.append(tile);
+  });
+  tiles.append(frag);
+  setStatus("آخرین دریافت: "+new Date().toLocaleTimeString("fa-IR"));
+ };
+ const loadIran=async()=>{
+  if(!iranHost||iranBusy)return;
+  iranBusy=true;
+  try{
+   const url="https://cdn.tsetmc.com/api/ClosingPrice/GetMarketMap?market=0&size=1920&sector=0&typeSelected=1&hEven=0";
+   const response=await fetch(url,{cache:"no-store",headers:{Accept:"application/json"}});
+   if(!response.ok)throw new Error("پاسخ سرویس بازار: "+response.status);
+   const data=await response.json();
+   renderIran(Array.isArray(data)?data:(data&&Array.isArray(data.marketMap)?data.marketMap:[]));
+  }catch(error){
+   setStatus("دریافت اطلاعات ناموفق بود؛ منبع بازار ممکن است دسترسی مرورگر را محدود کرده باشد.");
+   const tiles=iranHost.querySelector("[data-bhr-iran-tiles]");
+   if(tiles&&!tiles.children.length)tiles.innerHTML='<div class="bhr-iran-map-error">اتصال مستقیم به داده‌های بازار برقرار نشد. لطفاً کمی بعد دوباره تلاش کنید.</div>';
+  }finally{iranBusy=false;}
+ };
  const load=key=>{
-  if(key==="iran")return;
+  if(key==="iran"){loadIran();if(!iranTimer)iranTimer=setInterval(loadIran,45000);return;}
   const host=page.querySelector('[data-bhr-heatmap-host="'+key+'"]');
   if(!host||host.dataset.loaded==="1")return;
   host.dataset.loaded="1";
