@@ -3340,6 +3340,70 @@ header nav .bhr-nav-cart svg{stroke:#22c55e!important}
 }
 </style>
 </body>
+
+<style id="bhr-file-attachment-visibility-fix">
+/* Keep attachment controls visible above generic assistant/support button styles */
+#bhr-assistant-page #bhrAssistantForm .bhr-file-attach,
+#bhr-support-panel .bhr-support-compose #bhrSupportAttach{
+  display:grid!important;
+  place-items:center!important;
+  width:44px!important;
+  min-width:44px!important;
+  max-width:44px!important;
+  height:44px!important;
+  min-height:44px!important;
+  flex:0 0 44px!important;
+  padding:0!important;
+  margin:0!important;
+  border:1px solid rgba(103,232,249,.65)!important;
+  border-radius:12px!important;
+  background:linear-gradient(145deg,rgba(8,145,178,.28),rgba(49,46,129,.22))!important;
+  color:#a5f3fc!important;
+  font-size:23px!important;
+  line-height:1!important;
+  box-shadow:0 0 14px rgba(34,211,238,.13)!important;
+  cursor:pointer!important;
+}
+#bhr-assistant-page #bhrAssistantForm .bhr-file-attach:hover,
+#bhr-support-panel .bhr-support-compose #bhrSupportAttach:hover{
+  border-color:#67e8f9!important;
+  box-shadow:0 0 18px rgba(34,211,238,.3)!important;
+}
+#bhr-assistant-page #bhrAssistantForm input.bhr-file-input,
+#bhr-support-panel .bhr-support-compose input.bhr-file-input{
+  position:absolute!important;
+  width:1px!important;
+  min-width:1px!important;
+  max-width:1px!important;
+  height:1px!important;
+  min-height:1px!important;
+  padding:0!important;
+  margin:-1px!important;
+  border:0!important;
+  opacity:0!important;
+  overflow:hidden!important;
+  pointer-events:none!important;
+  clip:rect(0,0,0,0)!important;
+}
+#bhr-assistant-page #bhrAssistantForm .bhr-file-compose{
+  display:flex!important;
+  align-items:center!important;
+  flex-direction:row!important;
+  gap:9px!important;
+  width:100%!important;
+}
+@media(max-width:760px){
+  #bhr-assistant-page #bhrAssistantForm .bhr-file-attach,
+  #bhr-support-panel .bhr-support-compose #bhrSupportAttach{
+    width:44px!important;
+    min-width:44px!important;
+    max-width:44px!important;
+    height:44px!important;
+    min-height:44px!important;
+  }
+}
+</style>
+
 </html>
 
 
