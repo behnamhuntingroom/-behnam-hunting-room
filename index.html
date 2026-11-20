@@ -2465,7 +2465,40 @@ function renderChatMessage(message,mine,timestamp,id,from,attachment=null){
   link.className="bhr-support-attachment-link";
   link.textContent="📎 "+String(attachment.name||"فایل پیوست")+" — مشاهده / دریافت";
   link.href=SUPPORT_ENDPOINT+"attachment?conversationId="+encodeURIComponent(supportConversationId||"")+"&fileId="+encodeURIComponent(String(attachment.fileId));
-  link.target="_blank";link.rel="noopener noreferrer";
+  link.addEventListener("click",async event=>{
+   event.preventDefault();
+   const fileName=String(attachment.name||"attachment");
+   const ext=(fileName.split(".").pop()||"").toLowerCase();
+   const mimeByExt={
+    jpg:"image/jpeg",jpeg:"image/jpeg",png:"image/png",
+    pdf:"application/pdf",txt:"text/plain",
+    docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+   };
+   const previewable=["jpg","jpeg","png","pdf"].includes(ext);
+   const previewTab=previewable?window.open("about:blank","_blank"):null;
+   try{
+    const response=await fetch(link.href,{method:"GET",cache:"no-store"});
+    if(!response.ok)throw new Error("HTTP "+response.status);
+    const sourceBlob=await response.blob();
+    const correctedBlob=new Blob([sourceBlob],{type:mimeByExt[ext]||sourceBlob.type||"application/octet-stream"});
+    const objectUrl=URL.createObjectURL(correctedBlob);
+    if(previewable&&previewTab){
+     previewTab.location.href=objectUrl;
+    }else{
+     if(previewTab)previewTab.close();
+     const downloadLink=document.createElement("a");
+     downloadLink.href=objectUrl;
+     downloadLink.download=fileName;
+     document.body.appendChild(downloadLink);
+     downloadLink.click();
+     downloadLink.remove();
+    }
+    setTimeout(()=>URL.revokeObjectURL(objectUrl),60000);
+   }catch(error){
+    if(previewTab)previewTab.close();
+    $("bhrSupportStatus").textContent="دریافت فایل ناموفق بود. لطفاً دوباره تلاش کن.";
+   }
+  });
   box.appendChild(link);
  }
  $("bhr-support-messages").appendChild(box);
