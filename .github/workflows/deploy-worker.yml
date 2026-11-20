@@ -33,10 +33,10 @@ jobs:
           KV_ID="$(curl --fail --silent --show-error \
             -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
             "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/storage/kv/namespaces" \
-            | jq -r '.result[] | select(.title == "CHAT_STORE") | .id' | head -n 1)"
+            | jq -r '.result[] | select(.title == "BEHNAM_CHAT_MESSAGES") | .id' | head -n 1)"
 
           if [ -z "${KV_ID}" ] || [ "${KV_ID}" = "null" ]; then
-            echo "::error::Could not find the existing Cloudflare KV namespace named CHAT_STORE."
+            echo "::error::Could not find the existing Cloudflare KV namespace named BEHNAM_CHAT_MESSAGES."
             exit 1
           fi
 
