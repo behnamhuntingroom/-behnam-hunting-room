@@ -1887,7 +1887,12 @@ header .bhr-sun-letters{transform:translateZ(12px);text-shadow:0 1px 0 #8d6420,0
    <div class="bhr-assistant-message bhr-assistant-bot">سلام! من دستیار تحلیلی BHR هستم. می‌توانم خبرهای موجود در اتاق معاملاتی را دسته‌بندی و روش معاملاتی BHR را توضیح بدهم. سوالت را بنویس یا یکی از میانبرها را انتخاب کن.</div>
   </div>
   <form class="bhr-assistant-form" id="bhrAssistantForm">
-   <input id="bhrAssistantInput" type="text" maxlength="500" autocomplete="off" placeholder="مثلاً وضعیت خبرهای طلا و دلار را جمع‌بندی کن..." aria-label="سوال از دستیار BHR">
+   <div class="bhr-file-compose">
+    <button type="button" class="bhr-file-attach" id="bhrAssistantAttach" aria-label="الصاق فایل" title="الصاق فایل">📎</button>
+    <input id="bhrAssistantFile" class="bhr-file-input" type="file" accept=".pdf,.jpg,.jpeg,.png,.txt,.docx,application/pdf,image/jpeg,image/png,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+    <span class="bhr-file-name" id="bhrAssistantFileName">فایلی انتخاب نشده</span>
+   </div>
+   <input id="bhrAssistantInput" type="text" maxlength="500" autocomplete="off" placeholder="سوالت را بنویس یا فایل پیوست کن..." aria-label="سوال از دستیار BHR">
    <button type="submit">تحلیل کن</button>
   </form>
  </section>
@@ -2052,6 +2057,8 @@ header .bhr-sun-letters{transform:translateZ(12px);text-shadow:0 1px 0 #8d6420,0
   <div id="bhr-support-messages" aria-live="polite" aria-relevant="additions"></div>
   <div class="bhr-support-compose">
    <textarea id="bhrSupportMessage" rows="1" aria-label="متن پیام" placeholder="پیام خود را بنویس..."></textarea>
+   <button type="button" class="bhr-file-attach" id="bhrSupportAttach" aria-label="الصاق فایل" title="الصاق فایل">📎</button>
+   <input id="bhrSupportFile" class="bhr-file-input" type="file" accept=".pdf,.jpg,.jpeg,.png,.txt,.docx,application/pdf,image/jpeg,image/png,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
    <button type="button" id="bhrSupportSend" aria-label="ارسال پیام" title="ارسال پیام">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4Z"/></svg>
    </button>
@@ -2521,7 +2528,7 @@ function startSupportPolling(){
  supportPollTimer=setInterval(pollSupportMessages,1000);
 }
 
-async function sendToSupport(message){
+async function sendToSupport(message,file=null){
  const now=Date.now();
  if(now-lastSendAt<4000){
   $("bhrSupportStatus").textContent="لطفاً چند ثانیه صبر کن و دوباره بفرست.";
@@ -2533,7 +2540,8 @@ async function sendToSupport(message){
   const payload={
    name:supportUser.name,
    phone:supportUser.phone,
-   message:message
+   message:message,
+   ...(file?{attachment:{name:file.name,type:file.type,data:await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result||""));reader.onerror=()=>reject(new Error("خواندن فایل ناموفق بود."));reader.readAsDataURL(file);})}}:{})
   };
   if(supportConversationId)payload.conversationId=supportConversationId;
   const response=await fetch(SUPPORT_ENDPOINT,{
@@ -2590,15 +2598,31 @@ $("bhrSupportStart")?.addEventListener("click",async()=>{
  }
 });
 
+let supportSelectedFile=null;
+const supportFileInput=$("bhrSupportFile");
+$("bhrSupportAttach")?.addEventListener("click",()=>supportFileInput?.click());
+supportFileInput?.addEventListener("change",()=>{
+ const file=supportFileInput.files?.[0]||null;
+ if(!file){supportSelectedFile=null;return;}
+ if(!/\\.(pdf|jpe?g|png|txt|docx)$/i.test(file.name)){
+  $("bhrSupportStatus").textContent="فرمت فایل پشتیبانی نمی‌شود.";supportFileInput.value="";supportSelectedFile=null;return;
+ }
+ if(file.size>8*1024*1024){
+  $("bhrSupportStatus").textContent="حجم فایل نباید بیشتر از ۸ مگابایت باشد.";supportFileInput.value="";supportSelectedFile=null;return;
+ }
+ supportSelectedFile=file;
+ $("bhrSupportStatus").textContent="فایل آماده ارسال: "+file.name;
+});
 $("bhrSupportSend")?.addEventListener("click",async()=>{
  if(!supportUser||!supportConversationId)return;
  const input=$("bhrSupportMessage");
- const message=input.value.trim();
- if(!message)return;
- const ok=await sendToSupport(message);
+ const message=input.value.trim(),file=supportSelectedFile;
+ if(!message&&!file)return;
+ const ok=await sendToSupport(message,file);
  if(ok){
-  addChatMessage(message,true,Date.now(),null,"visitor",true);
-  input.value="";
+  addChatMessage(message+(file?"\\n📎 "+file.name:""),true,Date.now(),null,"visitor",true);
+  input.value="";supportSelectedFile=null;if(supportFileInput)supportFileInput.value="";
+  $("bhrSupportStatus").textContent="پیام و فایل به پشتیبانی ارسال شد.";
   pollSupportMessages();
  }
 });
@@ -3294,6 +3318,27 @@ header nav .bhr-nav-cart svg{stroke:#22c55e!important}
 }
 </style>
 
+
+<style id="bhr-file-attachment-styles">
+.bhr-file-compose{display:flex;align-items:center;gap:8px;min-width:0}
+.bhr-file-attach{width:44px;height:44px;flex:0 0 44px;display:grid;place-items:center;border:1px solid rgba(103,232,249,.45);border-radius:12px;background:rgba(8,145,178,.14);color:#a5f3fc;font-size:20px;cursor:pointer}
+.bhr-file-attach:hover{border-color:#67e8f9;background:rgba(8,145,178,.25)}
+.bhr-file-input{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;overflow:hidden!important;pointer-events:none!important}
+.bhr-file-name{min-width:0;max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:11px}
+#bhrAssistantFileName{color:#a5bfd0}
+#bhr-support-panel .bhr-support-compose .bhr-file-attach{width:44px;height:48px;flex:0 0 44px}
+#bhr-support-panel .bhr-support-compose{flex-wrap:wrap}
+#bhrSupportStatus{overflow-wrap:anywhere}
+@media(max-width:760px){
+ #bhr-assistant-page .bhr-assistant-form{display:flex;flex-direction:column;align-items:stretch}
+ #bhr-assistant-page .bhr-file-compose{width:100%}
+ #bhr-assistant-page .bhr-file-name{max-width:calc(100vw - 150px)}
+ #bhr-assistant-page .bhr-assistant-form input{width:100%;min-height:46px}
+ #bhr-assistant-page .bhr-assistant-form button{width:100%;min-height:46px}
+ #bhr-support-panel .bhr-support-compose{display:grid;grid-template-columns:minmax(0,1fr) 44px 48px;align-items:end}
+ #bhrSupportMessage{grid-column:1/-1;width:100%}
+}
+</style>
 </body>
 </html>
 
@@ -3428,7 +3473,39 @@ header .bhr-sun-letters:after{
  const root=document.getElementById("bhr-smart-assistant");
  if(!root)return;
  const form=root.querySelector("#bhrAssistantForm"),input=root.querySelector("#bhrAssistantInput"),chat=root.querySelector("#bhrAssistantChat");
+ const fileInput=root.querySelector("#bhrAssistantFile"),attachButton=root.querySelector("#bhrAssistantAttach"),fileName=root.querySelector("#bhrAssistantFileName");
  if(!form||!input||!chat)return;
+ let selectedFile=null;
+ const allowedExt=/\\.(pdf|jpe?g|png|txt|docx)$/i;
+ const maxFileBytes=8*1024*1024;
+ const fileToDataUrl=file=>new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result||""));reader.onerror=()=>reject(new Error("خواندن فایل ناموفق بود."));reader.readAsDataURL(file);});
+ const loadScript=src=>new Promise((resolve,reject)=>{const found=[...document.scripts].find(s=>s.src===src);if(found){if(found.dataset.loaded==="1")return resolve();found.addEventListener("load",resolve,{once:true});found.addEventListener("error",reject,{once:true});return;}const s=document.createElement("script");s.src=src;s.async=true;s.onload=()=>{s.dataset.loaded="1";resolve();};s.onerror=()=>reject(new Error("بارگذاری ابزار خواندن فایل انجام نشد."));document.head.appendChild(s);});
+ const extractDocumentText=async file=>{
+  if(file.name.toLowerCase().endsWith(".txt"))return (await file.text()).slice(0,60000);
+  if(file.name.toLowerCase().endsWith(".pdf")){
+   const pdfjs=await import("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs");
+   pdfjs.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs";
+   const pdf=await pdfjs.getDocument({data:await file.arrayBuffer()}).promise;
+   let out="";
+   for(let p=1;p<=Math.min(pdf.numPages,35);p++){const page=await pdf.getPage(p);const content=await page.getTextContent();out+=content.items.map(x=>x.str||"").join(" ")+"\\n";if(out.length>60000)break;}
+   return out.slice(0,60000);
+  }
+  if(file.name.toLowerCase().endsWith(".docx")){
+   await loadScript("https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.9.0/mammoth.browser.min.js");
+   if(!window.mammoth)throw new Error("ابزار خواندن Word در دسترس نیست.");
+   const result=await window.mammoth.extractRawText({arrayBuffer:await file.arrayBuffer()});
+   return String(result.value||"").slice(0,60000);
+  }
+  return "";
+ };
+ const setSelectedFile=file=>{
+  if(!file){selectedFile=null;if(fileName)fileName.textContent="فایلی انتخاب نشده";return;}
+  if(!allowedExt.test(file.name)){if(fileName)fileName.textContent="فرمت پشتیبانی نمی‌شود";if(fileInput)fileInput.value="";return;}
+  if(file.size>maxFileBytes){if(fileName)fileName.textContent="حجم فایل بیش از ۸ مگابایت است";if(fileInput)fileInput.value="";return;}
+  selectedFile=file;if(fileName)fileName.textContent="📎 "+file.name;
+ };
+ attachButton?.addEventListener("click",()=>fileInput?.click());
+ fileInput?.addEventListener("change",()=>setSelectedFile(fileInput.files?.[0]||null));
  const add=(text,kind)=>{
   const node=document.createElement("div");node.className="bhr-assistant-message "+(kind==="user"?"bhr-assistant-user":"bhr-assistant-bot");node.textContent=text;chat.appendChild(node);chat.scrollTop=chat.scrollHeight;return node;
  };
@@ -3467,10 +3544,10 @@ header .bhr-sun-letters:after{
   const tone=pos>neg?"در تیترهای قابل‌خواندن، واژه‌های مثبت بیشتر دیده می‌شود":neg>pos?"در تیترهای قابل‌خواندن، واژه‌های منفی بیشتر دیده می‌شود":"از روی تیترها جهت غالب روشنی به دست نمی‌آید";
   return "جمع‌بندی خبرهای "+label+":\\n"+filtered.slice(0,6).map((t,i)=>(i+1)+". "+t).join("\\n")+"\\n\\nبرداشت اولیه: "+tone+". این فقط دسته‌بندی واژگانی تیترهاست، نه سنجش قطعی جهت قیمت. برای تصمیم معاملاتی، نمودار، ساختار قیمت، حجم و مدیریت ریسک را جداگانه بررسی کن.";
  };
- const ask=async q=>{
+ const ask=async(q,file=selectedFile)=>{
   const clean=String(q||"").trim();
-  if(!clean)return;
-  add(clean,"user");
+  if(!clean&&!file)return;
+  add(clean+(file?"\\n📎 "+file.name:""),"user");
   const loading=add("در حال دریافت پاسخ از هوش مصنوعی BHR…","bot");
   const newsContext=headlines().slice(0,12).join("\n").slice(0,5000);
   const calendar=document.getElementById("bhrEconomicCalendar");
