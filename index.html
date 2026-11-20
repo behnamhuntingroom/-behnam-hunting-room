@@ -2914,7 +2914,8 @@ shortcuts.innerHTML=
  '<a class="bhr-shortcut" href="#bhr-page-tools" data-bhr-page="tools"><span class="bhr-shortcut-icon">⚙</span><strong>ابزارهای ترید</strong><small>ماشین‌حساب و ابزارهای مدیریت معامله</small></a>'+
  '<a class="bhr-shortcut" href="#bhr-page-community" data-bhr-page="community"><span class="bhr-shortcut-icon">♧</span><strong>تحلیل کاربران</strong><small>ثبت و بررسی تحلیل‌ها</small></a>'+
  '<a class="bhr-shortcut" href="#bhr-page-markets" data-bhr-page="markets"><span class="bhr-shortcut-icon">⌁</span><strong>مرکز بازار</strong><small>مشاهده بازارها در صفحه اصلی</small></a>'+
- '<a class="bhr-shortcut" href="#bhr-page-about" data-bhr-page="about"><span class="bhr-shortcut-icon">✦</span><strong>درباره ما</strong><small>آشنایی با برند BHR</small></a>';
+ '<a class="bhr-shortcut" href="#bhr-page-about" data-bhr-page="about"><span class="bhr-shortcut-icon">✦</span><strong>درباره ما</strong><small>آشنایی با برند BHR</small></a>'+
+ '<a class="bhr-shortcut bhr-shortcut-news" href="#bhr-page-room" data-bhr-page="room" data-bhr-scroll="bhr-command-center"><span class="bhr-shortcut-icon">▤</span><strong>اخبار</strong><small>خبرهای مهم و زنده بازارهای جهانی</small></a>';
 const methodIntro=document.createElement("section");
 methodIntro.className="bhr-home-method-intro";
 methodIntro.innerHTML=
@@ -2979,6 +2980,13 @@ function showPage(requestedKey,updateHash){
  document.title=(requestedKey==="markets"?"مرکز بازار":key==="home"?"اتاق شکار بهنام":({room:"اتاق معاملاتی",academy:"آکادمی آموزشی",tools:"ابزارهای ترید",community:"تحلیل کاربران",about:"درباره ما",heatmap:"نقشه حرارتی بازار",assistant:"دستیار هوشمند BHR"}[key]))+" | BEHNAM HUNTING ROOM";
 }
 document.addEventListener("click",e=>{
+ const newsLink=e.target.closest(".bhr-shortcut-news");
+ if(newsLink){
+  e.preventDefault();
+  showPage("room",true);
+  window.setTimeout(()=>document.getElementById("bhr-command-center")?.scrollIntoView({behavior:"smooth",block:"start"}),120);
+  return;
+ }
  const link=e.target.closest("[data-bhr-page]");
  if(!link)return;
  e.preventDefault();showPage(link.dataset.bhrPage,true);
@@ -3888,4 +3896,21 @@ header .bhr-sun-letters:after{
     font-size:11px!important;
   }
 }
+</style>
+
+
+<style id="bhr-news-shortcut-glow">
+.bhr-shortcut-news{
+ border:1px solid rgba(255,65,65,.72)!important;
+ background:linear-gradient(145deg,rgba(72,12,16,.88),rgba(24,8,11,.98))!important;
+ animation:bhrNewsGlow 2.8s ease-in-out infinite;
+}
+.bhr-shortcut-news .bhr-shortcut-icon,
+.bhr-shortcut-news strong{color:#ff7777!important;text-shadow:0 0 8px rgba(255,55,55,.45)}
+.bhr-shortcut-news small{color:#f0baba!important}
+@keyframes bhrNewsGlow{
+ 0%,100%{border-color:rgba(255,65,65,.38);box-shadow:0 0 5px rgba(255,35,35,.10),inset 0 0 5px rgba(255,35,35,.04)}
+ 50%{border-color:rgba(255,65,65,.95);box-shadow:0 0 18px rgba(255,35,35,.34),0 0 30px rgba(255,35,35,.13),inset 0 0 12px rgba(255,35,35,.10)}
+}
+@media(prefers-reduced-motion:reduce){.bhr-shortcut-news{animation:none!important;box-shadow:0 0 10px rgba(255,35,35,.2)!important}}
 </style>
