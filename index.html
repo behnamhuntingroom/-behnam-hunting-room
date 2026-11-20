@@ -2403,7 +2403,11 @@ const tools=document.querySelector("header .header-tools");
 if(tools){
  ["ورود","عضویت"].forEach(label=>{
   const b=document.createElement("button");
-  b.type="button";b.className="theme-btn";b.textContent=label;
+  b.type="button";b.className="theme-btn bhr-auth-nav-button";
+  b.setAttribute("aria-label",label);
+  b.innerHTML=(label==="ورود"
+   ?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3m9-8h7a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-7"/></svg>'
+   :'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0m4-12v8m-4-4h8"/></svg>')+'<span>'+label+'</span>';
   b.addEventListener("click",()=>{
    $("bhrAuthTitle").textContent=label;
    $("bhr-auth-panel").classList.add("open");
@@ -2994,7 +2998,11 @@ if(nav){
 const cartToggle=$("bhrCartToggle");
 if(nav&&cartToggle){
  cartToggle.classList.add("bhr-nav-cart");
- nav.append(cartToggle);
+ const accountGroup=document.createElement("div");
+ accountGroup.className="bhr-nav-account-tools";
+ accountGroup.append(cartToggle);
+ document.querySelectorAll("header .bhr-auth-nav-button").forEach(button=>accountGroup.append(button));
+ nav.append(accountGroup);
 }
 const brand=document.querySelector("header .brand");
 if(brand&&!brand.querySelector(".bhr-sun-mark")){
@@ -3460,6 +3468,21 @@ header nav .bhr-nav-cart svg{stroke:#22c55e!important}
 #bhr-home-market-workspace .bhr-shortcut-heatmap strong{color:#ff9a45;text-shadow:0 0 9px rgba(255,90,25,.38)}
 @keyframes bhrHomeHeatmapGlow{0%,100%{border-color:rgba(255,90,25,.28);box-shadow:0 0 3px rgba(255,65,20,.12),inset 0 0 3px rgba(255,65,20,.05);filter:brightness(.88)}50%{border-color:rgba(255,125,45,1);box-shadow:0 0 18px rgba(255,95,25,.62),0 0 34px rgba(220,35,15,.38),inset 0 0 14px rgba(255,75,20,.2);filter:brightness(1.18)}}
 @media(prefers-reduced-motion:reduce){#bhr-home-market-workspace .bhr-shortcut-heatmap{animation:none;box-shadow:0 0 10px rgba(255,90,25,.35)}}
+</style>
+
+
+<style id="bhr-nav-account-tools-layout">
+header nav .bhr-nav-account-tools{display:inline-flex;align-items:center;justify-content:center;gap:7px;margin-inline-start:auto;flex:0 0 auto}
+header nav .bhr-nav-account-tools .bhr-nav-cart{margin:0!important}
+header nav .bhr-auth-nav-button{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:7px 10px!important;border:1px solid var(--gold)!important;border-radius:10px;color:var(--gold2)!important;background:rgba(215,180,90,.09)!important;font-size:12px!important;white-space:nowrap}
+header nav .bhr-auth-nav-button svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+@media(max-width:600px){
+ header>nav>a:not([data-bhr-page="home"]):not([data-bhr-page="heatmap"]){display:none!important}
+ header>nav{display:flex!important;flex-wrap:wrap!important;justify-content:center!important;align-items:center!important;gap:10px!important}
+ header>nav .bhr-nav-account-tools{display:flex!important;flex-wrap:wrap;gap:5px;margin:0!important}
+ header>nav .bhr-nav-account-tools .bhr-nav-cart,header>nav .bhr-nav-account-tools .bhr-auth-nav-button{display:inline-flex!important;width:auto!important;min-width:0!important;padding:7px 8px!important;font-size:11px!important}
+ header>nav .bhr-nav-account-tools .bhr-nav-cart svg,header>nav .bhr-nav-account-tools .bhr-auth-nav-button svg{width:15px;height:15px}
+}
 </style>
 
 </body>
