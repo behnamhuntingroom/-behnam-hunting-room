@@ -1115,7 +1115,10 @@ export default {
 
 
 
-    if (!ALLOWED_ORIGINS.includes(origin)) {
+    // Public, read-only market data may also be opened directly for diagnostics.
+    const publicMarketMapRead = path === "/market-map" && request.method === "GET" && !origin;
+
+    if (!ALLOWED_ORIGINS.includes(origin) && !publicMarketMapRead) {
 
       return new Response("Forbidden", { status: 403 });
 
