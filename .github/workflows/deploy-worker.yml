@@ -41,7 +41,7 @@ jobs:
           fi
 
           cat > wrangler.generated.toml <<EOF
-          name = "behnam-hunting-support"
+          name = "tiny-unit-4ed3"
           main = "worker/index.js"
           compatibility_date = "2026-11-20"
           account_id = "${CF_ACCOUNT_ID}"
