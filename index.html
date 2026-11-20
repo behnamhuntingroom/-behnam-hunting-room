@@ -2448,7 +2448,7 @@ $("bhrSupportClose")?.addEventListener("click",()=>{
  $("bhr-support-panel").classList.add("bhr-up-hidden");
 });
 
-function renderChatMessage(message,mine,timestamp,id,from){
+function renderChatMessage(message,mine,timestamp,id,from,attachment=null){
  const box=document.createElement("div");
  box.className="bhr-chat-msg"+(mine?" mine":"");
  const meta=document.createElement("div");meta.className="bhr-chat-meta";
@@ -2460,17 +2460,26 @@ function renderChatMessage(message,mine,timestamp,id,from){
  time.textContent=date.toLocaleTimeString("fa-IR",{hour:"2-digit",minute:"2-digit"});
  const body=document.createElement("div");body.className="bhr-chat-text";body.textContent=message;
  meta.append(sender,time);box.append(meta,body);
+ if(attachment&&attachment.fileId){
+  const link=document.createElement("a");
+  link.className="bhr-support-attachment-link";
+  link.textContent="📎 "+String(attachment.name||"فایل پیوست")+" — مشاهده / دریافت";
+  link.href=SUPPORT_ENDPOINT+"attachment?conversationId="+encodeURIComponent(supportConversationId||"")+"&fileId="+encodeURIComponent(String(attachment.fileId));
+  link.target="_blank";link.rel="noopener noreferrer";
+  box.appendChild(link);
+ }
  $("bhr-support-messages").appendChild(box);
  $("bhr-support-messages").scrollTop=$("bhr-support-messages").scrollHeight;
 }
 
-function addChatMessage(message,mine,timestamp=Date.now(),id=null,from=null,persist=true){
+function addChatMessage(message,mine,timestamp=Date.now(),id=null,from=null,persist=true,attachment=null){
  const entry={
   id:String(id||("local-"+Date.now()+"-"+Math.random().toString(36).slice(2,8))),
   text:String(message),from:from||(mine?"visitor":"support"),
-  timestamp:Number(timestamp)||Date.now()
+  timestamp:Number(timestamp)||Date.now(),
+  ...(attachment?{attachment}: {})
  };
- renderChatMessage(entry.text,mine,entry.timestamp,entry.id,entry.from);
+ renderChatMessage(entry.text,mine,entry.timestamp,entry.id,entry.from,entry.attachment||null);
  if(persist&&supportUser){
   try{
    const key=supportHistoryKey(supportUser.phone);
@@ -2492,7 +2501,7 @@ function restoreSupportHistory(){
     if(!item||!item.text)return;
     const id=String(item.id||"");
     if(id)supportSeenMessages.add(id);
-    renderChatMessage(String(item.text),item.from==="visitor",item.timestamp,id,item.from);
+    renderChatMessage(String(item.text||""),item.from==="visitor",item.timestamp,id,item.from,item.attachment||null);
    });
   }
  }catch(error){}
@@ -2512,7 +2521,7 @@ async function pollSupportMessages(){
    data.messages.forEach(item=>{
     if(!item||item.id==null||supportSeenMessages.has(String(item.id)))return;
     supportSeenMessages.add(String(item.id));
-    if(item.text)addChatMessage(String(item.text),false,Number(item.timestamp)||Date.now(),String(item.id),"support",true);
+    if(item.text||item.attachment)addChatMessage(String(item.text||""),false,Number(item.timestamp)||Date.now(),String(item.id),"support",true,item.attachment||null);
    });
   }
  }catch(error){
@@ -3402,6 +3411,11 @@ header nav .bhr-nav-cart svg{stroke:#22c55e!important}
     min-height:44px!important;
   }
 }
+</style>
+
+<style id="bhr-support-attachment-link-styles">
+.bhr-support-attachment-link{display:inline-flex;align-items:center;gap:6px;max-width:100%;margin-top:8px;padding:7px 10px;border:1px solid rgba(103,232,249,.35);border-radius:9px;background:rgba(8,145,178,.12);color:#67e8f9;text-decoration:none;font-size:12px;overflow-wrap:anywhere}
+.bhr-support-attachment-link:hover{background:rgba(8,145,178,.22);text-decoration:underline}
 </style>
 
 </html>
