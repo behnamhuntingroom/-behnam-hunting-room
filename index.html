@@ -1875,15 +1875,15 @@ header .bhr-sun-letters{transform:translateZ(12px);text-shadow:0 1px 0 #8d6420,0
    <div class="bhr-up-status" id="bhrCalendarStatus" role="status">در انتظار بارگذاری منبع تقویم…</div>
   </div>
 
-  <div class="bhr-up-card bhr-live-news">
-   <h3>اخبار زنده بازار</h3>
-   <p>خبرهای تازه بازارهای جهانی با تیتر فارسی؛ به‌روزرسانی خودکار هر ۱۵ دقیقه</p>
-   <div class="bhr-news-list" id="bhrMarketNews"><div class="bhr-economic-empty">در حال دریافت خبرهای بازار…</div></div>
-   <div class="bhr-up-status" id="bhrNewsStatus" role="status">در انتظار دریافت خبرها…</div>
-   <div class="bhr-up-item" style="margin-top:12px">
-    <strong>وضعیت منابع داده</strong>
-    <div class="bhr-up-status" id="bhrMarketDataStatus">در حال اتصال به فیدهای خبری Investing.com…</div>
-    <div class="bhr-up-status" id="bhrCommandUpdate">زمان آخرین دریافت پس از اتصال ثبت می‌شود.</div>
+  <div class="bhr-up-card bhr-live-news bhr-iran-economic-news">
+   <h3>اخبار اقتصادی ایران</h3>
+   <p>خبرهای اقتصادی ایران از چند منبع خبری؛ بررسی و به‌روزرسانی خودکار هر ۵ دقیقه</p>
+   <div class="bhr-news-list" id="bhrIranEconomicNews" aria-live="polite"><div class="bhr-economic-empty">در حال دریافت آخرین خبرهای اقتصادی ایران…</div></div>
+   <div class="bhr-up-status" id="bhrIranEconomicNewsStatus" role="status">در حال اتصال به منابع خبر…</div>
+   <div class="bhr-up-item bhr-iran-news-source-status" style="margin-top:12px">
+    <strong>منابع و زمان به‌روزرسانی</strong>
+    <div class="bhr-up-status" id="bhrIranNewsSourceStatus">در حال بررسی فیدهای RSS رایگان</div>
+    <div class="bhr-up-status" id="bhrIranNewsUpdated">به‌روزرسانی خودکار هر ۵ دقیقه</div>
    </div>
   </div>
  </div>
@@ -2993,7 +2993,7 @@ shortcuts.innerHTML=
  '<a class="bhr-shortcut" href="#bhr-page-community" data-bhr-page="community"><span class="bhr-shortcut-icon">♧</span><strong>تحلیل کاربران</strong><small>ثبت و بررسی تحلیل‌ها</small></a>'+
  '<a class="bhr-shortcut" href="#bhr-page-markets" data-bhr-page="markets"><span class="bhr-shortcut-icon">⌁</span><strong>مرکز بازار</strong><small>مشاهده بازارها در صفحه اصلی</small></a>'+
  '<a class="bhr-shortcut" href="#bhr-page-about" data-bhr-page="about"><span class="bhr-shortcut-icon">✦</span><strong>درباره ما</strong><small>آشنایی با برند BHR</small></a>'+
- '<a class="bhr-shortcut bhr-shortcut-news" href="#bhr-page-news" data-bhr-page="news"><span class="bhr-shortcut-icon">▤</span><strong>اخبار</strong><small>خبرهای مهم و زنده بازارهای جهانی</small></a>'+
+ '<a class="bhr-shortcut bhr-shortcut-news" href="#bhr-page-heatmap" data-bhr-page="heatmap"><span class="bhr-shortcut-icon">▤</span><strong>اخبار اقتصادی ایران</strong><small>تیترهای تازه با به‌روزرسانی خودکار</small></a>'+
  '<a class="bhr-shortcut" href="#bhr-page-room" data-bhr-page="room"><span class="bhr-shortcut-icon">◈</span><strong>اتاق معاملاتی</strong><small>روش BHR و سناریوهای معاملاتی</small></a>';
 const methodIntro=document.createElement("section");
 methodIntro.className="bhr-home-method-intro";
@@ -3016,10 +3016,12 @@ const newsGrid=document.createElement("div");
 newsGrid.className="bhr-up-grid bhr-news-page-grid";
 const commandCenter=$("bhr-command-center");
 if(commandCenter){
- [".bhr-news-brief",".bhr-live-news",".bhr-live-calendar"].forEach(selector=>{
+ [".bhr-news-brief",".bhr-live-calendar"].forEach(selector=>{
   const card=commandCenter.querySelector(selector);
   if(card)newsGrid.append(card);
  });
+ const iranNewsCard=commandCenter.querySelector(".bhr-live-news");
+ if(iranNewsCard)heatmap.append(iranNewsCard);
  if(newsGrid.children.length)newsPage.append(newsGrid);
  const oldNewsGrid=commandCenter.querySelector(":scope > .bhr-up-grid");
  if(oldNewsGrid&&!oldNewsGrid.children.length)oldNewsGrid.remove();
@@ -3424,7 +3426,47 @@ header nav .bhr-nav-cart svg{stroke:#22c55e!important}
    if(host&&!host.childElementCount){const e=document.createElement("div");e.className="bhr-economic-empty";e.textContent=message;host.append(e);}
   }
  }
- function start(){loadPersianCalendar();window.setInterval(loadPersianCalendar,60*60*1000);mountNews();window.setInterval(mountNews,15*60*1000);}
+ async function mountIranEconomicNews(){
+  const host=document.getElementById("bhrIranEconomicNews");
+  const status=document.getElementById("bhrIranEconomicNewsStatus");
+  const sourceStatus=document.getElementById("bhrIranNewsSourceStatus");
+  const updated=document.getElementById("bhrIranNewsUpdated");
+  if(!host)return;
+  try{
+   const url="https://raw.githubusercontent.com/behnamhuntingroom/-behnam-hunting-room/market-data/data/iran-economic-news.json?ts="+Date.now();
+   const response=await fetch(url,{cache:"no-store"});
+   if(!response.ok)throw new Error("HTTP "+response.status);
+   const payload=await response.json();
+   const items=Array.isArray(payload.items)?payload.items:[];
+   host.replaceChildren();
+   if(!items.length){
+    const empty=document.createElement("div");empty.className="bhr-economic-empty";empty.textContent="هنوز خبری از منابع دریافت نشده است؛ دریافت خودکار ادامه دارد.";host.append(empty);
+    if(status)status.textContent="در انتظار نخستین خبرهای اقتصادی ایران";
+   }else{
+    items.slice(0,25).forEach(item=>{
+     const card=document.createElement("article");card.className="bhr-news-item";
+     const link=document.createElement("a");link.href=item.link;link.target="_blank";link.rel="noopener noreferrer";link.textContent=item.title||"خبر اقتصادی ایران";
+     const meta=document.createElement("div");meta.className="bhr-news-meta";
+     const source=document.createElement("span");source.className="bhr-news-tag";source.textContent=item.source||"منبع خبری";
+     const date=document.createElement("span");const time=new Date(item.publishedAt||"");
+     date.textContent=Number.isNaN(time.getTime())?"زمان انتشار نامشخص":new Intl.DateTimeFormat("fa-IR",{dateStyle:"short",timeStyle:"short",timeZone:"Asia/Tehran"}).format(time)+" (تهران)";
+     meta.append(source,date);card.append(link);
+     if(item.summary){const summary=document.createElement("p");summary.className="bhr-iran-news-summary";summary.textContent=item.summary;card.append(summary);}
+     card.append(meta);host.append(card);
+    });
+    if(status)status.textContent=items.length+" خبر اقتصادی ایران دریافت شد.";
+   }
+   const sourceNames=Array.isArray(payload.sources)?payload.sources.join("، "):"فیدهای خبری اقتصادی";
+   if(sourceStatus)sourceStatus.textContent="منابع بررسی‌شده: "+sourceNames;
+   const lastUpdated=new Date(payload.updatedAt||"");
+   if(updated)updated.textContent=Number.isNaN(lastUpdated.getTime())?"بررسی خودکار هر ۵ دقیقه؛ زمان انتشار کنار هر خبر آمده است.":"آخرین دریافت: "+new Intl.DateTimeFormat("fa-IR",{dateStyle:"short",timeStyle:"short",timeZone:"Asia/Tehran"}).format(lastUpdated)+" (تهران) · بررسی خودکار هر ۵ دقیقه";
+  }catch(error){
+   if(status)status.textContent="دریافت خبرها موقتاً ممکن نیست؛ بررسی خودکار ادامه دارد.";
+   if(sourceStatus)sourceStatus.textContent="منابع RSS رایگان؛ تلاش دوباره هر ۵ دقیقه";
+   if(!host.childElementCount){const empty=document.createElement("div");empty.className="bhr-economic-empty";empty.textContent="اتصال به منبع خبر برقرار نشد؛ کمی بعد دوباره تلاش می‌کنیم.";host.append(empty);}
+  }
+ }
+ function start(){loadPersianCalendar();window.setInterval(loadPersianCalendar,60*60*1000);mountNews();window.setInterval(mountNews,15*60*1000);mountIranEconomicNews();window.setInterval(mountIranEconomicNews,5*60*1000);}
  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
 })();
 </script>
@@ -4253,4 +4295,10 @@ header .bhr-sun-letters:after{
  50%{border-color:rgba(255,35,35,1);box-shadow:0 0 24px rgba(255,20,20,.78),0 0 48px rgba(255,20,20,.48),0 0 72px rgba(255,20,20,.22),inset 0 0 20px rgba(255,20,20,.24);filter:brightness(1.28)}
 }
 @media(prefers-reduced-motion:reduce){.bhr-shortcut-news{animation:none!important;box-shadow:0 0 10px rgba(255,35,35,.2)!important}}
+</style>
+
+<style id="bhr-iran-economic-news-under-heatmap">
+#bhr-heatmap-page>.bhr-iran-economic-news{box-sizing:border-box;width:min(1160px,94%);margin:18px auto 28px}
+#bhr-heatmap-page>.bhr-iran-economic-news .bhr-iran-news-summary{margin:8px 0 0;color:rgba(235,242,249,.78);line-height:1.8;font-size:.92em}
+#bhr-heatmap-page>.bhr-iran-economic-news .bhr-news-list{max-height:720px;overflow:auto}
 </style>
