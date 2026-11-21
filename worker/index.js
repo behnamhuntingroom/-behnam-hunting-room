@@ -1165,35 +1165,60 @@ export default {
 
 
 
-    /* تقویم اقتصادی Forex Factory با کش یک‌ساعته */
+    /* تقویم اقتصادی Forex Factory با کش لبه و KV */
     if (path === "/economic-calendar") {
       if (request.method !== "GET") return new Response("Method not allowed", { status: 405, headers });
       const cacheKey = "bhr:forexfactory:calendar:weekly";
       let cached = null;
       try {
         cached = await env.CHAT_STORE.get(cacheKey, "json");
-        if (cached && Array.isArray(cached.data) && Date.now() - new Date(cached.updatedAt).getTime() < 55 * 60 * 1000) {
-          return json(cached, 200, { ...headers, "Cache-Control": "public, max-age=300" });
-        }
+      } catch (cacheReadError) {
+        console.error("[BHR_FF_CACHE_READ_ERROR]", cacheReadError?.message || "Unknown error");
+      }
+      const cachedAge = cached?.updatedAt ? Date.now() - new Date(cached.updatedAt).getTime() : Infinity;
+      if (cached && Array.isArray(cached.data) && cachedAge < 55 * 60 * 1000) {
+        return json(cached, 200, { ...headers, "Cache-Control": "public, max-age=300" });
+      }
+      try {
         const response = await fetch("https://nfs.faireconomy.media/ff_calendar_thisweek.json", {
-          headers: { "Accept": "application/json", "User-Agent": "BEHNAM-HUNTING-ROOM/1.0" }
+          headers: {
+            "Accept": "application/json,text/plain,*/*",
+            "Accept-Language": "en-US,en;q=0.9",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+            "Referer": "https://www.forexfactory.com/",
+            "Origin": "https://www.forexfactory.com"
+          },
+          cf: { cacheTtl: 3600, cacheEverything: true }
         });
-        if (!response.ok) throw new Error("Forex Factory HTTP " + response.status);
-        const sourceRows = await response.json();
-        if (!Array.isArray(sourceRows)) throw new Error("Invalid Forex Factory calendar");
+        const body = await response.text();
+        if (!response.ok) throw new Error("Forex Factory HTTP " + response.status + (body ? ": " + body.slice(0, 180).replace(/\s+/g, " ") : ""));
+        let sourceRows;
+        try { sourceRows = JSON.parse(body); } catch (_) { throw new Error("Forex Factory returned non-JSON content: " + body.slice(0, 140).replace(/\s+/g, " ")); }
+        if (!Array.isArray(sourceRows)) throw new Error("Invalid Forex Factory calendar structure");
         const data = sourceRows.filter(event => event && event.date && event.title).map(event => ({
           scheduledAt: event.date, eventName: event.title, currency: event.country || "",
           periodLabel: event.country || "", impact: event.impact || "Low",
           previous: event.previous || "", forecast: event.forecast || "",
           actual: event.actual || "", source: "Forex Factory"
         }));
+        if (!data.length) throw new Error("Forex Factory returned an empty calendar");
         const payload = { ok: true, source: "Forex Factory", updatedAt: new Date().toISOString(), data };
-        await env.CHAT_STORE.put(cacheKey, JSON.stringify(payload), { expirationTtl: 7200 });
+        try {
+          await env.CHAT_STORE.put(cacheKey, JSON.stringify(payload), { expirationTtl: 7200 });
+        } catch (cacheWriteError) {
+          console.error("[BHR_FF_CACHE_WRITE_ERROR]", cacheWriteError?.message || "Unknown error");
+        }
         return json(payload, 200, { ...headers, "Cache-Control": "public, max-age=300" });
       } catch (error) {
         console.error("[BHR_FOREX_FACTORY_CALENDAR_ERROR]", error?.message || "Unknown error");
-        if (cached && Array.isArray(cached.data)) return json({ ...cached, stale: true }, 200, { ...headers, "Cache-Control": "public, max-age=120" });
-        return json({ ok: false, error: "Forex Factory calendar unavailable" }, 502, headers);
+        if (cached && Array.isArray(cached.data)) {
+          return json({ ...cached, stale: true }, 200, { ...headers, "Cache-Control": "public, max-age=120" });
+        }
+        return json({
+          ok: false,
+          error: "Forex Factory calendar unavailable",
+          detail: String(error?.message || "Unknown upstream error").slice(0, 240)
+        }, 502, headers);
       }
     }
 
