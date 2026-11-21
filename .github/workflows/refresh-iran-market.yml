@@ -27,6 +27,7 @@ jobs:
           ref: main
 
       - name: Fetch and validate TSETMC market data
+        id: fetch
         run: |
           node <<'NODE'
           import fs from "node:fs";
@@ -92,6 +93,7 @@ jobs:
               throw new Error("Both TSETMC endpoints failed; keeping the last published data.");
             }
             console.log("TSETMC returned no current symbols; keeping the last published data.");
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, "available=false\n");
             process.exit(0);
           }
 
@@ -100,10 +102,12 @@ jobs:
             marketMap
           };
           fs.writeFileSync("/tmp/iran-market.json", JSON.stringify(payload));
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, "available=true\n");
           console.log(`Validated ${marketMap.length} symbols.`);
           NODE
 
       - name: Publish updated data branch
+        if: steps.fetch.outputs.available == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
