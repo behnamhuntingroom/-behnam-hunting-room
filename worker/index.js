@@ -1117,8 +1117,9 @@ export default {
 
     // Public, read-only market data may also be opened directly for diagnostics.
     const publicMarketMapRead = path === "/market-map" && request.method === "GET" && !origin;
+    const publicCalendarRead = path === "/economic-calendar" && request.method === "GET" && !origin;
 
-    if (!ALLOWED_ORIGINS.includes(origin) && !publicMarketMapRead) {
+    if (!ALLOWED_ORIGINS.includes(origin) && !publicMarketMapRead && !publicCalendarRead) {
 
       return new Response("Forbidden", { status: 403 });
 
@@ -1164,7 +1165,39 @@ export default {
 
 
 
-    /* پراکسی امن نقشه حرارتی بورس ایران */
+    /* تقویم اقتصادی Forex Factory با کش یک‌ساعته */
+    if (path === "/economic-calendar") {
+      if (request.method !== "GET") return new Response("Method not allowed", { status: 405, headers });
+      const cacheKey = "bhr:forexfactory:calendar:weekly";
+      let cached = null;
+      try {
+        cached = await env.CHAT_STORE.get(cacheKey, "json");
+        if (cached && Array.isArray(cached.data) && Date.now() - new Date(cached.updatedAt).getTime() < 55 * 60 * 1000) {
+          return json(cached, 200, { ...headers, "Cache-Control": "public, max-age=300" });
+        }
+        const response = await fetch("https://nfs.faireconomy.media/ff_calendar_thisweek.json", {
+          headers: { "Accept": "application/json", "User-Agent": "BEHNAM-HUNTING-ROOM/1.0" }
+        });
+        if (!response.ok) throw new Error("Forex Factory HTTP " + response.status);
+        const sourceRows = await response.json();
+        if (!Array.isArray(sourceRows)) throw new Error("Invalid Forex Factory calendar");
+        const data = sourceRows.filter(event => event && event.date && event.title).map(event => ({
+          scheduledAt: event.date, eventName: event.title, currency: event.country || "",
+          periodLabel: event.country || "", impact: event.impact || "Low",
+          previous: event.previous || "", forecast: event.forecast || "",
+          actual: event.actual || "", source: "Forex Factory"
+        }));
+        const payload = { ok: true, source: "Forex Factory", updatedAt: new Date().toISOString(), data };
+        await env.CHAT_STORE.put(cacheKey, JSON.stringify(payload), { expirationTtl: 7200 });
+        return json(payload, 200, { ...headers, "Cache-Control": "public, max-age=300" });
+      } catch (error) {
+        console.error("[BHR_FOREX_FACTORY_CALENDAR_ERROR]", error?.message || "Unknown error");
+        if (cached && Array.isArray(cached.data)) return json({ ...cached, stale: true }, 200, { ...headers, "Cache-Control": "public, max-age=120" });
+        return json({ ok: false, error: "Forex Factory calendar unavailable" }, 502, headers);
+      }
+    }
+
+    /* پراکسی امن نقشه حرارتی بورس ایران */
     if (path === "/market-map") {
       if (request.method !== "GET") {
         return new Response("Method not allowed", {
