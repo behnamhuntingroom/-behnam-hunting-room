@@ -3960,8 +3960,12 @@ header nav .bhr-auth-nav-button svg{width:16px;height:16px;fill:none;stroke:curr
 #bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-shortcut-assistant .bhr-shortcut-icon,
 #bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-shortcut-assistant strong{color:#8af0ad!important}
 #bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-shortcut-assistant small{color:#b8e7c8!important}
-@media(max-width:1050px){
- #bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-shortcut{min-height:84px!important}
+/* Restore the original compact desktop card dimensions and spacing */
+#bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-shortcut{
+ min-height:0!important;padding:14px 13px!important;margin:0!important;
+}
+#bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-shortcut:not(.bhr-shortcut-heatmap):not(.bhr-shortcut-news):not(.bhr-shortcut-assistant) .bhr-shortcut-icon{
+ margin:0!important;font-size:24px!important;
 }
 @media(prefers-reduced-motion:reduce){
  #bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-shortcut{transition:none!important}
