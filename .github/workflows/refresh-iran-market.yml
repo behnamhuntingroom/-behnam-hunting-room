@@ -1,0 +1,129 @@
+name: Refresh Iran market data
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+    paths:
+      - ".github/workflows/refresh-iran-market.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-iran-market
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Check out the site
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Fetch and validate TSETMC market data
+        run: |
+          node <<'NODE'
+          const fs = require("node:fs");
+
+          const headers = {
+            "Accept": "application/json",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36",
+            "Referer": "https://www.tsetmc.com/"
+          };
+
+          async function fetchJson(url) {
+            const response = await fetch(url, { headers, signal: AbortSignal.timeout(20000) });
+            if (!response.ok) throw new Error(`TSETMC returned HTTP ${response.status}`);
+            return response.json();
+          }
+
+          function rowsFrom(data) {
+            if (Array.isArray(data)) return data;
+            if (data && Array.isArray(data.marketwatch)) return data.marketwatch;
+            if (data && Array.isArray(data.marketMap)) return data.marketMap;
+            return [];
+          }
+
+          function normalize(rows) {
+            return rows.map(row => {
+              const symbol = row.lVal18AFC ?? row.l18 ?? row.lVal18 ?? row.symbol;
+              const rawPercent = row.percent ?? row.priceChangePercent ?? row.pcp ?? row.plp;
+              const percent = Number(rawPercent);
+              if (!symbol || !Number.isFinite(percent)) return null;
+              return {
+                lVal18AFC: String(symbol),
+                lVal30: String(row.lVal30 ?? row.l30 ?? row.name ?? row.lSecVal ?? ""),
+                percent,
+                pDrCotVal: Number(row.pDrCotVal ?? row.pl ?? row.last ?? 0),
+                pClosing: Number(row.pClosing ?? row.pc ?? row.close ?? 0)
+              };
+            }).filter(Boolean);
+          }
+
+          const mapUrl = "https://cdn.tsetmc.com/api/ClosingPrice/GetMarketMap?market=0&size=1920&sector=0&typeSelected=1&hEven=0";
+          const watchUrl = "https://cdn.tsetmc.com/api/ClosingPrice/GetMarketWatch?market=0&industrialGroup=&paperTypes%5B0%5D=1&paperTypes%5B1%5D=2&paperTypes%5B2%5D=3&paperTypes%5B3%5D=4&paperTypes%5B4%5D=5&paperTypes%5B5%5D=6&paperTypes%5B6%5D=7&paperTypes%5B7%5D=8&paperTypes%5B8%5D=9&showTraded=false&withBestLimits=false&hEven=0&RefID=0";
+
+          let marketMap = [];
+          try {
+            marketMap = normalize(rowsFrom(await fetchJson(mapUrl)));
+          } catch (error) {
+            console.log(`Market map endpoint unavailable: ${error.message}`);
+          }
+
+          if (!marketMap.length) {
+            try {
+              marketMap = normalize(rowsFrom(await fetchJson(watchUrl)));
+            } catch (error) {
+              console.log(`Market watch endpoint unavailable: ${error.message}`);
+            }
+          }
+
+          if (!marketMap.length) {
+            throw new Error("TSETMC returned no usable market symbols; keeping the last published data.");
+          }
+
+          const payload = {
+            updatedAt: new Date().toISOString(),
+            marketMap
+          };
+          fs.writeFileSync("/tmp/iran-market.json", JSON.stringify(payload));
+          console.log(`Validated ${marketMap.length} symbols.`);
+          NODE
+
+      - name: Publish updated data branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin market-data 2>/dev/null || true
+
+          if git show-ref --verify --quiet refs/remotes/origin/market-data; then
+            git checkout -B market-data origin/market-data
+          else
+            git checkout -b market-data origin/main
+          fi
+
+          mkdir -p data
+          NEW_ROWS="$(jq -cS '.marketMap' /tmp/iran-market.json)"
+          OLD_ROWS=""
+          if [ -f data/iran-market.json ]; then
+            OLD_ROWS="$(jq -cS '.marketMap' data/iran-market.json)"
+          fi
+
+          if [ "$NEW_ROWS" = "$OLD_ROWS" ]; then
+            echo "Market data is unchanged; no commit needed."
+            exit 0
+          fi
+
+          cp /tmp/iran-market.json data/iran-market.json
+          git add data/iran-market.json
+          git commit -m "Refresh Iran market data"
+          git push --set-upstream origin market-data

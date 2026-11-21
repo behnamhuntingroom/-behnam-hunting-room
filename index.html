@@ -3726,7 +3726,7 @@ header .bhr-sun-letters:after{
  let iranTimer=null,iranBusy=false;
  const fmt=n=>Number(n).toLocaleString("fa-IR",{maximumFractionDigits:2});
  const setStatus=t=>{const el=iranHost&&iranHost.querySelector(".bhr-iran-map-status");if(el)el.textContent=t;};
- const renderIran=rows=>{
+ const renderIran=(rows,updatedAt)=>{
   const tiles=iranHost.querySelector("[data-bhr-iran-tiles]");
   const summary=iranHost.querySelector("[data-bhr-iran-summary]");
   if(!Array.isArray(rows)||!rows.length)throw new Error("داده‌ای از سرویس بازار دریافت نشد");
@@ -3750,17 +3750,18 @@ header .bhr-sun-letters:after{
    tile.append(symbol,change,name);frag.append(tile);
   });
   tiles.append(frag);
-  setStatus("آخرین دریافت: "+new Date().toLocaleTimeString("fa-IR"));
+  const dataTime=updatedAt?new Date(updatedAt):new Date();
+  setStatus("آخرین به‌روزرسانی داده: "+dataTime.toLocaleTimeString("fa-IR"));
  };
  const loadIran=async()=>{
   if(!iranHost||iranBusy)return;
   iranBusy=true;
   try{
-   const url="https://tiny-unit-4ed3.behnamhuntingroom.workers.dev/market-map";
+   const url="https://raw.githubusercontent.com/behnamhuntingroom/-behnam-hunting-room/market-data/data/iran-market.json?v="+Date.now();
    const response=await fetch(url,{cache:"no-store",headers:{Accept:"application/json"}});
-   if(!response.ok)throw new Error("پاسخ سرویس بازار: "+response.status);
+   if(!response.ok)throw new Error("پاسخ فایل داده بازار: "+response.status);
    const data=await response.json();
-   renderIran(Array.isArray(data)?data:(data&&Array.isArray(data.marketMap)?data.marketMap:[]));
+   renderIran(Array.isArray(data)?data:(data&&Array.isArray(data.marketMap)?data.marketMap:[]),data&&data.updatedAt);
   }catch(error){
    setStatus("دریافت اطلاعات ناموفق بود؛ منبع بازار ممکن است دسترسی مرورگر را محدود کرده باشد.");
    const tiles=iranHost.querySelector("[data-bhr-iran-tiles]");
