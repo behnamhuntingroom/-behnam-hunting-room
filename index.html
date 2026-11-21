@@ -794,6 +794,62 @@ header .brand .bhr-brand-room{color:#ef4444!important}
 @media(max-width:520px){.bhr-live-calendar .bhr-economic-list{padding:10px 0}.bhr-economic-event{padding:11px}.bhr-economic-name{font-size:14px}.bhr-economic-value{padding:8px 4px}.bhr-economic-value strong{font-size:12px}}
 @media(prefers-reduced-motion:reduce){.bhr-economic-event{transition:none}.bhr-economic-event:hover{transform:none}}
 </style>
+
+<style id="bhr-header-icons-embossed">
+/* Premium embossed treatment for the icons in the top header */
+header nav a .nav-icon,
+header .header-tools button svg,
+header .header-tools a svg,
+header nav .bhr-nav-cart svg{
+  box-sizing:content-box;
+  width:19px!important;
+  height:19px!important;
+  padding:5px!important;
+  border:1px solid rgba(242,217,139,.52)!important;
+  border-radius:9px!important;
+  color:#ffe6a0!important;
+  background:linear-gradient(145deg,rgba(255,239,190,.22),rgba(126,91,28,.24) 48%,rgba(15,13,9,.82))!important;
+  filter:drop-shadow(0 2px 2px rgba(0,0,0,.65));
+  box-shadow:
+    inset 0 1px 2px rgba(255,250,220,.34),
+    inset 0 -2px 4px rgba(0,0,0,.48),
+    0 3px 7px rgba(0,0,0,.38),
+    0 0 9px rgba(215,180,90,.16)!important;
+  transition:transform .24s ease,box-shadow .24s ease,border-color .24s ease,filter .24s ease;
+}
+header nav a:hover .nav-icon,
+header .header-tools button:hover svg,
+header .header-tools a:hover svg,
+header nav .bhr-nav-cart:hover svg{
+  transform:translateY(-2px) scale(1.09);
+  border-color:#fff0bd!important;
+  color:#fff8df!important;
+  filter:drop-shadow(0 3px 3px rgba(0,0,0,.6)) drop-shadow(0 0 5px rgba(242,217,139,.55));
+  box-shadow:
+    inset 0 1px 3px rgba(255,255,255,.48),
+    inset 0 -2px 4px rgba(0,0,0,.35),
+    0 5px 11px rgba(0,0,0,.42),
+    0 0 15px rgba(242,217,139,.32)!important;
+}
+header nav a:active .nav-icon,
+header .header-tools button:active svg,
+header .header-tools a:active svg{
+  transform:translateY(1px) scale(.96);
+}
+:root[data-theme="light"] header nav a .nav-icon,
+:root[data-theme="light"] header .header-tools button svg,
+:root[data-theme="light"] header .header-tools a svg,
+:root[data-theme="light"] header nav .bhr-nav-cart svg{
+  color:#76500b!important;
+  border-color:rgba(128,91,18,.45)!important;
+  background:linear-gradient(145deg,#fffdf4,#e8d7ad 55%,#c6a45b)!important;
+  box-shadow:inset 0 1px 2px #fff9,inset 0 -2px 4px #80602033,0 3px 7px #8060202b!important;
+}
+@media(prefers-reduced-motion:reduce){
+ header nav a .nav-icon,header .header-tools button svg,header .header-tools a svg,header nav .bhr-nav-cart svg{transition:none!important}
+}
+</style>
+
 </head>
 <body>
 <header>
