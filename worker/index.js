@@ -1168,31 +1168,42 @@ export default {
     /* تقویم اقتصادی Helious؛ داده رایگان با تأخیر حدود یک ساعت */
     if (path === "/economic-calendar") {
       if (request.method !== "GET") return new Response("Method not allowed", { status: 405, headers });
-      const cacheKey = "bhr:helious:calendar:v1";
+      const cacheKey = "bhr:helious:calendar:v2";
       let cached = null;
-      try {
-        cached = await env.CHAT_STORE.get(cacheKey, "json");
-      } catch (cacheReadError) {
-        console.error("[BHR_CALENDAR_CACHE_READ_ERROR]", cacheReadError?.message || "Unknown error");
+      try { cached = await env.CHAT_STORE.get(cacheKey, "json"); } catch (e) {
+        console.error("[BHR_CALENDAR_CACHE_READ_ERROR]", e?.message || "Unknown error");
       }
       const cachedAge = cached?.updatedAt ? Date.now() - new Date(cached.updatedAt).getTime() : Infinity;
       if (cached && Array.isArray(cached.data) && cachedAge < 55 * 60 * 1000) {
         return json(cached, 200, { ...headers, "Cache-Control": "public, max-age=300" });
       }
       try {
-        const upstreamUrl = "https://api.helious.io/v1/calendar?days_back=1&days_ahead=7&detail=full&extended=1";
+        // Use the documented minimal public request; no API key is required.
+        const upstreamUrl = "https://api.helious.io/v1/calendar?days_ahead=7&days_back=1&detail=full";
         const response = await fetch(upstreamUrl, {
-          headers: { "Accept": "application/json", "User-Agent": "BEHNAM-HUNTING-ROOM/1.0" },
+          headers: { "Accept": "application/json", "User-Agent": "BEHNAM-HUNTING-ROOM/1.0 (+https://behnamhunter.ir)" },
           cf: { cacheTtl: 300, cacheEverything: true }
         });
         const body = await response.text();
-        if (!response.ok) throw new Error("Helious HTTP " + response.status + (body ? ": " + body.slice(0, 160).replace(/\s+/g, " ") : ""));
-        const result = JSON.parse(body);
-        const sourceRows = Array.isArray(result?.data?.events) ? result.data.events : [];
-        if (!sourceRows.length) throw new Error("Helious returned no calendar events");
-        const data = sourceRows.filter(event => event && event.datetime_utc && event.title).map(event => ({
-          scheduledAt: event.datetime_utc,
-          eventName: event.title,
+        if (!response.ok) throw new Error("Helious HTTP " + response.status + (body ? ": " + body.slice(0, 240).replace(/\s+/g, " ") : ""));
+        let result;
+        try { result = JSON.parse(body); } catch (_) { throw new Error("Helious returned invalid JSON: " + body.slice(0, 180)); }
+        const root = result?.data;
+        const sourceRows = Array.isArray(root) ? root :
+          Array.isArray(root?.events) ? root.events :
+          Array.isArray(root?.calendar) ? root.calendar :
+          Array.isArray(root?.rows) ? root.rows :
+          Array.isArray(root?.items) ? root.items :
+          Array.isArray(result?.events) ? result.events :
+          Array.isArray(result?.calendar) ? result.calendar :
+          Array.isArray(result?.rows) ? result.rows : [];
+        if (!sourceRows.length) {
+          const err = result?.error?.message || result?.error?.code || result?.message || result?.summary || "No event rows in API response";
+          throw new Error("Helious response shape not recognized: " + String(err).slice(0, 180));
+        }
+        const data = sourceRows.filter(event => event && (event.datetime_utc || event.datetime || event.date_utc) && (event.title || event.event || event.name)).map(event => ({
+          scheduledAt: event.datetime_utc || event.datetime || event.date_utc,
+          eventName: event.title || event.event || event.name,
           currency: event.currency || event.country || "",
           country: event.country || "",
           periodLabel: event.period || "",
@@ -1205,19 +1216,14 @@ export default {
           sigma: event.sigma ?? null,
           source: "Helious"
         }));
+        if (!data.length) throw new Error("Helious returned " + sourceRows.length + " rows but none had usable event fields");
         const payload = {
-          ok: true,
-          source: "Helious",
-          updatedAt: new Date().toISOString(),
+          ok: true, source: "Helious", updatedAt: new Date().toISOString(),
           delaySec: Number(result?.meta?.delay_sec ?? 3600),
-          tier: result?.meta?.tier || "keyless",
-          summary: result?.summary || "",
-          data
+          tier: result?.meta?.tier || "sample", summary: result?.summary || "", data
         };
-        try {
-          await env.CHAT_STORE.put(cacheKey, JSON.stringify(payload), { expirationTtl: 7200 });
-        } catch (cacheWriteError) {
-          console.error("[BHR_CALENDAR_CACHE_WRITE_ERROR]", cacheWriteError?.message || "Unknown error");
+        try { await env.CHAT_STORE.put(cacheKey, JSON.stringify(payload), { expirationTtl: 7200 }); } catch (e) {
+          console.error("[BHR_CALENDAR_CACHE_WRITE_ERROR]", e?.message || "Unknown error");
         }
         return json(payload, 200, { ...headers, "Cache-Control": "public, max-age=300" });
       } catch (error) {
@@ -1226,9 +1232,8 @@ export default {
           return json({ ...cached, stale: true }, 200, { ...headers, "Cache-Control": "public, max-age=120" });
         }
         return json({
-          ok: false,
-          error: "Helious economic calendar unavailable",
-          detail: String(error?.message || "Unknown upstream error").slice(0, 240)
+          ok: false, error: "Helious economic calendar unavailable",
+          detail: String(error?.message || "Unknown error").slice(0, 320)
         }, 502, headers);
       }
     }
