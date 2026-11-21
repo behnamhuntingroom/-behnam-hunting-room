@@ -764,6 +764,36 @@ header .brand .bhr-brand-room{color:#ef4444!important}
 @media(min-width:761px){#bhr-live-dashboard{display:block}}
 @media(max-width:760px){#bhr-live-dashboard{display:none!important}}
 </style>
+
+<style id="bhr-economic-calendar-premium">
+/* Refined economic calendar palette */
+.bhr-live-calendar{position:relative;overflow:hidden}
+.bhr-live-calendar>h3{display:flex;align-items:center;gap:9px}
+.bhr-live-calendar>h3:before{content:"";width:9px;height:9px;border-radius:50%;background:#34d399;box-shadow:0 0 12px rgba(52,211,153,.7)}
+.bhr-live-calendar .bhr-economic-list{gap:12px;padding:14px 4px;max-height:680px;overflow:auto;scrollbar-width:thin}
+.bhr-economic-event{position:relative;overflow:hidden;border:1px solid rgba(148,163,184,.18);border-radius:14px;padding:14px;background:linear-gradient(145deg,rgba(30,41,59,.78),rgba(15,23,42,.92));box-shadow:0 5px 18px rgba(0,0,0,.16);transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+.bhr-economic-event:hover{transform:translateY(-2px);border-color:rgba(212,175,55,.42);box-shadow:0 9px 24px rgba(0,0,0,.24)}
+.bhr-economic-event:before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:#94a3b8}
+.bhr-economic-event:has(.bhr-economic-impact[style*="239,68,68"]){border-color:rgba(248,113,113,.3);background:linear-gradient(120deg,rgba(127,29,29,.19),rgba(15,23,42,.94) 58%)}
+.bhr-economic-event:has(.bhr-economic-impact[style*="239,68,68"]):before{background:#f87171;box-shadow:0 0 12px rgba(248,113,113,.45)}
+.bhr-economic-event:has(.bhr-economic-impact[style*="245,158,11"]){border-color:rgba(251,191,36,.28);background:linear-gradient(120deg,rgba(120,53,15,.17),rgba(15,23,42,.94) 58%)}
+.bhr-economic-event:has(.bhr-economic-impact[style*="245,158,11"]):before{background:#fbbf24;box-shadow:0 0 12px rgba(251,191,36,.4)}
+.bhr-economic-event .bhr-economic-top{margin-bottom:10px}
+.bhr-economic-date{font-weight:600;letter-spacing:.1px}
+.bhr-economic-impact{font-weight:800;padding:5px 11px;border:1px solid currentColor;letter-spacing:.1px}
+.bhr-economic-name{font-size:15px;line-height:1.8;color:#f8fafc;margin:3px 0 7px}
+.bhr-economic-period{line-height:1.8}
+.bhr-economic-values{gap:8px;margin-top:10px}
+.bhr-economic-value{border:1px solid rgba(148,163,184,.13);background:rgba(2,6,23,.42);padding:10px 7px;border-radius:10px}
+.bhr-economic-value small{font-weight:600;color:#aab8cc}
+.bhr-economic-value strong{display:block;color:#e2e8f0;font-variant-numeric:tabular-nums}
+.bhr-economic-value:last-child{border-color:rgba(52,211,153,.28);background:rgba(6,78,59,.19)}
+.bhr-economic-value:last-child small{color:#6ee7b7}
+.bhr-economic-value:last-child strong{color:#a7f3d0;font-size:14px}
+.bhr-economic-source{border-top:1px solid rgba(148,163,184,.12);margin-top:4px;padding-top:10px}
+@media(max-width:520px){.bhr-live-calendar .bhr-economic-list{padding:10px 0}.bhr-economic-event{padding:11px}.bhr-economic-name{font-size:14px}.bhr-economic-value{padding:8px 4px}.bhr-economic-value strong{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.bhr-economic-event{transition:none}.bhr-economic-event:hover{transform:none}}
+</style>
 </head>
 <body>
 <header>
