@@ -1496,6 +1496,13 @@ document.getElementById("marketSearch").addEventListener("keydown", function(eve
 }
 #bhr-support-launcher:hover{transform:translateY(-3px);box-shadow:0 12px 32px #000b,0 0 0 7px #d6b45a20}
 #bhr-support-launcher svg{width:27px;height:27px}
+#bhrSupportUnreadBadge{
+ position:absolute;top:-5px;left:-5px;z-index:1;min-width:22px;height:22px;
+ display:grid;place-items:center;padding:0 5px;border:2px solid var(--bg);
+ border-radius:999px;background:#c62828;color:#fff;font-size:11px;
+ font-weight:900;line-height:1;box-shadow:0 2px 8px #0008
+}
+#bhrSupportUnreadBadge[hidden]{display:none}
 #bhr-support-panel{
  position:fixed;right:20px;bottom:96px;z-index:9999;
  display:flex;flex-direction:column;gap:12px;
@@ -2047,6 +2054,7 @@ header .bhr-sun-letters{transform:translateZ(12px);text-shadow:0 1px 0 #8d6420,0
 
 <button id="bhr-support-launcher" type="button" aria-label="باز کردن گفت‌وگوی پشتیبانی" title="پشتیبانی">
  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-3 2v-6.5A7.5 7.5 0 1 1 20 11.5Z"/><path d="M8 11h8M8 14.5h5"/></svg>
+ <span id="bhrSupportUnreadBadge" hidden aria-live="polite" aria-atomic="true"></span>
 </button>
 <div id="bhr-support-panel" class="bhr-up-hidden">
  <div class="bhr-support-head">
@@ -2450,6 +2458,7 @@ let supportConversationId=null;
 let lastSendAt=0;
 let supportPollTimer=null;
 let supportPolling=false;
+let supportUnreadCount=0;
 const supportSeenMessages=new Set();
 
 function supportConversationKey(phone){
@@ -2458,9 +2467,40 @@ function supportConversationKey(phone){
 function supportHistoryKey(phone){
  return "bhr-support-history:"+phone;
 }
+function supportUnreadKey(phone){
+ return "bhr-support-unread:"+phone;
+}
+function updateSupportUnreadBadge(){
+ const badge=$("bhrSupportUnreadBadge");
+ const launcher=$("bhr-support-launcher");
+ if(!badge||!launcher)return;
+ badge.hidden=supportUnreadCount<1;
+ badge.textContent=supportUnreadCount>99?"99+":String(supportUnreadCount);
+ const label=supportUnreadCount>0
+  ? supportUnreadCount+" پیام خوانده‌نشده از پشتیبانی"
+  : "باز کردن گفت‌وگوی پشتیبانی";
+ launcher.setAttribute("aria-label",label);
+ launcher.title=supportUnreadCount>0?label:"پشتیبانی";
+}
+function setSupportUnreadCount(count){
+ supportUnreadCount=Math.max(0,Number(count)||0);
+ if(supportUser){
+  try{localStorage.setItem(supportUnreadKey(supportUser.phone),String(supportUnreadCount));}catch(error){}
+ }
+ updateSupportUnreadBadge();
+}
+function isSupportConversationVisible(){
+ return document.visibilityState==="visible"&&
+  !$("bhr-support-panel")?.classList.contains("bhr-up-hidden")&&
+  !$("bhrSupportChat")?.classList.contains("bhr-up-hidden");
+}
+function markSupportMessagesRead(){
+ if(supportUnreadCount>0)setSupportUnreadCount(0);
+}
 
 $("bhr-support-launcher")?.addEventListener("click",()=>{
  $("bhr-support-panel").classList.toggle("bhr-up-hidden");
+ if(isSupportConversationVisible())markSupportMessagesRead();
 });
 $("bhrSupportClose")?.addEventListener("click",()=>{
  $("bhr-support-panel").classList.add("bhr-up-hidden");
@@ -2586,7 +2626,12 @@ async function pollSupportMessages(){
    data.messages.forEach(item=>{
     if(!item||item.id==null||supportSeenMessages.has(String(item.id)))return;
     supportSeenMessages.add(String(item.id));
-    if(item.text||item.attachment)addChatMessage(String(item.text||""),false,Number(item.timestamp)||Date.now(),String(item.id),"support",true,item.attachment||null);
+    if(item.text||item.attachment){
+     const text=String(item.text||(item.attachment?"پشتیبانی یک فایل فرستاد.":""));
+     addChatMessage(text,false,Number(item.timestamp)||Date.now(),String(item.id),"support",true,item.attachment||null);
+     if(isSupportConversationVisible())markSupportMessagesRead();
+     else setSupportUnreadCount(supportUnreadCount+1);
+    }
    });
   }
  }catch(error){
@@ -2601,6 +2646,10 @@ function startSupportPolling(){
  pollSupportMessages();
  supportPollTimer=setInterval(pollSupportMessages,1000);
 }
+document.addEventListener("visibilitychange",()=>{
+ if(isSupportConversationVisible())markSupportMessagesRead();
+});
+updateSupportUnreadBadge();
 
 async function sendToSupport(message,file=null){
  const now=Date.now();
@@ -2653,6 +2702,8 @@ $("bhrSupportStart")?.addEventListener("click",async()=>{
   return;
  }
  supportUser={name,phone};
+ try{supportUnreadCount=Math.max(0,Number(localStorage.getItem(supportUnreadKey(phone))||0)||0);}catch(error){supportUnreadCount=0;}
+ updateSupportUnreadBadge();
  supportSeenMessages.clear();
  try{
   supportConversationId=localStorage.getItem(supportConversationKey(phone))||null;
@@ -2668,6 +2719,7 @@ $("bhrSupportStart")?.addEventListener("click",async()=>{
   if(!$("bhr-support-messages").children.length){
    addChatMessage("گفت‌وگو شروع شد. پیام خود را بنویس.",false,Date.now(),null,"system",true);
   }
+  markSupportMessagesRead();
   startSupportPolling();
  }
 });
