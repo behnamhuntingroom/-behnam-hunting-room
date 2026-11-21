@@ -1165,73 +1165,69 @@ export default {
 
 
 
-    /* تقویم اقتصادی Forex Factory با کش لبه و KV */
+    /* تقویم اقتصادی Helious؛ داده رایگان با تأخیر حدود یک ساعت */
     if (path === "/economic-calendar") {
       if (request.method !== "GET") return new Response("Method not allowed", { status: 405, headers });
-      const cacheKey = "bhr:forexfactory:calendar:weekly";
+      const cacheKey = "bhr:helious:calendar:v1";
       let cached = null;
       try {
         cached = await env.CHAT_STORE.get(cacheKey, "json");
       } catch (cacheReadError) {
-        console.error("[BHR_FF_CACHE_READ_ERROR]", cacheReadError?.message || "Unknown error");
+        console.error("[BHR_CALENDAR_CACHE_READ_ERROR]", cacheReadError?.message || "Unknown error");
       }
       const cachedAge = cached?.updatedAt ? Date.now() - new Date(cached.updatedAt).getTime() : Infinity;
       if (cached && Array.isArray(cached.data) && cachedAge < 55 * 60 * 1000) {
         return json(cached, 200, { ...headers, "Cache-Control": "public, max-age=300" });
       }
       try {
-        // Forex Factory limits weekly export downloads; KV above prevents frequent requests.
-        // Try the primary feed, then its alternate CDN hostname only if the first request fails.
-        const feedUrls = [
-          "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
-          "https://cdn-nfs.faireconomy.media/ff_calendar_thisweek.json"
-        ];
-        let sourceRows = null;
-        let lastFeedError = null;
-        for (const feedUrl of feedUrls) {
-          try {
-            const response = await fetch(feedUrl, {
-              headers: {
-                "Accept": "application/json",
-                "User-Agent": "Mozilla/5.0 (compatible; BEHNAM-HUNTING-ROOM/1.0)",
-                "Referer": "https://www.forexfactory.com/"
-              },
-              cf: { cacheTtl: 3600, cacheEverything: true }
-            });
-            const body = await response.text();
-            if (!response.ok) throw new Error("HTTP " + response.status + (body ? ": " + body.slice(0, 140).replace(/\\s+/g, " ") : ""));
-            sourceRows = JSON.parse(body);
-            if (!Array.isArray(sourceRows)) throw new Error("Invalid JSON calendar structure");
-            break;
-          } catch (feedError) {
-            lastFeedError = feedError;
-            sourceRows = null;
-            console.error("[BHR_FF_FEED_ATTEMPT_FAILED]", feedUrl, feedError?.message || "Unknown error");
-          }
-        }
-        if (!Array.isArray(sourceRows)) throw new Error("Forex Factory feeds unavailable: " + (lastFeedError?.message || "unknown error"));
-        const data = sourceRows.filter(event => event && event.date && event.title).map(event => ({
-          scheduledAt: event.date, eventName: event.title, currency: event.country || "",
-          periodLabel: event.country || "", impact: event.impact || "Low",
-          previous: event.previous || "", forecast: event.forecast || "",
-          actual: event.actual || "", source: "Forex Factory"
+        const upstreamUrl = "https://api.helious.io/v1/calendar?days_back=1&days_ahead=7&detail=full&extended=1";
+        const response = await fetch(upstreamUrl, {
+          headers: { "Accept": "application/json", "User-Agent": "BEHNAM-HUNTING-ROOM/1.0" },
+          cf: { cacheTtl: 300, cacheEverything: true }
+        });
+        const body = await response.text();
+        if (!response.ok) throw new Error("Helious HTTP " + response.status + (body ? ": " + body.slice(0, 160).replace(/\s+/g, " ") : ""));
+        const result = JSON.parse(body);
+        const sourceRows = Array.isArray(result?.data?.events) ? result.data.events : [];
+        if (!sourceRows.length) throw new Error("Helious returned no calendar events");
+        const data = sourceRows.filter(event => event && event.datetime_utc && event.title).map(event => ({
+          scheduledAt: event.datetime_utc,
+          eventName: event.title,
+          currency: event.currency || event.country || "",
+          country: event.country || "",
+          periodLabel: event.period || "",
+          impact: event.impact || "Low",
+          previous: event.previous_value ?? event.previous ?? "",
+          forecast: event.forecast_value ?? event.forecast ?? "",
+          actual: event.actual_value ?? event.actual ?? "",
+          status: event.status || "",
+          surprise: event.surprise || "",
+          sigma: event.sigma ?? null,
+          source: "Helious"
         }));
-        if (!data.length) throw new Error("Forex Factory returned an empty calendar");
-        const payload = { ok: true, source: "Forex Factory", updatedAt: new Date().toISOString(), data };
+        const payload = {
+          ok: true,
+          source: "Helious",
+          updatedAt: new Date().toISOString(),
+          delaySec: Number(result?.meta?.delay_sec ?? 3600),
+          tier: result?.meta?.tier || "keyless",
+          summary: result?.summary || "",
+          data
+        };
         try {
           await env.CHAT_STORE.put(cacheKey, JSON.stringify(payload), { expirationTtl: 7200 });
         } catch (cacheWriteError) {
-          console.error("[BHR_FF_CACHE_WRITE_ERROR]", cacheWriteError?.message || "Unknown error");
+          console.error("[BHR_CALENDAR_CACHE_WRITE_ERROR]", cacheWriteError?.message || "Unknown error");
         }
         return json(payload, 200, { ...headers, "Cache-Control": "public, max-age=300" });
       } catch (error) {
-        console.error("[BHR_FOREX_FACTORY_CALENDAR_ERROR]", error?.message || "Unknown error");
+        console.error("[BHR_HELIOUS_CALENDAR_ERROR]", error?.message || "Unknown error");
         if (cached && Array.isArray(cached.data)) {
           return json({ ...cached, stale: true }, 200, { ...headers, "Cache-Control": "public, max-age=120" });
         }
         return json({
           ok: false,
-          error: "Forex Factory calendar unavailable",
+          error: "Helious economic calendar unavailable",
           detail: String(error?.message || "Unknown upstream error").slice(0, 240)
         }, 502, headers);
       }
