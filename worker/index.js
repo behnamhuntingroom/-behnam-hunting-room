@@ -1178,10 +1178,15 @@ export default {
         return json(cached, 200, { ...headers, "Cache-Control": "public, max-age=300" });
       }
       try {
-        // Use the documented minimal public request; no API key is required.
+        // Use a dedicated free Helious key when configured; otherwise use the shared sample quota.
         const upstreamUrl = "https://api.helious.io/v1/calendar?days_ahead=7&days_back=1&detail=full";
+        const upstreamHeaders = {
+          "Accept": "application/json",
+          "User-Agent": "BEHNAM-HUNTING-ROOM/1.0 (+https://behnamhunter.ir)"
+        };
+        if (env.HELIOUS_API_KEY) upstreamHeaders["X-Api-Key"] = env.HELIOUS_API_KEY;
         const response = await fetch(upstreamUrl, {
-          headers: { "Accept": "application/json", "User-Agent": "BEHNAM-HUNTING-ROOM/1.0 (+https://behnamhunter.ir)" },
+          headers: upstreamHeaders,
           cf: { cacheTtl: 300, cacheEverything: true }
         });
         const body = await response.text();
