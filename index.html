@@ -480,6 +480,36 @@ body > footer {
  }
 }
 
+
+/* Compact cart and user-panel controls only */
+header #bhrUserPanelOpen,
+header #bhrCartToggle{
+ min-height:31px!important;
+ padding:5px 8px!important;
+ gap:5px!important;
+ font-size:11px!important;
+ line-height:1.1!important;
+ border-radius:9px!important;
+}
+header #bhrUserPanelOpen svg,
+header #bhrCartToggle svg{
+ width:15px!important;height:15px!important;
+ stroke-width:2.1!important;
+}
+header #bhrCartCount{
+ min-width:16px!important;height:16px!important;
+ padding:0 3px!important;font-size:10px!important;
+}
+@media(max-width:600px){
+ header #bhrUserPanelOpen,
+ header #bhrCartToggle{
+  min-height:29px!important;padding:4px 7px!important;
+  gap:4px!important;font-size:10px!important;
+ }
+ header #bhrUserPanelOpen svg,
+ header #bhrCartToggle svg{width:14px!important;height:14px!important}
+ header #bhrCartCount{min-width:15px!important;height:15px!important;font-size:9px!important}
+}
 </style>
 <meta name="theme-color" content="#080909">
 <meta name="mobile-web-app-capable" content="yes">
