@@ -3763,7 +3763,7 @@ header .bhr-sun-letters:after{
    const data=await response.json();
    renderIran(Array.isArray(data)?data:(data&&Array.isArray(data.marketMap)?data.marketMap:[]),data&&data.updatedAt);
   }catch(error){
-   setStatus("دریافت اطلاعات ناموفق بود؛ منبع بازار ممکن است دسترسی مرورگر را محدود کرده باشد.");
+   setStatus("اطلاعات بورس ایران فعلاً در دسترس نیست؛ دریافت خودکار دوباره تلاش می‌کند.");
    const tiles=iranHost.querySelector("[data-bhr-iran-tiles]");
    if(tiles&&!tiles.children.length)tiles.innerHTML='<div class="bhr-iran-map-error">اتصال مستقیم به داده‌های بازار برقرار نشد. لطفاً کمی بعد دوباره تلاش کنید.</div>';
   }finally{iranBusy=false;}
