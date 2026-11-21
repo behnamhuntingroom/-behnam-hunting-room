@@ -3651,6 +3651,22 @@ header nav .bhr-auth-nav-button svg{width:16px;height:16px;fill:none;stroke:curr
 }
 </style>
 
+
+
+<style id="bhr-iran-news-next-to-market-brief">
+/* Put Iran economic news beside the market brief; move the calendar below both. */
+@media(min-width:761px){
+ #bhr-news-page .bhr-news-brief{grid-column:1!important;grid-row:1!important}
+ #bhr-news-page .bhr-iran-economic-news{grid-column:2!important;grid-row:1!important}
+ #bhr-news-page .bhr-live-calendar{grid-column:1/-1!important;grid-row:2!important}
+}
+@media(max-width:760px){
+ #bhr-news-page .bhr-news-page-grid{grid-template-columns:minmax(0,1fr)!important}
+ #bhr-news-page .bhr-news-brief{grid-column:1!important;grid-row:1!important}
+ #bhr-news-page .bhr-iran-economic-news{grid-column:1!important;grid-row:2!important}
+ #bhr-news-page .bhr-live-calendar{grid-column:1!important;grid-row:3!important}
+}
+</style>
 </body>
 
 <style id="bhr-file-attachment-visibility-fix">
