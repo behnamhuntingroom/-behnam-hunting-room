@@ -2987,7 +2987,7 @@ const shortcuts=document.createElement("div");
 shortcuts.className="bhr-home-shortcuts";
 shortcuts.innerHTML=
  '<a class="bhr-shortcut bhr-shortcut-heatmap" href="#bhr-page-heatmap" data-bhr-page="heatmap"><span class="bhr-shortcut-icon bhr-heatmap-shortcut-icon" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><strong>نقشه حرارتی</strong><small>بورس ایران، بورس آمریکا، ارزهای دیجیتال و فارکس</small></a>'+
- '<a class="bhr-shortcut bhr-shortcut-news" href="#bhr-page-heatmap" data-bhr-page="heatmap"><span class="bhr-shortcut-icon">▤</span><strong>اخبار اقتصادی ایران</strong><small>تیترهای تازه با به‌روزرسانی خودکار</small></a>'+
+ '<a class="bhr-shortcut bhr-shortcut-news" href="#bhr-page-news" data-bhr-page="news"><span class="bhr-shortcut-icon">▤</span><strong>اخبار اقتصادی ایران</strong><small>تیترهای تازه با به‌روزرسانی خودکار</small></a>'+
  '<a class="bhr-shortcut bhr-shortcut-assistant" href="#bhr-page-assistant" data-bhr-page="assistant"><span class="bhr-shortcut-icon">✧</span><strong>دستیار هوشمند BHR</strong><small>تحلیل و پاسخ‌گویی هوشمند بازارها</small></a>'+
  '<a class="bhr-shortcut" href="#bhr-page-tools" data-bhr-page="tools"><span class="bhr-shortcut-icon">⚙</span><strong>ابزارهای ترید</strong><small>ماشین‌حساب و ابزارهای مدیریت معامله</small></a>'+
  '<a class="bhr-shortcut" href="#bhr-page-community" data-bhr-page="community"><span class="bhr-shortcut-icon">♧</span><strong>تحلیل کاربران</strong><small>ثبت و بررسی تحلیل‌ها</small></a>'+
@@ -3021,7 +3021,7 @@ if(commandCenter){
   if(card)newsGrid.append(card);
  });
  const iranNewsCard=commandCenter.querySelector(".bhr-live-news");
- if(iranNewsCard)heatmap.append(iranNewsCard);
+ if(iranNewsCard)newsGrid.append(iranNewsCard);
  if(newsGrid.children.length)newsPage.append(newsGrid);
  const oldNewsGrid=commandCenter.querySelector(":scope > .bhr-up-grid");
  if(oldNewsGrid&&!oldNewsGrid.children.length)oldNewsGrid.remove();
