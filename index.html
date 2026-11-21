@@ -3972,6 +3972,62 @@ header nav .bhr-auth-nav-button svg{width:16px;height:16px;fill:none;stroke:curr
 }
 </style>
 
+
+<style id="bhr-economic-calendar-spacious-v3">
+/* Stronger separation: give each event and each information row room to breathe */
+#bhrEconomicCalendar{display:block!important;width:100%!important;min-width:0!important}
+#bhrEconomicCalendar>.bhr-economic-list{
+ display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+ gap:24px!important;padding:22px 10px 26px!important;
+ max-height:820px!important;overflow-y:auto!important;overflow-x:hidden!important;
+}
+#bhrEconomicCalendar .bhr-economic-event{
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;
+ gap:16px!important;width:100%!important;min-width:0!important;box-sizing:border-box!important;
+ padding:24px 25px!important;margin:0!important;border-radius:18px!important;
+ line-height:2.1!important;
+}
+#bhrEconomicCalendar .bhr-economic-top{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ flex-wrap:wrap!important;gap:12px 20px!important;margin:0!important;
+ padding:0 0 14px!important;border-bottom:1px solid rgba(148,163,184,.24)!important;
+}
+#bhrEconomicCalendar .bhr-economic-date{font-size:13px!important;line-height:2!important}
+#bhrEconomicCalendar .bhr-economic-impact{min-height:34px!important;padding:6px 15px!important;font-size:12px!important}
+#bhrEconomicCalendar .bhr-economic-name{
+ margin:0!important;padding:3px 0!important;font-size:18px!important;
+ line-height:2.15!important;white-space:normal!important;overflow-wrap:anywhere!important;
+}
+#bhrEconomicCalendar .bhr-economic-period{
+ margin:0!important;padding:12px 15px!important;border-radius:11px!important;
+ font-size:13px!important;line-height:2.1!important;white-space:normal!important;
+}
+#bhrEconomicCalendar .bhr-economic-values{
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ gap:14px!important;margin:3px 0 0!important;
+}
+#bhrEconomicCalendar .bhr-economic-value{
+ display:flex!important;flex-direction:column!important;justify-content:center!important;
+ align-items:center!important;gap:9px!important;min-width:0!important;min-height:86px!important;
+ padding:14px 12px!important;border-radius:12px!important;box-sizing:border-box!important;
+}
+#bhrEconomicCalendar .bhr-economic-value small{font-size:12px!important;line-height:1.9!important}
+#bhrEconomicCalendar .bhr-economic-value strong{font-size:15px!important;line-height:2!important;overflow-wrap:anywhere!important}
+#bhrEconomicCalendar .bhr-economic-source{margin:16px 8px 0!important;padding:16px 8px!important;line-height:2.2!important}
+@media(max-width:620px){
+ #bhrEconomicCalendar>.bhr-economic-list{gap:18px!important;padding:14px 3px 20px!important}
+ #bhrEconomicCalendar .bhr-economic-event{padding:17px 15px!important;gap:13px!important}
+ #bhrEconomicCalendar .bhr-economic-name{font-size:16px!important;line-height:2!important}
+ #bhrEconomicCalendar .bhr-economic-period{padding:10px 11px!important;font-size:12px!important}
+ #bhrEconomicCalendar .bhr-economic-values{grid-template-columns:minmax(0,1fr)!important;gap:9px!important}
+ #bhrEconomicCalendar .bhr-economic-value{
+  min-height:52px!important;flex-direction:row!important;justify-content:space-between!important;
+  align-items:center!important;padding:10px 13px!important;gap:14px!important;
+ }
+ #bhrEconomicCalendar .bhr-economic-value small{font-size:12px!important}
+ #bhrEconomicCalendar .bhr-economic-value strong{font-size:14px!important;text-align:left!important}
+}
+</style>
 </body>
 
 <style id="bhr-file-attachment-visibility-fix">
