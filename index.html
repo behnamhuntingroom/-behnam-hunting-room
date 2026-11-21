@@ -4152,6 +4152,70 @@ header nav .bhr-auth-nav-button svg{width:16px;height:16px;fill:none;stroke:curr
  #bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-shortcut{padding:9px 7px!important}
 }
 </style>
+
+<style id="bhr-header-tools-solid-style">
+/* Solid, consistent header controls: cart, auth, user panel, theme, language and date */
+header .header-tools{gap:8px!important;align-items:center!important}
+header #bhrUserPanelOpen,
+header #bhrCartToggle,
+header .header-tools .bhr-auth-nav-button,
+header #themeBtn,
+header #langBtn{
+ box-sizing:border-box!important;
+ min-height:38px!important;
+ border:1px solid #d9b45d!important;
+ border-radius:11px!important;
+ background:linear-gradient(145deg,#d9b45d 0%,#a87924 100%)!important;
+ color:#171208!important;
+ box-shadow:0 3px 9px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,245,205,.55)!important;
+ font-weight:800!important;
+ text-shadow:none!important;
+}
+header #bhrUserPanelOpen,
+header #bhrCartToggle,
+header .header-tools .bhr-auth-nav-button{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;
+ padding:8px 11px!important;
+}
+header #bhrUserPanelOpen svg,
+header #bhrCartToggle svg,
+header .header-tools .bhr-auth-nav-button svg{
+ width:18px!important;height:18px!important;
+ stroke:currentColor!important;stroke-width:2.2!important;
+}
+header #bhrCartCount{
+ display:inline-grid!important;place-items:center!important;
+ min-width:19px!important;height:19px!important;padding:0 4px!important;
+ border-radius:20px!important;background:#211807!important;color:#ffe7a2!important;
+ font-size:11px!important;font-weight:900!important;
+}
+header .header-tools .bhr-auth-nav-button{min-width:76px!important}
+header #themeBtn,header #langBtn{padding:8px 12px!important;cursor:pointer!important}
+header .header-tools .datebox{
+ box-sizing:border-box!important;min-height:38px!important;
+ align-items:center!important;justify-content:center!important;
+ padding:7px 10px!important;gap:6px!important;
+ border:1px solid #d9b45d!important;border-radius:11px!important;
+ background:linear-gradient(145deg,#332711 0%,#211909 100%)!important;
+ color:#f5dda0!important;box-shadow:inset 0 1px 0 rgba(255,235,175,.12),0 3px 9px rgba(0,0,0,.22)!important;
+}
+header .header-tools .datebox span{color:#d8c18b!important;font-weight:700!important}
+header .header-tools .datebox b{color:#ffe6a2!important;font-weight:900!important}
+:root[data-theme="light"] header .header-tools .datebox{background:linear-gradient(145deg,#fff0c6,#f4d98d)!important;color:#38270a!important}
+:root[data-theme="light"] header .header-tools .datebox span{color:#684b16!important}
+:root[data-theme="light"] header .header-tools .datebox b{color:#38270a!important}
+header #bhrUserPanelOpen:hover,
+header #bhrCartToggle:hover,
+header .header-tools .bhr-auth-nav-button:hover,
+header #themeBtn:hover,header #langBtn:hover{filter:brightness(1.08)!important;transform:translateY(-1px)!important}
+@media(max-width:600px){
+ header .header-tools{justify-content:center!important;gap:7px!important}
+ header #bhrUserPanelOpen,header #bhrCartToggle,
+ header .header-tools .bhr-auth-nav-button,
+ header #themeBtn,header #langBtn{min-height:36px!important;padding:7px 9px!important;font-size:12px!important}
+ header .header-tools .datebox{width:100%!important;min-height:34px!important;flex-wrap:wrap!important}
+}
+</style>
 </body>
 
 <style id="bhr-file-attachment-visibility-fix">
