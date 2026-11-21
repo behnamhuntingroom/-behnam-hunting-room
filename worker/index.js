@@ -1180,21 +1180,36 @@ export default {
         return json(cached, 200, { ...headers, "Cache-Control": "public, max-age=300" });
       }
       try {
-        const response = await fetch("https://nfs.faireconomy.media/ff_calendar_thisweek.json", {
-          headers: {
-            "Accept": "application/json,text/plain,*/*",
-            "Accept-Language": "en-US,en;q=0.9",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
-            "Referer": "https://www.forexfactory.com/",
-            "Origin": "https://www.forexfactory.com"
-          },
-          cf: { cacheTtl: 3600, cacheEverything: true }
-        });
-        const body = await response.text();
-        if (!response.ok) throw new Error("Forex Factory HTTP " + response.status + (body ? ": " + body.slice(0, 180).replace(/\s+/g, " ") : ""));
-        let sourceRows;
-        try { sourceRows = JSON.parse(body); } catch (_) { throw new Error("Forex Factory returned non-JSON content: " + body.slice(0, 140).replace(/\s+/g, " ")); }
-        if (!Array.isArray(sourceRows)) throw new Error("Invalid Forex Factory calendar structure");
+        // Forex Factory limits weekly export downloads; KV above prevents frequent requests.
+        // Try the primary feed, then its alternate CDN hostname only if the first request fails.
+        const feedUrls = [
+          "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+          "https://cdn-nfs.faireconomy.media/ff_calendar_thisweek.json"
+        ];
+        let sourceRows = null;
+        let lastFeedError = null;
+        for (const feedUrl of feedUrls) {
+          try {
+            const response = await fetch(feedUrl, {
+              headers: {
+                "Accept": "application/json",
+                "User-Agent": "Mozilla/5.0 (compatible; BEHNAM-HUNTING-ROOM/1.0)",
+                "Referer": "https://www.forexfactory.com/"
+              },
+              cf: { cacheTtl: 3600, cacheEverything: true }
+            });
+            const body = await response.text();
+            if (!response.ok) throw new Error("HTTP " + response.status + (body ? ": " + body.slice(0, 140).replace(/\\s+/g, " ") : ""));
+            sourceRows = JSON.parse(body);
+            if (!Array.isArray(sourceRows)) throw new Error("Invalid JSON calendar structure");
+            break;
+          } catch (feedError) {
+            lastFeedError = feedError;
+            sourceRows = null;
+            console.error("[BHR_FF_FEED_ATTEMPT_FAILED]", feedUrl, feedError?.message || "Unknown error");
+          }
+        }
+        if (!Array.isArray(sourceRows)) throw new Error("Forex Factory feeds unavailable: " + (lastFeedError?.message || "unknown error"));
         const data = sourceRows.filter(event => event && event.date && event.title).map(event => ({
           scheduledAt: event.date, eventName: event.title, currency: event.country || "",
           periodLabel: event.country || "", impact: event.impact || "Low",
