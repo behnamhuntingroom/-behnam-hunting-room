@@ -3016,12 +3016,10 @@ const newsGrid=document.createElement("div");
 newsGrid.className="bhr-up-grid bhr-news-page-grid";
 const commandCenter=$("bhr-command-center");
 if(commandCenter){
- [".bhr-news-brief",".bhr-live-calendar"].forEach(selector=>{
+ [".bhr-news-brief",".bhr-iran-economic-news",".bhr-live-calendar"].forEach(selector=>{
   const card=commandCenter.querySelector(selector);
   if(card)newsGrid.append(card);
  });
- const iranNewsCard=commandCenter.querySelector(".bhr-live-news");
- if(iranNewsCard)newsGrid.append(iranNewsCard);
  if(newsGrid.children.length)newsPage.append(newsGrid);
  const oldNewsGrid=commandCenter.querySelector(":scope > .bhr-up-grid");
  if(oldNewsGrid&&!oldNewsGrid.children.length)oldNewsGrid.remove();
