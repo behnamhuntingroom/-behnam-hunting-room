@@ -4028,6 +4028,46 @@ header nav .bhr-auth-nav-button svg{width:16px;height:16px;fill:none;stroke:curr
  #bhrEconomicCalendar .bhr-economic-value strong{font-size:14px!important;text-align:left!important}
 }
 </style>
+
+<style id="bhr-home-sidebar-shortcuts-compact-v2">
+/* Restore the original horizontal icon-and-text layout and compact card height */
+#bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-home-shortcuts{
+ display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+ gap:8px!important;margin:0!important;
+}
+#bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-shortcut{
+ display:grid!important;grid-template-columns:32px minmax(0,1fr)!important;
+ grid-template-rows:auto auto!important;align-items:center!important;
+ column-gap:9px!important;row-gap:1px!important;
+ width:100%!important;min-height:0!important;height:auto!important;
+ margin:0!important;padding:9px 11px!important;
+ border-radius:12px!important;
+}
+#bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-shortcut .bhr-shortcut-icon{
+ display:block!important;grid-column:1!important;grid-row:1 / span 2!important;
+ margin:0!important;font-size:21px!important;line-height:1.2!important;
+}
+#bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-shortcut strong{
+ display:block!important;grid-column:2!important;grid-row:1!important;
+ margin:0!important;font-size:13px!important;line-height:1.45!important;
+}
+#bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-shortcut small{
+ display:block!important;grid-column:2!important;grid-row:2!important;
+ margin:0!important;font-size:10px!important;line-height:1.45!important;
+}
+@media(max-width:600px){
+ #bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-home-shortcuts{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;
+ }
+ #bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-shortcut{
+  grid-template-columns:24px minmax(0,1fr)!important;
+  column-gap:6px!important;padding:8px 7px!important;
+ }
+ #bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-shortcut .bhr-shortcut-icon{font-size:17px!important}
+ #bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-shortcut strong{font-size:11px!important}
+ #bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-shortcut small{font-size:9px!important}
+}
+</style>
 </body>
 
 <style id="bhr-file-attachment-visibility-fix">
