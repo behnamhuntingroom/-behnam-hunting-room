@@ -4290,6 +4290,31 @@ header #langBtn:hover{
 }
 </style>
 
+
+<style id="bhr-auth-icons-hover-color-fix">
+/* Auth controls are moved into nav; target their final location explicitly */
+header nav .bhr-nav-account-tools .bhr-auth-nav-button svg{
+ color:#cdb77f!important;
+ transition:color .22s ease,filter .22s ease!important;
+}
+header nav .bhr-nav-account-tools .bhr-auth-nav-button svg path,
+header nav .bhr-nav-account-tools .bhr-auth-nav-button svg circle{
+ fill:currentColor!important;
+ stroke:currentColor!important;
+}
+header nav .bhr-nav-account-tools .bhr-auth-nav-button:hover svg{
+ color:#fff4c9!important;
+ filter:drop-shadow(0 0 5px rgba(242,217,139,.7))!important;
+}
+:root[data-theme="light"] header nav .bhr-nav-account-tools .bhr-auth-nav-button svg{
+ color:#80601f!important;
+}
+:root[data-theme="light"] header nav .bhr-nav-account-tools .bhr-auth-nav-button:hover svg{
+ color:#3f2b08!important;
+ filter:drop-shadow(0 0 5px rgba(177,132,39,.48))!important;
+}
+</style>
+
 </body>
 
 <style id="bhr-file-attachment-visibility-fix">
