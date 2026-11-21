@@ -70,9 +70,11 @@ jobs:
           const watchUrl = "https://cdn.tsetmc.com/api/ClosingPrice/GetMarketWatch?market=0&industrialGroup=&paperTypes%5B0%5D=1&paperTypes%5B1%5D=2&paperTypes%5B2%5D=3&paperTypes%5B3%5D=4&paperTypes%5B4%5D=5&paperTypes%5B5%5D=6&paperTypes%5B6%5D=7&paperTypes%5B7%5D=8&paperTypes%5B8%5D=9&showTraded=false&withBestLimits=false&hEven=0&RefID=0";
 
           let marketMap = [];
+          const endpointErrors = [];
           try {
             marketMap = normalize(rowsFrom(await fetchJson(mapUrl)));
           } catch (error) {
+            endpointErrors.push(error.message);
             console.log(`Market map endpoint unavailable: ${error.message}`);
           }
 
@@ -80,12 +82,17 @@ jobs:
             try {
               marketMap = normalize(rowsFrom(await fetchJson(watchUrl)));
             } catch (error) {
+              endpointErrors.push(error.message);
               console.log(`Market watch endpoint unavailable: ${error.message}`);
             }
           }
 
           if (!marketMap.length) {
-            throw new Error("TSETMC returned no usable market symbols; keeping the last published data.");
+            if (endpointErrors.length === 2) {
+              throw new Error("Both TSETMC endpoints failed; keeping the last published data.");
+            }
+            console.log("TSETMC returned no current symbols; keeping the last published data.");
+            process.exit(0);
           }
 
           const payload = {
