@@ -939,6 +939,81 @@ header .bhr-main-nav .nav-icon{
  header .bhr-main-nav .nav-icon{width:18px!important;height:18px!important;flex-basis:18px}
 }
 </style>
+
+<style id="bhr-economic-calendar-readability-v2">
+/* Clear spacing and hierarchy for every economic-calendar event */
+#bhrEconomicCalendar{width:100%;min-width:0;box-sizing:border-box}
+#bhrEconomicCalendar .bhr-economic-list{
+ display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+ gap:16px!important;padding:14px 5px 18px!important;
+ max-height:760px;overflow-y:auto;overflow-x:hidden;
+}
+#bhrEconomicCalendar .bhr-economic-event{
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;
+ gap:10px!important;min-width:0;width:100%;box-sizing:border-box;
+ padding:17px 18px!important;margin:0!important;border-radius:15px!important;
+ line-height:1.9!important;overflow-wrap:anywhere;
+}
+#bhrEconomicCalendar .bhr-economic-top{
+ display:flex!important;justify-content:space-between!important;align-items:center!important;
+ gap:10px 14px!important;flex-wrap:wrap!important;margin:0!important;
+ padding-bottom:9px;border-bottom:1px solid rgba(148,163,184,.2);
+}
+#bhrEconomicCalendar .bhr-economic-date{
+ display:block;font-size:12px!important;line-height:1.9!important;
+ font-weight:700!important;white-space:normal!important;
+}
+#bhrEconomicCalendar .bhr-economic-impact{
+ display:inline-flex!important;align-items:center;justify-content:center;
+ min-height:30px;padding:4px 12px!important;border-radius:999px!important;
+ font-size:11px!important;line-height:1.6!important;white-space:nowrap;
+}
+#bhrEconomicCalendar .bhr-economic-name{
+ display:block!important;margin:0!important;padding:2px 0!important;
+ color:#f8fafc!important;font-size:16px!important;font-weight:800!important;
+ line-height:2!important;white-space:normal!important;overflow-wrap:anywhere;
+}
+#bhrEconomicCalendar .bhr-economic-period{
+ display:block!important;margin:0!important;padding:7px 10px!important;
+ border-radius:9px;background:rgba(148,163,184,.09);
+ font-size:12px!important;line-height:1.9!important;white-space:normal!important;
+}
+#bhrEconomicCalendar .bhr-economic-values{
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ gap:10px!important;margin:2px 0 0!important;align-items:stretch;
+}
+#bhrEconomicCalendar .bhr-economic-value{
+ display:flex!important;flex-direction:column!important;justify-content:center!important;
+ gap:5px!important;min-width:0;min-height:66px;box-sizing:border-box;
+ padding:10px 9px!important;border-radius:10px!important;text-align:center!important;
+}
+#bhrEconomicCalendar .bhr-economic-value small{
+ display:block!important;font-size:11px!important;line-height:1.7!important;
+ white-space:normal!important;
+}
+#bhrEconomicCalendar .bhr-economic-value strong{
+ display:block!important;font-size:14px!important;line-height:1.8!important;
+ overflow-wrap:anywhere;white-space:normal!important;
+}
+#bhrEconomicCalendar .bhr-economic-source{
+ margin:8px 5px 0!important;padding:12px 5px 5px!important;
+ font-size:11px!important;line-height:2!important;overflow-wrap:anywhere;
+}
+@media(max-width:560px){
+ #bhrEconomicCalendar .bhr-economic-list{gap:13px!important;padding:10px 2px 14px!important;max-height:680px}
+ #bhrEconomicCalendar .bhr-economic-event{padding:13px!important;gap:9px!important}
+ #bhrEconomicCalendar .bhr-economic-name{font-size:14px!important;line-height:2!important}
+ #bhrEconomicCalendar .bhr-economic-values{grid-template-columns:minmax(0,1fr)!important;gap:7px!important}
+ #bhrEconomicCalendar .bhr-economic-value{
+  min-height:0;flex-direction:row!important;justify-content:space-between!important;
+  align-items:center!important;text-align:right!important;padding:8px 11px!important;gap:12px!important;
+ }
+ #bhrEconomicCalendar .bhr-economic-value small{font-size:11px!important;margin:0!important}
+ #bhrEconomicCalendar .bhr-economic-value strong{font-size:13px!important;text-align:left}
+ #bhrEconomicCalendar .bhr-economic-date{font-size:11px!important}
+}
+</style>
+
 </head>
 <body>
 <header>
