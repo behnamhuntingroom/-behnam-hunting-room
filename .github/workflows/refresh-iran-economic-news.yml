@@ -1,0 +1,163 @@
+name: Refresh Iran economic news
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+    paths:
+      - ".github/workflows/refresh-iran-economic-news.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-iran-market
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Check out the site
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Fetch and validate Iranian economic news RSS feeds
+        id: fetch
+        run: |
+          node <<'NODE'
+          import fs from "node:fs";
+
+          const feeds = [
+            {
+              name: "خبر اقتصادی ایران",
+              url: "https://news.google.com/rss/search?q=%D8%A7%D9%82%D8%AA%D8%B5%D8%A7%D8%AF+%D8%A7%DB%8C%D8%B1%D8%A7%D9%86&hl=fa&gl=IR&ceid=IR:fa"
+            },
+            {
+              name: "اقتصادنیوز",
+              url: "https://www.eghtesadnews.com/feeds/"
+            },
+            {
+              name: "خبرآنلاین",
+              url: "https://www.khabaronline.ir/rss/tp/2"
+            },
+            {
+              name: "دنیای اقتصاد",
+              url: "https://www.donya-e-eqtesad.com/general-news/rss/"
+            }
+          ];
+
+          function decode(value) {
+            return String(value || "")
+              .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
+              .replace(/&#x([\da-f]+);/gi, (_, code) => String.fromCodePoint(parseInt(code, 16)))
+              .replace(/&#(\d+);/g, (_, code) => String.fromCodePoint(Number(code)))
+              .replace(/&amp;/g, "&")
+              .replace(/&quot;/g, '"')
+              .replace(/&apos;|&#39;/g, "'")
+              .replace(/&lt;/g, "<")
+              .replace(/&gt;/g, ">");
+          }
+
+          function field(xml, tag) {
+            const match = xml.match(new RegExp("<(?:[\\w.-]+:)?"+tag+"\\b[^>]*>([\\s\\S]*?)<\\/(?:[\\w.-]+:)?"+tag+"\\s*>", "i"));
+            return match ? decode(match[1]).replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim() : "";
+          }
+
+          function parse(xml, feed) {
+            return [...xml.matchAll(/<item\b[^>]*>([\s\S]*?)<\/item>/gi)].map(([, item]) => {
+              const title = field(item, "title");
+              const link = field(item, "link");
+              const publishedAt = field(item, "pubDate") || field(item, "published") || field(item, "updated") || field(item, "date");
+              const summary = field(item, "description") || field(item, "summary");
+              const publisher = field(item, "source");
+              if (!title || !/^https:\/\//i.test(link)) return null;
+              const date = new Date(publishedAt);
+              return {
+                title: title.slice(0, 300),
+                link,
+                publishedAt: Number.isNaN(date.getTime()) ? "" : date.toISOString(),
+                summary: summary.slice(0, 260),
+                source: (publisher || feed.name).slice(0, 100)
+              };
+            }).filter(Boolean);
+          }
+
+          const results = await Promise.all(feeds.map(async feed => {
+            try {
+              const response = await fetch(feed.url, {
+                headers: {
+                  "Accept": "application/rss+xml, application/atom+xml, application/xml, text/xml, */*",
+                  "User-Agent": "BHR-Iran-Economic-News/1.0 (+https://github.com/behnamhuntingroom/-behnam-hunting-room)"
+                },
+                signal: AbortSignal.timeout(18000)
+              });
+              if (!response.ok) throw new Error("HTTP " + response.status);
+              const xml = await response.text();
+              const items = parse(xml, feed);
+              if (!items.length) throw new Error("No valid RSS items");
+              console.log(feed.name + ": " + items.length + " items");
+              return { name: feed.name, items };
+            } catch (error) {
+              console.log(feed.name + " unavailable: " + error.message);
+              return { name: feed.name, items: [] };
+            }
+          }));
+
+          const seen = new Set();
+          const items = results.flatMap(result => result.items).filter(item => {
+            if (seen.has(item.link)) return false;
+            seen.add(item.link);
+            return true;
+          }).sort((a, b) => (Date.parse(b.publishedAt) || 0) - (Date.parse(a.publishedAt) || 0)).slice(0, 30);
+
+          if (!items.length) {
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, "available=false\n");
+            throw new Error("No news feed returned valid current items; existing published news will be kept.");
+          }
+
+          const payload = {
+            updatedAt: new Date().toISOString(),
+            sources: [...new Set(results.filter(result => result.items.length).map(result => result.name))],
+            items
+          };
+          fs.writeFileSync("/tmp/iran-economic-news.json", JSON.stringify(payload));
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, "available=true\n");
+          console.log("Validated " + items.length + " unique news items from " + payload.sources.length + " sources.");
+          NODE
+
+      - name: Publish updated news data branch
+        if: steps.fetch.outputs.available == 'true'
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin market-data 2>/dev/null || true
+
+          if git show-ref --verify --quiet refs/remotes/origin/market-data; then
+            git checkout -B market-data origin/market-data
+          else
+            git checkout -b market-data origin/main
+          fi
+
+          mkdir -p data
+          NEW_ITEMS="$(jq -cS '{sources, items}' /tmp/iran-economic-news.json)"
+          OLD_ITEMS=""
+          if [ -f data/iran-economic-news.json ]; then
+            OLD_ITEMS="$(jq -cS '{sources, items}' data/iran-economic-news.json)"
+          fi
+
+          if [ "$NEW_ITEMS" = "$OLD_ITEMS" ]; then
+            echo "Iran economic news is unchanged; no commit needed."
+            exit 0
+          fi
+
+          cp /tmp/iran-economic-news.json data/iran-economic-news.json
+          git add data/iran-economic-news.json
+          git commit -m "Refresh Iran economic news"
+          git push --set-upstream origin market-data
+          
