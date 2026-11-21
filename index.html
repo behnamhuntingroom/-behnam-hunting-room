@@ -897,15 +897,57 @@ header .header-tools a:active svg{
  #bhr-heatmap-page>.bhr-iran-economic-news .bhr-news-item a{font-size:14px!important;line-height:1.95!important}
 }
 </style>
+
+<style id="bhr-filled-embossed-main-nav">
+header .bhr-main-nav{gap:10px!important;align-items:center}
+header .bhr-main-nav>a{
+ position:relative;isolation:isolate;overflow:hidden;
+ min-height:43px;padding:9px 15px!important;gap:9px!important;
+ border:1px solid rgba(239,197,91,.42)!important;border-radius:13px!important;
+ color:#ffe3a0!important;
+ background:linear-gradient(145deg,rgba(111,78,22,.72),rgba(35,27,13,.96))!important;
+ box-shadow:0 5px 12px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,238,183,.2),inset 0 -3px 7px rgba(0,0,0,.34)!important;
+ font-weight:800!important;text-shadow:0 1px 2px #000!important;
+ transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease!important;
+}
+header .bhr-main-nav>a:before{
+ content:"";position:absolute;z-index:-1;inset:0;
+ background:linear-gradient(115deg,rgba(255,255,255,.13),transparent 48%);
+ pointer-events:none;
+}
+header .bhr-main-nav>a:hover,
+header .bhr-main-nav>a[aria-current="page"]{
+ transform:translateY(-2px)!important;border-color:#ffe08a!important;
+ background:linear-gradient(145deg,#b8862d,#644411)!important;
+ color:#fff4ce!important;
+ box-shadow:0 8px 19px rgba(205,155,48,.32),inset 0 1px 0 rgba(255,245,205,.45),inset 0 -3px 7px rgba(50,30,4,.35)!important;
+}
+header .bhr-main-nav .nav-icon{
+ width:20px!important;height:20px!important;flex:0 0 20px;
+ fill:currentColor!important;stroke:none!important;
+ filter:drop-shadow(0 2px 2px rgba(0,0,0,.55)) drop-shadow(0 0 5px rgba(255,216,125,.28));
+}
+:root[data-theme="light"] header .bhr-main-nav>a{
+ color:#fff4d2!important;
+ background:linear-gradient(145deg,#9b6b19,#63430e)!important;
+ border-color:rgba(142,96,17,.65)!important;
+ box-shadow:0 5px 12px rgba(89,62,13,.2),inset 0 1px 0 rgba(255,246,213,.45),inset 0 -3px 7px rgba(40,25,5,.25)!important;
+}
+@media(max-width:760px){
+ header .bhr-main-nav{gap:6px!important}
+ header .bhr-main-nav>a{padding:8px 10px!important;min-height:40px}
+ header .bhr-main-nav .nav-icon{width:18px!important;height:18px!important;flex-basis:18px}
+}
+</style>
 </head>
 <body>
 <header>
 <a class="brand" href="#home"><span class="bhr-brand-name"><span class="bhr-brand-behnam">BEHNAM</span> <span class="bhr-brand-hunting">HUNTING</span> <span class="bhr-brand-room">ROOM</span></span></a>
-<nav>
-<a href="#home"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-6v-7h-4v7H4a1 1 0 0 1-1-1z"/></svg><span data-fa="خانه" data-en="Home">خانه</span></a>
-<a href="#markets"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 19V5m0 14h17M7 15l4-5 3 2 5-7"/></svg><span data-fa="بازارها" data-en="Markets">بازارها</span></a>
-<a href="#services"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/><circle cx="18" cy="17" r="2"/></svg><span data-fa="خدمات" data-en="Services">خدمات</span></a>
-<a href="#contact"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg><span data-fa="تماس" data-en="Contact">تماس</span></a>
+<nav class="bhr-main-nav">
+<a href="#home" aria-label="خانه"><svg class="nav-icon bhr-nav-home" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8 1.8 11.1a1.2 1.2 0 0 0 1.5 1.9L4.5 12v8.1c0 .9.7 1.6 1.6 1.6h4.2v-6.1h3.4v6.1h4.2c.9 0 1.6-.7 1.6-1.6V12l1.2 1a1.2 1.2 0 0 0 1.5-1.9L12 2.8z"/></svg><span data-fa="خانه" data-en="Home">خانه</span></a>
+<a href="#markets" aria-label="بازارها"><svg class="nav-icon bhr-nav-markets" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20h18v2H1V2h2v18zm3-3.2 4.1-5.1 3.2 2.5 5.2-7.1 2.1 1.5-6.8 9.2-3.3-2.6-2.5 3.1-2-1.5z"/><path d="M16.5 5H22v5.5z"/></svg><span data-fa="بازارها" data-en="Markets">بازارها</span></a>
+<a href="#services" aria-label="خدمات"><svg class="nav-icon bhr-nav-services" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v2H4zm0 6h16v2H4zm0 6h10v2H4z"/><circle cx="17" cy="18" r="3"/><path d="M17 13.5v1.7m0 5.6v1.7m-4.5-4.2h1.7m5.6 0h1.7" fill="none" stroke="currentColor" stroke-width="1.7"/></svg><span data-fa="خدمات" data-en="Services">خدمات</span></a>
+<a href="#contact" aria-label="تماس"><svg class="nav-icon bhr-nav-contact" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zm9 8.1L3.3 7h-.1v1.7l8.8 6.1 8.8-6.1V7h-.1L12 13.1z"/></svg><span data-fa="تماس" data-en="Contact">تماس</span></a>
 </nav>
 <div class="header-tools">
 <button id="bhrUserPanelOpen" type="button" aria-haspopup="dialog" aria-controls="bhr-user-panel">
