@@ -3917,6 +3917,57 @@ header nav .bhr-auth-nav-button svg{width:16px;height:16px;fill:none;stroke:curr
  #bhr-news-page .bhr-live-calendar{grid-column:1!important;grid-row:3!important}
 }
 </style>
+
+<style id="bhr-home-sidebar-shortcuts-filled">
+/* Solid, embossed shortcut tiles in the right-hand home sidebar */
+#bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-shortcut{
+ box-sizing:border-box!important;position:relative!important;isolation:isolate;
+ display:block!important;width:100%!important;min-height:92px!important;
+ margin:0 0 12px!important;padding:17px 15px!important;
+ border:1px solid rgba(226,190,105,.58)!important;
+ border-right:4px solid #d8b45a!important;border-radius:15px!important;
+ background:linear-gradient(145deg,#3a301b 0%,#252012 52%,#17140d 100%)!important;
+ box-shadow:0 8px 18px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,238,184,.19),inset 0 -4px 10px rgba(0,0,0,.24)!important;
+ text-decoration:none!important;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease!important;
+}
+#bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-shortcut:not(.bhr-shortcut-heatmap):not(.bhr-shortcut-news):not(.bhr-shortcut-assistant) .bhr-shortcut-icon{
+ display:block!important;margin:0 0 7px!important;color:#ffe09a!important;
+ font-size:25px!important;line-height:1.2!important;
+ text-shadow:0 2px 5px #000,0 0 10px rgba(255,213,119,.35)!important;
+}
+#bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-shortcut strong{
+ display:block!important;color:#ffe5a5!important;font-weight:900!important;
+ text-shadow:0 1px 3px #000!important;
+}
+#bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-shortcut small{
+ display:block!important;margin-top:5px!important;color:#d6c69e!important;line-height:1.8!important;
+}
+#bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-shortcut:hover{
+ transform:translateY(-3px)!important;border-color:#ffe09a!important;
+ box-shadow:0 12px 25px rgba(0,0,0,.48),0 0 16px rgba(215,180,90,.2),inset 0 1px 0 rgba(255,238,184,.25)!important;
+}
+/* Keep each highlighted shortcut filled in its own identity color */
+#bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-shortcut-heatmap{
+ background:linear-gradient(145deg,#54240f,#29130c 70%,#170d09)!important;
+}
+#bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-shortcut-news{
+ background:linear-gradient(145deg,#4b151b,#260d12 70%,#16090c)!important;
+}
+#bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-shortcut-assistant{
+ border-color:rgba(65,210,112,.55)!important;border-right-color:#39c879!important;
+ background:linear-gradient(145deg,#123c29,#0b241a 70%,#07150f)!important;
+}
+#bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-shortcut-assistant .bhr-shortcut-icon,
+#bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-shortcut-assistant strong{color:#8af0ad!important}
+#bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-shortcut-assistant small{color:#b8e7c8!important}
+@media(max-width:1050px){
+ #bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-shortcut{min-height:84px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-shortcut{transition:none!important}
+}
+</style>
+
 </body>
 
 <style id="bhr-file-attachment-visibility-fix">
