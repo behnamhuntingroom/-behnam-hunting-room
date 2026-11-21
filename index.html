@@ -850,6 +850,53 @@ header .header-tools a:active svg{
 }
 </style>
 
+
+<style id="bhr-news-readability-fix">
+/* Improve breathing room and readability in economic/news feeds */
+#bhr-news-page .bhr-news-list,
+#bhr-heatmap-page>.bhr-iran-economic-news .bhr-news-list{
+  display:grid!important;
+  gap:14px!important;
+  padding:8px!important;
+}
+#bhr-news-page .bhr-news-item,
+#bhr-heatmap-page>.bhr-iran-economic-news .bhr-news-item{
+  padding:17px 19px!important;
+  margin:0!important;
+  border-radius:14px!important;
+  line-height:2!important;
+}
+#bhr-news-page .bhr-news-item a,
+#bhr-heatmap-page>.bhr-iran-economic-news .bhr-news-item a{
+  display:block!important;
+  font-size:15px!important;
+  line-height:2.05!important;
+  letter-spacing:0!important;
+  overflow-wrap:anywhere!important;
+  white-space:normal!important;
+  -webkit-line-clamp:unset!important;
+}
+#bhr-news-page .bhr-news-meta,
+#bhr-heatmap-page>.bhr-iran-economic-news .bhr-news-meta{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:8px 14px!important;
+  margin-top:10px!important;
+  padding-top:8px!important;
+  border-top:1px solid rgba(148,163,184,.14)!important;
+  font-size:11px!important;
+  line-height:1.8!important;
+}
+#bhr-news-page .bhr-up-card>p{line-height:2!important;margin-bottom:18px!important}
+@media(max-width:760px){
+ #bhr-news-page .bhr-news-list,
+ #bhr-heatmap-page>.bhr-iran-economic-news .bhr-news-list{gap:11px!important;padding:5px!important}
+ #bhr-news-page .bhr-news-item,
+ #bhr-heatmap-page>.bhr-iran-economic-news .bhr-news-item{padding:14px!important}
+ #bhr-news-page .bhr-news-item a,
+ #bhr-heatmap-page>.bhr-iran-economic-news .bhr-news-item a{font-size:14px!important;line-height:1.95!important}
+}
+</style>
 </head>
 <body>
 <header>
