@@ -2304,6 +2304,23 @@ header .bhr-sun-letters{transform:translateZ(12px);text-shadow:0 1px 0 #8d6420,0
  <h2 class="bhr-section-title">تحلیل کاربران</h2>
  <p class="bhr-section-sub">ثبت ایده معاملاتی، سناریوی ورود و بررسی نتیجه تحلیل‌ها</p>
 
+ <div class="bhr-up-card" id="bhr-opportunity-scanner" style="margin-bottom:16px">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+   <div><h3 style="margin:0">شکارچی فرصت‌ها</h3><p style="margin:5px 0 0;color:var(--muted,#9ca3af)">غربال خودکار چهار بازار با داده‌های عمومی</p></div>
+   <button type="button" id="bhrScannerRefresh">اسکن بازارها</button>
+  </div>
+  <div class="bhr-scanner-tabs" style="display:flex;gap:8px;flex-wrap:wrap;margin:15px 0">
+   <button type="button" data-bhr-scan-market="all" class="active">همه بازارها</button>
+   <button type="button" data-bhr-scan-market="iran">بورس ایران</button>
+   <button type="button" data-bhr-scan-market="us">بورس آمریکا</button>
+   <button type="button" data-bhr-scan-market="forex">فارکس و طلا</button>
+   <button type="button" data-bhr-scan-market="crypto">رمزارزها</button>
+  </div>
+  <div id="bhrScannerStatus" class="bhr-up-status" aria-live="polite">برای دریافت آخرین داده‌ها، «اسکن بازارها» را بزن.</div>
+  <div id="bhrScannerResults" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px;margin-top:12px"></div>
+  <p style="font-size:11px;line-height:1.9;color:var(--muted,#9ca3af);margin:14px 0 0">امتیاز فقط قدرت نسبی حرکت را نشان می‌دهد، نه احتمال موفقیت معامله. این نسخه سیگنال ورود، حد ضرر یا هدف صادر نمی‌کند. داده‌های رایگان ممکن است تأخیری یا ناقص باشند؛ قبل از معامله، منبع و نمودار را بررسی کن.</p>
+ </div>
+
  <div class="bhr-warning">
   نسخه فعلی این قسمت اطلاعات را فقط در مرورگر همین دستگاه نگه می‌دارد.
   انتشار عمومی تحلیل‌ها، نظر دادن و امتیازدهی بین کاربران تا راه‌اندازی حساب کاربری و پایگاه داده فعال نیست.
@@ -4697,6 +4714,49 @@ footer .bhr-visitor-counter{margin:0 auto 12px}
     .catch(()=>{countEl.textContent="۳۰۴";});
 })();
 </script>
+
+<script id="bhr-opportunity-scanner-script">
+(()=>{"use strict";
+ const root=document.getElementById("bhr-opportunity-scanner");if(!root||root.dataset.ready==="1")return;root.dataset.ready="1";
+ const endpoint="https://tiny-unit-4ed3.behnamhuntingroom.workers.dev/opportunity-scanner";
+ const status=root.querySelector("#bhrScannerStatus"),results=root.querySelector("#bhrScannerResults"),refresh=root.querySelector("#bhrScannerRefresh");
+ const tabs=[...root.querySelectorAll("[data-bhr-scan-market]")];let active="all",payload=null,busy=false;
+ const fa=n=>Number(n).toLocaleString("fa-IR",{maximumFractionDigits:4});
+ const safe=s=>String(s??"");
+ const card=item=>{
+  const el=document.createElement("article");el.className="bhr-up-item";el.style.cssText="padding:13px;border:1px solid var(--border,rgba(148,163,184,.2));border-radius:12px;min-width:0";
+  const top=document.createElement("div");top.style.cssText="display:flex;justify-content:space-between;gap:8px;align-items:center";
+  const name=document.createElement("strong");name.textContent=item.symbol+(item.name&&item.name!==item.symbol?" · "+item.name:"");
+  const score=document.createElement("small");score.textContent="امتیاز رصد "+fa(item.score)+"/۱۰۰";top.append(name,score);
+  const price=document.createElement("div");price.style.cssText="font-size:19px;font-weight:800;margin:10px 0 4px";price.textContent=item.price>0?fa(item.price):"قیمت نامشخص";
+  const change=document.createElement("div");const pct=Number(item.changePct)||0;change.style.color=pct>0?"#16a34a":pct<0?"#dc5656":"inherit";change.textContent=(pct>0?"+":"")+fa(pct)+"٪ · "+safe(item.direction);
+  const reason=document.createElement("p");reason.style.cssText="font-size:12px;line-height:1.8;margin:9px 0";reason.textContent=safe(item.reason);
+  const time=document.createElement("small");time.style.cssText="display:block;opacity:.7;line-height:1.8";time.textContent="زمان داده: "+(item.dataTime?new Date(item.dataTime).toLocaleString("fa-IR"):"زمان نماد اعلام نشده");
+  const type=document.createElement("small");type.style.cssText="display:block;opacity:.7;margin-top:4px";type.textContent=safe(item.kind)+" · فقط رصد";
+  el.append(top,price,change,reason,time,type);return el;
+ };
+ const render=()=>{
+  results.innerHTML="";if(!payload)return;
+  const keys=active==="all"?["iran","us","forex","crypto"]:[active];
+  let total=0,failed=0;
+  keys.forEach(key=>{const market=payload.markets?.[key];if(!market||!market.ok){failed++;const msg=document.createElement("div");msg.className="bhr-up-item";msg.textContent=(market?.source||key)+" : "+(market?.error||"داده‌ای دریافت نشد");results.append(msg);return;}
+   const heading=document.createElement("div");heading.style.cssText="grid-column:1/-1;font-weight:800;margin-top:8px";heading.textContent=({iran:"بورس ایران",us:"بورس آمریکا",forex:"فارکس و طلا",crypto:"رمزارزها"})[key]+" · "+market.items.length+" مورد";results.append(heading);
+   market.items.forEach(item=>{results.append(card(item));total++;});
+  });
+  status.textContent="آخرین دریافت: "+new Date(payload.updatedAt).toLocaleString("fa-IR")+" · "+total+" مورد رصدشده"+(failed?" · "+failed+" منبع ناموفق":"");
+ };
+ const scan=async()=>{
+  if(busy)return;busy=true;refresh.disabled=true;refresh.textContent="در حال اسکن…";status.textContent="در حال دریافت داده از منابع عمومی بازارها…";
+  try{const r=await fetch(endpoint,{method:"GET",cache:"no-store"});if(!r.ok)throw new Error("خطای ارتباط "+r.status);const data=await r.json();if(!data||!data.markets)throw new Error("پاسخ اسکنر معتبر نیست");payload=data;render();}
+  catch(e){status.textContent="دریافت داده ناموفق بود: "+safe(e.message)+". دوباره تلاش کن.";}
+  finally{busy=false;refresh.disabled=false;refresh.textContent="اسکن دوباره";}
+ };
+ refresh.addEventListener("click",scan);
+ tabs.forEach(t=>t.addEventListener("click",()=>{active=t.dataset.bhrScanMarket;tabs.forEach(x=>x.classList.toggle("active",x===t));if(payload)render();}));
+ const page=document.getElementById("bhr-community-page");if(page?.classList.contains("is-active"))scan();else if(page){const obs=new MutationObserver(()=>{if(page.classList.contains("is-active")){scan();obs.disconnect();}});obs.observe(page,{attributes:true,attributeFilter:["class"]});}
+})();
+</script>
+
 </body>
 
 <style id="bhr-file-attachment-visibility-fix">
