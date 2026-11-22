@@ -1773,6 +1773,7 @@ document.getElementById("marketSearch").addEventListener("keydown", function(eve
         const usd = byId.usd;\n        setText('bhrBrentToman', usd && typeof usd.price === 'number' ? 'معادل تومانی: ' + formatter.format(brent.price * usd.price) + ' تومان' : 'معادل تومانی: ناموجود');
       } else {
         setText('bhrBrentPrice', 'فعلاً ناموجود');
+        setText('bhrBrentToman', 'معادل تومانی: ناموجود');
       }
 
       const relevant = [...Object.keys(fields), 'btc', 'brent', 'xau', 'xag', 'usd'].map(id => byId[id]).filter(Boolean);
