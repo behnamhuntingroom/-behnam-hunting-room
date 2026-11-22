@@ -1401,40 +1401,70 @@ export default {
       return handleOpportunityScanner(env, headers);
     }
 
-    /* شاخص کل بورس تهران؛ دریافت مستقیم از API شاخص‌های منتخب TSETMC */
+    /* شاخص کل بورس تهران؛ شاخص منتخب با مسیر جایگزین نمای کلی بازار */
     if (path === "/market-index") {
       if (request.method !== "GET") return new Response("Method not allowed", { status: 405, headers });
+      const sourceHeaders = {
+        "Accept": "application/json",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36",
+        "Referer": "https://www.tsetmc.com/"
+      };
       try {
-        const response = await fetch("https://cdn.tsetmc.com/api/Index/GetIndexB1LastAll/SelectedIndexes/1", {
-          headers: {
-            "Accept": "application/json",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36",
-            "Referer": "https://www.tsetmc.com/"
-          },
-          cf: { cacheTtl: 8, cacheEverything: true }
+        let result = null;
+        let sourceError = "";
+        try {
+          const response = await fetch("https://cdn.tsetmc.com/api/Index/GetIndexB1LastAll/SelectedIndexes/1", {
+            headers: sourceHeaders,
+            cf: { cacheTtl: 8, cacheEverything: true }
+          });
+          if (!response.ok) throw new Error("SelectedIndexes HTTP " + response.status);
+          const body = await response.json();
+          const indices = Array.isArray(body) ? body : (Array.isArray(body?.indexB1) ? body.indexB1 : []);
+          const row = indices.find(item => String(item?.lVal30 || "").replace(/[\s\u200c\u200f]+/g, " ").trim() === "شاخص کل")
+            || indices.find(item => String(item?.lVal30 || "").includes("شاخص کل") && !String(item?.lVal30 || "").includes("هم وزن"));
+          if (row) {
+            const value = Number(row.xDrNivJIdx004);
+            const change = Number(row.indexChange ?? 0);
+            const percent = Number(row.xVarIdxJRfV ?? (value > change && value > 0 ? change / (value - change) * 100 : 0));
+            if (Number.isFinite(value) && value > 0) {
+              result = { name: String(row.lVal30 || "شاخص کل"), value, change, percent, time: String(row.hEven || "") };
+            }
+          }
+          if (!result) throw new Error("شاخص کل در فهرست منتخب پیدا نشد یا مقدار آن نامعتبر بود");
+        } catch (error) {
+          sourceError = String(error?.message || error);
+        }
+
+        if (!result) {
+          const response = await fetch("https://cdn.tsetmc.com/api/MarketData/GetMarketOverview/1", {
+            headers: sourceHeaders,
+            cf: { cacheTtl: 8, cacheEverything: true }
+          });
+          if (!response.ok) throw new Error("SelectedIndexes: " + sourceError + "; MarketOverview HTTP " + response.status);
+          const body = await response.json();
+          const overview = body?.marketOverview || body;
+          const value = Number(overview?.indexLastValue);
+          const change = Number(overview?.indexChange);
+          if (!Number.isFinite(value) || value <= 0) throw new Error("SelectedIndexes: " + sourceError + "; مقدار شاخص در MarketOverview معتبر نیست");
+          const previous = value - change;
+          const percent = previous > 0 ? change / previous * 100 : 0;
+          result = {
+            name: "شاخص کل",
+            value,
+            change: Number.isFinite(change) ? change : 0,
+            percent,
+            time: String(overview?.marketActivityHEven ?? overview?.lastDataHEven ?? "")
+          };
+        }
+
+        return json({ ok: true, ...result, updatedAt: new Date().toISOString() }, 200, {
+          ...headers, "Cache-Control": "public, max-age=8"
         });
-        if (!response.ok) throw new Error("TSETMC HTTP " + response.status);
-        const body = await response.json();
-        const indices = Array.isArray(body) ? body : (Array.isArray(body?.indexB1) ? body.indexB1 : []);
-        const row = indices.find(item => String(item?.lVal30 || "").replace(/\s+/g, " ").trim() === "شاخص کل")
-          || indices.find(item => String(item?.lVal30 || "").includes("شاخص کل") && !String(item?.lVal30 || "").includes("هم وزن"));
-        if (!row) throw new Error("شاخص کل در پاسخ TSETMC پیدا نشد");
-        const value = Number(row.xDrNivJIdx004);
-        const change = Number(row.indexChange ?? row.xVarIdxJRfV ?? 0);
-        const percent = Number(row.xVarIdxJRfV ?? 0);
-        if (!Number.isFinite(value) || value <= 0) throw new Error("مقدار شاخص معتبر نیست");
-        return json({
-          ok: true,
-          name: String(row.lVal30 || "شاخص کل"),
-          value,
-          change,
-          percent,
-          time: String(row.hEven || ""),
-          updatedAt: new Date().toISOString()
-        }, 200, { ...headers, "Cache-Control": "public, max-age=8" });
       } catch (error) {
         console.error("[BHR_MARKET_INDEX_ERROR]", error?.message || "Unknown error");
-        return json({ ok: false, error: "دریافت شاخص کل از TSETMC ناموفق بود" }, 502, { ...headers, "Cache-Control": "no-store" });
+        return json({ ok: false, error: "دریافت شاخص کل از TSETMC ناموفق بود", detail: String(error?.message || "Unknown error").slice(0, 240) }, 502, {
+          ...headers, "Cache-Control": "no-store"
+        });
       }
     }
 
