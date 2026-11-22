@@ -1134,7 +1134,12 @@ export default {
       try {
         const key = "bhr:visitor-count:v1";
         const current = Number(await env.CHAT_STORE.get(key));
-        const next = (Number.isFinite(current) && current >= 304 ? current : 304) + 1;
+        const stored = Number.isFinite(current) && current >= 304 ? current : 304;
+        if (url.searchParams.get("mode") === "read") {
+          if (!Number.isFinite(current) || current < 304) await env.CHAT_STORE.put(key, "304");
+          return json({ ok: true, count: stored }, 200, { ...headers, "Cache-Control": "no-store" });
+        }
+        const next = stored + 1;
         await env.CHAT_STORE.put(key, String(next));
         return json({ ok: true, count: next }, 200, { ...headers, "Cache-Control": "no-store" });
       } catch (error) {
