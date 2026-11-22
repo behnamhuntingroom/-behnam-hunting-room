@@ -4935,10 +4935,10 @@ header .bhr-sun-letters:after{
   const normalized=rows.map(x=>{
    if(!x)return null;
    const symbol=x.lVal18AFC||x.lva||"";
-   const price=Number(x.pDrCotVal||x.pClosing||0);
+   const price=Number(x.pDrCotVal||x.pClosing||x.pmd||x.pcl||x.pf||0);
    const previous=Number(x.py||0);
    const rawPct=x.percent??x.priceChangePercent;
-   const pct=rawPct!==undefined&&rawPct!==null?Number(rawPct):(price>0&&previous>0?(price-previous)/previous*100:0);
+   const pct=rawPct!==undefined&&rawPct!==null?Number(rawPct):(price>0&&previous>0?((Number(x.pcl||price)-previous)/previous*100):0);
    return {raw:x,symbol,name:x.lVal30||x.lSecVal||x.lvc||"",price,pct};
   }).filter(x=>x&&x.symbol&&x.price>0);
   if(!normalized.length)throw new Error("نماد قابل معامله با قیمت معتبر در پاسخ TSETMC پیدا نشد");
