@@ -3351,6 +3351,7 @@ heatmap.insertAdjacentHTML("beforeend", `
   <div class="bhr-heatmap-widget bhr-iran-heatmap-widget" data-bhr-heatmap-host="iran" hidden>
    <div class="bhr-iran-map-head"><strong>نقشه حرارتی بورس ایران</strong><span class="bhr-iran-map-status" aria-live="polite">در حال دریافت اطلاعات بازار…</span></div>
    <div class="bhr-iran-map-summary" data-bhr-iran-summary></div>
+   <div class="bhr-iran-search-wrap"><input type="search" class="bhr-iran-search" data-bhr-iran-search placeholder="جستجوی نماد یا نام شرکت…" aria-label="جستجوی نماد یا نام شرکت" autocomplete="off"><span aria-hidden="true">⌕</span></div>
    <div class="bhr-iran-map-tiles" data-bhr-iran-tiles aria-live="polite"></div>
    <div class="bhr-iran-map-foot">منبع: داده بازار TSETMC · به‌روزرسانی خودکار هر ۴۵ ثانیه در صورت دسترسی منبع</div>
   </div>
@@ -4886,6 +4887,11 @@ header .bhr-sun-letters:after{
 .bhr-iran-map-summary{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
 .bhr-iran-map-summary span{padding:7px 10px;border-radius:8px;background:#171f29;color:#cbd5df;font-size:12px}
 .bhr-iran-map-summary .up{color:#6de0a0}.bhr-iran-map-summary .down{color:#ff8585}
+.bhr-iran-search-wrap{position:relative;max-width:420px;margin:0 0 12px auto}
+.bhr-iran-search{display:block;width:100%;box-sizing:border-box;padding:11px 38px 11px 12px;border:1px solid rgba(215,180,90,.35);border-radius:9px;background:#121b25;color:#f3f6fa;font:inherit;font-size:13px;outline:none}
+.bhr-iran-search::placeholder{color:#8f9aa7}
+.bhr-iran-search:focus{border-color:#d7b45a;box-shadow:0 0 0 2px rgba(215,180,90,.12)}
+.bhr-iran-search-wrap>span{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:20px;color:#d7b45a;pointer-events:none}
 .bhr-iran-map-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:6px;max-height:720px;overflow:auto;padding:2px}
 .bhr-iran-tile{min-height:78px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;padding:8px 5px;border:1px solid #ffffff18;border-radius:8px;text-align:center;overflow:hidden}
 .bhr-iran-tile.positive{background:linear-gradient(145deg,#087b49,#064d32);color:#e4fff0}
@@ -4928,11 +4934,31 @@ header .bhr-sun-letters:after{
  let iranTimer=null,iranBusy=false;
  const fmt=n=>Number(n).toLocaleString("fa-IR",{maximumFractionDigits:2});
  const setStatus=t=>{const el=iranHost&&iranHost.querySelector(".bhr-iran-map-status");if(el)el.textContent=t;};
- const renderIran=(rows,updatedAt)=>{
+ let iranNormalized=[];
+ const drawIranTiles=()=>{
   const tiles=iranHost.querySelector("[data-bhr-iran-tiles]");
+  const search=iranHost.querySelector("[data-bhr-iran-search]");
+  const term=(search?.value||"").trim().toLocaleLowerCase("fa-IR");
+  const filtered=iranNormalized.filter(item=>!term||(item.symbol+" "+item.name).toLocaleLowerCase("fa-IR").includes(term));
+  tiles.innerHTML="";
+  if(!filtered.length){tiles.innerHTML='<div class="bhr-iran-map-error">نمادی با این نام یا کد پیدا نشد.</div>';return;}
+  const frag=document.createDocumentFragment();
+  filtered.slice(0,260).forEach(item=>{
+   const x=item.raw,pct=item.pct;
+   const tile=document.createElement("div");
+   tile.className="bhr-iran-tile "+(pct>0?"positive":pct<0?"negative":"neutral");
+   const symbol=document.createElement("strong");symbol.textContent=item.symbol;
+   const change=document.createElement("b");change.textContent=(pct>0?"+":"")+fmt(pct)+"٪";
+   const name=document.createElement("small");name.textContent=item.name;
+   tile.title=item.name+" | آخرین قیمت: "+fmt(item.price)+" | پایانی: "+fmt(x.pClosing||x.pcl||0);
+   tile.append(symbol,change,name);frag.append(tile);
+  });
+  tiles.append(frag);
+ };
+ const renderIran=(rows,updatedAt)=>{
   const summary=iranHost.querySelector("[data-bhr-iran-summary]");
   if(!Array.isArray(rows)||!rows.length)throw new Error("داده‌ای از سرویس بازار دریافت نشد");
-  const normalized=rows.map(x=>{
+  iranNormalized=rows.map(x=>{
    if(!x)return null;
    const symbol=x.lVal18AFC||x.lva||"";
    const price=Number(x.pDrCotVal||x.pClosing||x.pmd||x.pcl||x.pf||0);
@@ -4941,28 +4967,17 @@ header .bhr-sun-letters:after{
    const pct=rawPct!==undefined&&rawPct!==null?Number(rawPct):(price>0&&previous>0?((Number(x.pcl||price)-previous)/previous*100):0);
    return {raw:x,symbol,name:x.lVal30||x.lSecVal||x.lvc||"",price,pct};
   }).filter(x=>x&&x.symbol&&x.price>0);
-  if(!normalized.length)throw new Error("نماد قابل معامله با قیمت معتبر در پاسخ TSETMC پیدا نشد");
-  const up=normalized.filter(x=>x.pct>0).length;
-  const down=normalized.filter(x=>x.pct<0).length;
-  const flat=normalized.length-up-down;
-  summary.innerHTML='<span>نمادها: <b>'+fmt(normalized.length)+'</b></span><span class="up">مثبت: <b>'+fmt(up)+'</b></span><span class="down">منفی: <b>'+fmt(down)+'</b></span><span>بدون تغییر: <b>'+fmt(flat)+'</b></span>';
-  tiles.innerHTML="";
-  normalized.sort((a,b)=>Math.abs(b.pct)-Math.abs(a.pct));
-  const frag=document.createDocumentFragment();
-  normalized.slice(0,260).forEach(item=>{
-   const x=item.raw,pct=item.pct;
-   const tile=document.createElement("div");
-   tile.className="bhr-iran-tile "+(pct>0?"positive":pct<0?"negative":"neutral");
-   const symbol=document.createElement("strong");symbol.textContent=item.symbol;
-   const change=document.createElement("b");change.textContent=(pct>0?"+":"")+fmt(pct)+"٪";
-   const name=document.createElement("small");name.textContent=item.name;
-   tile.title=item.name+" | آخرین قیمت: "+fmt(item.price)+" | پایانی: "+fmt(x.pClosing||0);
-   tile.append(symbol,change,name);frag.append(tile);
-  });
-  tiles.append(frag);
+  if(!iranNormalized.length)throw new Error("نماد قابل معامله با قیمت معتبر در پاسخ TSETMC پیدا نشد");
+  const up=iranNormalized.filter(x=>x.pct>0).length;
+  const down=iranNormalized.filter(x=>x.pct<0).length;
+  const flat=iranNormalized.length-up-down;
+  summary.innerHTML='<span>نمادها: <b>'+fmt(iranNormalized.length)+'</b></span><span class="up">مثبت: <b>'+fmt(up)+'</b></span><span class="down">منفی: <b>'+fmt(down)+'</b></span><span>بدون تغییر: <b>'+fmt(flat)+'</b></span>';
+  drawIranTiles();
   const dataTime=updatedAt?new Date(updatedAt):new Date();
   setStatus("آخرین به‌روزرسانی داده: "+dataTime.toLocaleTimeString("fa-IR"));
  };
+ const iranSearch=iranHost&&iranHost.querySelector("[data-bhr-iran-search]");
+ if(iranSearch)iranSearch.addEventListener("input",drawIranTiles);
  const loadIran=async()=>{
   if(!iranHost||iranBusy)return;
   iranBusy=true;
