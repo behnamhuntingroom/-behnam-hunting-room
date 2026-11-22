@@ -1084,6 +1084,11 @@ header .bhr-main-nav .nav-icon{
 <h1 data-fa="اتاق شکار بهنام" data-en="BEHNAM HUNTING ROOM">اتاق شکار بهنام</h1>
 <p data-fa="تحلیل بازار، آموزش و بررسی سناریوهای معاملاتی با تمرکز بر طلا، نزدک و رمزارزها." data-en="Market analysis, education and trading scenarios focused on Gold, Nasdaq and Crypto.">تحلیل بازار، آموزش و بررسی سناریوهای معاملاتی با تمرکز بر طلا، نزدک و رمزارزها.</p>
 <div class="btn bhr-hunt-slogan" role="note" aria-label="ما شکارچی فرصت‌ها هستیم نه دنبال‌کننده قیمت‌ها" data-fa="ما شکارچی فرصت‌ها هستیم نه دنبال‌کننده قیمت‌ها" data-en="We hunt opportunities, not prices"><span class="bhr-hunt-track"><span>ما شکارچی فرصت‌ها هستیم نه دنبال‌کننده قیمت‌ها</span><span aria-hidden="true">ما شکارچی فرصت‌ها هستیم نه دنبال‌کننده قیمت‌ها</span><span aria-hidden="true">ما شکارچی فرصت‌ها هستیم نه دنبال‌کننده قیمت‌ها</span></span></div>
+<div class="bhr-visitor-counter" id="bhrVisitorCounter" aria-live="polite" aria-label="تعداد بازدیدکنندگان سایت">
+  <span class="bhr-visitor-icon" aria-hidden="true">◉</span>
+  <span>بازدیدکنندگان سایت</span>
+  <strong id="bhrVisitorCount" dir="ltr">۳۰۴</strong>
+</div>
 </div>
 <section class="bhr-price-banner" aria-label="قیمت زنده به تومان">
   <div class="bhr-price-head"><span>LIVE IRAN MARKET | قیمت‌های بازار ایران</span><small>همه قیمت‌ها به تومان</small></div>
@@ -4661,6 +4666,29 @@ header nav .bhr-nav-account-tools .bhr-auth-nav-button:hover svg{
 }
 @media(prefers-reduced-motion:reduce){#bhr-page-home>.hero>img{animation:lionGlow 3.5s ease-in-out infinite!important}}
 </style>
+
+<style id="bhr-visitor-counter-style">
+.bhr-visitor-counter{display:inline-flex;align-items:center;justify-content:center;gap:9px;margin:17px auto 0;padding:9px 16px;border:1px solid rgba(215,180,90,.42);border-radius:999px;background:linear-gradient(135deg,rgba(215,180,90,.12),rgba(20,25,34,.72));color:var(--text,#eee);font-size:12px;box-shadow:0 0 18px rgba(215,180,90,.09);direction:rtl}
+.bhr-visitor-counter .bhr-visitor-icon{color:#e5c36e;font-size:15px;text-shadow:0 0 9px rgba(242,217,139,.65)}
+.bhr-visitor-counter strong{min-width:34px;color:#f2d98b;font-size:15px;font-weight:900;letter-spacing:1px;font-variant-numeric:tabular-nums}
+</style>
+<script id="bhr-visitor-counter-script">
+(function(){
+  const countEl=document.getElementById("bhrVisitorCount");
+  if(!countEl)return;
+  const endpoint="https://tiny-unit-4ed3.behnamhuntingroom.workers.dev/visitor-count";
+  let counted=false;
+  try{counted=localStorage.getItem("bhr_visitor_counted_v1")==="1";}catch(e){}
+  fetch(endpoint+(counted?"?mode=read":""),{method:"GET",cache:"no-store"})
+    .then(response=>{if(!response.ok)throw new Error("Counter request failed");return response.json();})
+    .then(data=>{
+      if(!data||!data.ok||!Number.isFinite(Number(data.count)))return;
+      countEl.textContent=Number(data.count).toLocaleString("fa-IR");
+      if(!counted){try{localStorage.setItem("bhr_visitor_counted_v1","1");}catch(e){}}
+    })
+    .catch(()=>{countEl.textContent="۳۰۴";});
+})();
+</script>
 </body>
 
 <style id="bhr-file-attachment-visibility-fix">
