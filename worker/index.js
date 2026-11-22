@@ -1093,7 +1093,7 @@ async function handleTelegramWebhook(request, env) {
 
 /* BHR Opportunity Scanner: public/free feeds, observation only (no fabricated trade levels). */
 async function handleOpportunityScanner(env, headers) {
-  const cacheKey = "bhr:opportunity-scanner:v1";
+  const cacheKey = "bhr:opportunity-scanner:v2";
   try {
     const cached = env.CHAT_STORE ? await env.CHAT_STORE.get(cacheKey, "json") : null;
     if (cached && cached.updatedAt && Date.now() - Date.parse(cached.updatedAt) < 60 * 1000) {
@@ -1122,13 +1122,25 @@ async function handleOpportunityScanner(env, headers) {
       try {
         const url = "https://cdn.tsetmc.com/api/ClosingPrice/GetMarketMap?market=0&size=1920&sector=0&typeSelected=1&hEven=0";
         const data = await safeFetchJson(url, { "Referer": "https://www.tsetmc.com/" });
-        const rows = Array.isArray(data) ? data : [];
-        markets.iran.items = rows.filter(x => x && x.lVal18AFC && Number.isFinite(Number(x.percent ?? x.priceChangePercent)))
-          .map(x => {
-            const pct = Number(x.percent ?? x.priceChangePercent) || 0;
-            return { symbol: String(x.lVal18AFC), name: String(x.lVal30 || x.lSecVal || ""), price: Number(x.pDrCotVal || x.pClosing || 0), changePct: pct, volume: Number(x.qTotTran5J || 0), direction: direction(pct), score: score(pct), observedAt, dataTime: null, reason: "تغییر قیمت روزانه در نقشه بازار؛ نیازمند بررسی نمودار و حجم", kind: "رصد روزانه", actionable: false };
-          }).sort((a,b) => b.score-a.score).slice(0, 80);
+        const rows = Array.isArray(data) ? data : (Array.isArray(data?.marketMap) ? data.marketMap : []);
+        markets.iran.items = rows.map(x => {
+            const symbol = String(x?.lva || x?.lVal18AFC || x?.symbol || "").trim();
+            const name = String(x?.lvc || x?.lVal30 || x?.lSecVal || x?.name || "").trim();
+            const price = Number(x?.pmd || x?.pDrCotVal || x?.pcl || x?.pClosing || x?.pf || 0);
+            const close = Number(x?.pcl || x?.pClosing || x?.pDrCotVal || 0);
+            const previous = Number(x?.py || x?.pYesterday || 0);
+            const explicitPct = x?.percent ?? x?.priceChangePercent ?? x?.regularMarketChangePercent;
+            const pct = explicitPct !== undefined && explicitPct !== null && Number.isFinite(Number(explicitPct))
+              ? Number(explicitPct)
+              : (previous > 0 && close > 0 ? ((close - previous) / previous) * 100 : 0);
+            const volume = Number(x?.qTotTran5J || x?.qtj || 0);
+            const trades = Number(x?.zTotTran || x?.ztt || 0);
+            const value = Number(x?.qTotCap || x?.qtc || 0);
+            if (!symbol || !Number.isFinite(price) || price <= 0) return null;
+            return { symbol, name: name || symbol, price, changePct: pct, volume, trades, value, direction: direction(pct), score: score(pct), observedAt, dataTime: null, reason: "تغییر قیمت روزانه در نقشه بازار؛ برای تصمیم‌گیری نمودار و حجم را بررسی کن", kind: "رصد روزانه", actionable: false };
+          }).filter(Boolean).sort((a,b) => b.score-a.score).slice(0, 80);
         markets.iran.ok = markets.iran.items.length > 0;
+        if (!markets.iran.ok) markets.iran.error = "پاسخ TSETMC دریافت شد، اما نماد معتبر در آن پیدا نشد";
       } catch (e) { markets.iran.error = String(e?.message || "منبع TSETMC در دسترس نیست"); }
     })(),
     (async () => {
