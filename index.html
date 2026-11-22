@@ -3445,6 +3445,10 @@ shortcuts.innerHTML=
  '<a class="bhr-shortcut" href="#bhr-page-academy" data-bhr-page="academy"><span class="bhr-shortcut-icon">▤</span><strong>آکادمی آموزشی</strong><small>۹ فصل آموزش والیوم تریدینگ</small></a>'+
  '<a class="bhr-shortcut" href="#bhr-page-room" data-bhr-page="room"><span class="bhr-shortcut-icon">◈</span><strong>اتاق معاملاتی</strong><small>روش BHR و سناریوهای معاملاتی</small></a>'+
  '<a class="bhr-shortcut" href="#bhr-page-about" data-bhr-page="about"><span class="bhr-shortcut-icon">✦</span><strong>درباره ما</strong><small>آشنایی با برند BHR</small></a>';
+/* Move the existing guide card into the home shortcut stack, between Trading Room and About */
+const userGuide=document.querySelector(".bhr-user-guide");
+const aboutShortcut=shortcuts.querySelector('[data-bhr-page="about"]');
+if(userGuide&&aboutShortcut)shortcuts.insertBefore(userGuide,aboutShortcut);
 const methodIntro=document.createElement("section");
 methodIntro.className="bhr-home-method-intro";
 methodIntro.innerHTML=
