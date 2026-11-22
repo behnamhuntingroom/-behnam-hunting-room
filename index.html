@@ -4643,6 +4643,24 @@ header nav .bhr-nav-account-tools .bhr-auth-nav-button:hover svg{
 }
 @media(prefers-reduced-motion:reduce){#bhr-page-home>.hero>img{animation:lionGlow 3.5s ease-in-out infinite!important}}
 </style>
+
+<style id="bhr-main-logo-stronger-animated-effect">
+/* Stronger animated gold shimmer and luminous pulse: main logo only */
+#bhr-page-home>.hero>img{
+  animation:lionGlow 3.5s ease-in-out infinite,bhrMainLogoLight 2.4s ease-in-out infinite,bhrMainLogoShimmer 4.2s linear infinite!important;
+}
+@keyframes bhrMainLogoLight{
+  0%,100%{filter:brightness(1) saturate(1) drop-shadow(0 0 3px rgba(242,217,139,.25));}
+  35%{filter:brightness(1.24) saturate(1.45) drop-shadow(0 0 13px rgba(242,217,139,.8));}
+  55%{filter:brightness(1.32) saturate(1.55) drop-shadow(0 0 24px rgba(255,218,120,.95));}
+  72%{filter:brightness(1.12) saturate(1.25) drop-shadow(0 0 12px rgba(215,180,90,.7));}
+}
+@keyframes bhrMainLogoShimmer{
+  0%,100%{box-shadow:0 15px 55px #0009,0 0 20px rgba(215,180,90,.32),0 0 42px rgba(242,217,139,.12);border-color:rgba(215,180,90,.55)}
+  50%{box-shadow:0 18px 65px #000b,0 0 34px rgba(255,218,120,.8),0 0 78px rgba(242,217,139,.48);border-color:rgba(255,225,150,1)}
+}
+@media(prefers-reduced-motion:reduce){#bhr-page-home>.hero>img{animation:lionGlow 3.5s ease-in-out infinite!important}}
+</style>
 </body>
 
 <style id="bhr-file-attachment-visibility-fix">
