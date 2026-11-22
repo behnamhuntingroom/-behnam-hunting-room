@@ -1775,7 +1775,7 @@ document.getElementById("marketSearch").addEventListener("keydown", function(eve
         setText('bhrBrentPrice', 'فعلاً ناموجود');
       }
 
-      const relevant = [...Object.keys(fields), 'btc', 'brent'].map(id => byId[id]).filter(Boolean);
+      const relevant = [...Object.keys(fields), 'btc', 'brent', 'xau', 'xag', 'usd'].map(id => byId[id]).filter(Boolean);
       const times = relevant.filter(item => item.updated_utc).map(item => new Date(item.updated_utc + 'Z').getTime()).filter(Number.isFinite);
       const newest = times.length ? new Date(Math.max(...times)) : null;
       updated.textContent = newest ? 'آخرین دریافت داده: ' + new Intl.DateTimeFormat('fa-IR', { dateStyle: 'short', timeStyle: 'short' }).format(newest) : 'زمان به‌روزرسانی در دسترس نیست';
