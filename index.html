@@ -1243,6 +1243,12 @@ style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index
   const canvas = document.getElementById('bhr-ambient');
   if (!canvas) return;
 
+  // Disable the animated network entirely on mobile screens to reduce GPU/CPU load.
+  if (matchMedia('(max-width: 760px)').matches) {
+    canvas.style.display = 'none';
+    return;
+  }
+
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
 
