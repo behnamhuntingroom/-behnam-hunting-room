@@ -3439,55 +3439,6 @@ if(marketSidebar){
  home.append(shortcuts);
 }
 /* Subtle hover sound for the home-page shortcut cards */
-let bhrHoverAudioContext=null;
-let bhrLastHoverSound=0;
-const bhrGetShortcutAudio=()=>{
- const AudioCtx=window.AudioContext||window.webkitAudioContext;
- if(!AudioCtx)return null;
- if(!bhrHoverAudioContext)bhrHoverAudioContext=new AudioCtx();
- return bhrHoverAudioContext;
-};
-const bhrUnlockShortcutAudio=()=>{
- try{
-  const ctx=bhrGetShortcutAudio();
-  if(ctx&&ctx.state==="suspended")ctx.resume().catch(()=>{});
- }catch(error){}
-};
-document.addEventListener("pointerdown",bhrUnlockShortcutAudio,{once:true,capture:true});
-document.addEventListener("keydown",bhrUnlockShortcutAudio,{once:true,capture:true});
-const bhrPlayShortcutHoverSound=()=>{
- const now=Date.now();
- if(now-bhrLastHoverSound<180)return;
- bhrLastHoverSound=now;
- try{
-  const ctx=bhrGetShortcutAudio();
-  if(!ctx)return;
-  const play=()=>{
-   if(ctx.state!=="running")return;
-   const oscillator=ctx.createOscillator();
-   const gain=ctx.createGain();
-   oscillator.type="triangle";
-   oscillator.frequency.setValueAtTime(820,ctx.currentTime);
-   oscillator.frequency.exponentialRampToValueAtTime(520,ctx.currentTime+0.11);
-   gain.gain.setValueAtTime(0.0001,ctx.currentTime);
-   gain.gain.exponentialRampToValueAtTime(0.075,ctx.currentTime+0.012);
-   gain.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+0.13);
-   oscillator.connect(gain);gain.connect(ctx.destination);
-   oscillator.start();oscillator.stop(ctx.currentTime+0.14);
-  };
-  if(ctx.state==="running")play();
-  else ctx.resume().then(play).catch(()=>{});
- }catch(error){}
-};
-shortcuts.querySelectorAll(".bhr-shortcut").forEach(card=>{
- card.addEventListener("mouseenter",bhrPlayShortcutHoverSound);
-});
-shortcuts.addEventListener("pointerover",event=>{
- const card=event.target.closest(".bhr-shortcut");
- if(!card||!shortcuts.contains(card))return;
- if(event.relatedTarget&&card.contains(event.relatedTarget))return;
- bhrPlayShortcutHoverSound();
-});
 const marketMain=workspace&&workspace.querySelector(".market-main");
 if(marketMain)home.insertBefore(marketMain,methodIntro);
 const newsGrid=document.createElement("div");
