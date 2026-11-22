@@ -3438,6 +3438,37 @@ if(marketSidebar){
 }else{
  home.append(shortcuts);
 }
+/* Subtle hover sound for the home-page shortcut cards */
+let bhrHoverAudioContext=null;
+let bhrLastHoverSound=0;
+const bhrPlayShortcutHoverSound=()=>{
+ const now=Date.now();
+ if(now-bhrLastHoverSound<110)return;
+ bhrLastHoverSound=now;
+ try{
+  const AudioCtx=window.AudioContext||window.webkitAudioContext;
+  if(!AudioCtx)return;
+  if(!bhrHoverAudioContext)bhrHoverAudioContext=new AudioCtx();
+  const ctx=bhrHoverAudioContext;
+  if(ctx.state==="suspended")ctx.resume().catch(()=>{});
+  const oscillator=ctx.createOscillator();
+  const gain=ctx.createGain();
+  oscillator.type="sine";
+  oscillator.frequency.setValueAtTime(720,ctx.currentTime);
+  oscillator.frequency.exponentialRampToValueAtTime(590,ctx.currentTime+0.055);
+  gain.gain.setValueAtTime(0.0001,ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.022,ctx.currentTime+0.008);
+  gain.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+0.065);
+  oscillator.connect(gain);gain.connect(ctx.destination);
+  oscillator.start();oscillator.stop(ctx.currentTime+0.07);
+ }catch(error){}
+};
+shortcuts.addEventListener("pointerover",event=>{
+ const card=event.target.closest(".bhr-shortcut");
+ if(!card||!shortcuts.contains(card))return;
+ if(event.relatedTarget&&card.contains(event.relatedTarget))return;
+ bhrPlayShortcutHoverSound();
+});
 const marketMain=workspace&&workspace.querySelector(".market-main");
 if(marketMain)home.insertBefore(marketMain,methodIntro);
 const newsGrid=document.createElement("div");
