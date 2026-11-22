@@ -3353,6 +3353,7 @@ heatmap.insertAdjacentHTML("beforeend", `
    <div class="bhr-iran-map-summary" data-bhr-iran-summary></div>
    <div class="bhr-iran-search-wrap"><input type="search" class="bhr-iran-search" data-bhr-iran-search placeholder="جستجوی نماد یا نام شرکت…" aria-label="جستجوی نماد یا نام شرکت" autocomplete="off"><span aria-hidden="true">⌕</span></div>
    <div class="bhr-iran-map-tiles" data-bhr-iran-tiles aria-live="polite"></div>
+   <div class="bhr-iran-detail" data-bhr-iran-detail hidden aria-live="polite"></div>
    <div class="bhr-iran-map-foot">منبع: داده بازار TSETMC · به‌روزرسانی خودکار هر ۴۵ ثانیه در صورت دسترسی منبع</div>
   </div>
   <div class="bhr-heatmap-widget" data-bhr-heatmap-host="crypto" hidden></div>
@@ -4758,6 +4759,23 @@ footer .bhr-visitor-counter{margin:0 auto 12px}
 })();
 </script>
 
+
+<style id="bhr-iran-symbol-detail">
+.bhr-iran-tile{font:inherit;cursor:pointer}
+.bhr-iran-tile.selected{outline:2px solid #f2d98b;outline-offset:1px;box-shadow:0 0 18px rgba(242,217,139,.32)}
+.bhr-iran-detail{margin:16px 0 8px;padding:18px;border:1px solid rgba(242,217,139,.48);border-radius:16px;background:linear-gradient(145deg,rgba(215,180,90,.12),rgba(8,9,9,.96));box-shadow:0 12px 28px #0006}
+.bhr-iran-detail-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;color:#f2d98b}
+.bhr-iran-detail-head strong{font-size:16px}
+.bhr-iran-detail-close{border:1px solid #8c7137;border-radius:8px;padding:5px 12px;background:#ffffff0a;color:#e8d7aa;cursor:pointer}
+.bhr-iran-detail-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.bhr-iran-detail-cell{min-width:0;padding:11px;border:1px solid rgba(215,180,90,.2);border-radius:10px;background:#ffffff08}
+.bhr-iran-detail-cell span{display:block;color:#aaa18e;font-size:11px}
+.bhr-iran-detail-cell b{display:block;margin-top:5px;color:#f4e6bd;font-size:14px;overflow-wrap:anywhere}
+.bhr-iran-detail-cell b.up{color:#55d68b}.bhr-iran-detail-cell b.down{color:#ff7777}
+.bhr-iran-detail-link{display:inline-block;margin-top:14px;padding:8px 13px;border:1px solid #b58b35;border-radius:9px;color:#f2d98b;font-size:12px;font-weight:800}
+@media(max-width:650px){.bhr-iran-detail{padding:13px}.bhr-iran-detail-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.bhr-iran-detail-head strong{font-size:13px}}
+</style>
+
 </body>
 
 <style id="bhr-file-attachment-visibility-fix">
@@ -4935,6 +4953,7 @@ header .bhr-sun-letters:after{
  const fmt=n=>Number(n).toLocaleString("fa-IR",{maximumFractionDigits:2});
  const setStatus=t=>{const el=iranHost&&iranHost.querySelector(".bhr-iran-map-status");if(el)el.textContent=t;};
  let iranNormalized=[];
+ let selectedIranSymbol="";
  const drawIranTiles=()=>{
   const tiles=iranHost.querySelector("[data-bhr-iran-tiles]");
   const search=iranHost.querySelector("[data-bhr-iran-search]");
@@ -4945,8 +4964,11 @@ header .bhr-sun-letters:after{
   const frag=document.createDocumentFragment();
   filtered.slice(0,260).forEach(item=>{
    const x=item.raw,pct=item.pct;
-   const tile=document.createElement("div");
-   tile.className="bhr-iran-tile "+(pct>0?"positive":pct<0?"negative":"neutral");
+   const tile=document.createElement("button");
+   tile.type="button";
+   tile.className="bhr-iran-tile "+(pct>0?"positive":pct<0?"negative":"neutral")+(selectedIranSymbol===item.symbol?" selected":"");
+   tile.dataset.symbol=item.symbol;
+   tile.setAttribute("aria-label","نمایش اطلاعات نماد "+item.symbol);
    const symbol=document.createElement("strong");symbol.textContent=item.symbol;
    const change=document.createElement("b");change.textContent=(pct>0?"+":"")+fmt(pct)+"٪";
    const name=document.createElement("small");name.textContent=item.name;
@@ -4954,6 +4976,44 @@ header .bhr-sun-letters:after{
    tile.append(symbol,change,name);frag.append(tile);
   });
   tiles.append(frag);
+ };
+ const showIranSymbolDetail=item=>{
+  if(!item)return;
+  selectedIranSymbol=item.symbol;
+  const panel=iranHost.querySelector("[data-bhr-iran-detail]");
+  if(!panel)return;
+  const raw=item.raw||{};
+  const metrics=[
+   ["آخرین قیمت",item.price,false],
+   ["قیمت پایانی",raw.pClosing||raw.pcl||0,false],
+   ["قیمت دیروز",raw.py||0,false],
+   ["درصد تغییر",item.pct,true],
+   ["تعداد معاملات",raw.zTotTran||raw.ztt||0,false],
+   ["حجم معاملات",raw.qTotTran5J||raw.qtj||0,false],
+   ["ارزش معاملات",raw.qTotCap||raw.qtc||0,false]
+  ];
+  panel.replaceChildren();
+  const head=document.createElement("div");head.className="bhr-iran-detail-head";
+  const title=document.createElement("strong");title.textContent=item.symbol+" — "+(item.name||"اطلاعات نماد");
+  const close=document.createElement("button");close.type="button";close.className="bhr-iran-detail-close";close.textContent="بستن";close.addEventListener("click",()=>{panel.hidden=true;selectedIranSymbol="";drawIranTiles();});
+  head.append(title,close);panel.append(head);
+  const grid=document.createElement("div");grid.className="bhr-iran-detail-grid";
+  metrics.forEach(([label,value,isPercent])=>{
+   const cell=document.createElement("div");cell.className="bhr-iran-detail-cell";
+   const caption=document.createElement("span");caption.textContent=label;
+   const val=document.createElement("b");val.textContent=isPercent?(Number(value)>0?"+":"")+fmt(value)+"٪":fmt(value);
+   if(isPercent&&Number(value)>0)val.classList.add("up");
+   if(isPercent&&Number(value)<0)val.classList.add("down");
+   cell.append(caption,val);grid.append(cell);
+  });
+  panel.append(grid);
+  const insCode=String(raw.insCode||raw.insID||"").trim();
+  if(/^\d+$/.test(insCode)){
+   const link=document.createElement("a");link.className="bhr-iran-detail-link";link.href="https://www.tsetmc.com/InstInfo/"+insCode;link.target="_blank";link.rel="noopener noreferrer";link.textContent="مشاهده صفحه کامل این نماد در TSETMC ↗";panel.append(link);
+  }
+  panel.hidden=false;
+  tiles.querySelectorAll(".bhr-iran-tile").forEach(tile=>tile.classList.toggle("selected",tile.dataset.symbol===item.symbol));
+  panel.scrollIntoView({behavior:"smooth",block:"nearest"});
  };
  const renderIran=(rows,updatedAt)=>{
   const summary=iranHost.querySelector("[data-bhr-iran-summary]");
@@ -4978,6 +5038,13 @@ header .bhr-sun-letters:after{
  };
  const iranSearch=iranHost&&iranHost.querySelector("[data-bhr-iran-search]");
  if(iranSearch)iranSearch.addEventListener("input",drawIranTiles);
+ const iranTiles=iranHost&&iranHost.querySelector("[data-bhr-iran-tiles]");
+ if(iranTiles)iranTiles.addEventListener("click",event=>{
+  const tile=event.target.closest(".bhr-iran-tile");
+  if(!tile)return;
+  const item=iranNormalized.find(row=>row.symbol===tile.dataset.symbol);
+  showIranSymbolDetail(item);
+ });
  const loadIran=async()=>{
   if(!iranHost||iranBusy)return;
   iranBusy=true;
