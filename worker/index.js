@@ -1091,6 +1091,99 @@ async function handleTelegramWebhook(request, env) {
 
 }
 
+/* BHR Opportunity Scanner: public/free feeds, observation only (no fabricated trade levels). */
+async function handleOpportunityScanner(env, headers) {
+  const cacheKey = "bhr:opportunity-scanner:v1";
+  try {
+    const cached = env.CHAT_STORE ? await env.CHAT_STORE.get(cacheKey, "json") : null;
+    if (cached && cached.updatedAt && Date.now() - Date.parse(cached.updatedAt) < 60 * 1000) {
+      return json({ ...cached, cached: true }, 200, { ...headers, "Cache-Control": "public, max-age=20" });
+    }
+  } catch (e) { console.error("[BHR_SCANNER_CACHE_READ]", e?.message || "cache unavailable"); }
+
+  const observedAt = new Date().toISOString();
+  const markets = {
+    iran: { ok: false, source: "TSETMC", delay: "زمان انتشار وابسته به بازار ایران", items: [], note: "داده لحظه‌ای/تاریخی هر نماد در این خروجی تضمین نمی‌شود." },
+    us: { ok: false, source: "Yahoo Finance public screener", delay: "ممکن است با تأخیر باشد", items: [], note: "سهام پرتراکنش و نمادهای دارای تغییر روزانه برجسته؛ نه تمام نمادهای بورس آمریکا." },
+    forex: { ok: false, source: "Yahoo Finance public chart", delay: "ممکن است با تأخیر باشد", items: [], note: "جفت‌ارزهای اصلی و طلای جهانی؛ داده رایگان بدون تضمین SLA." },
+    crypto: { ok: false, source: "Binance public market data", delay: "قیمت ۲۴ ساعته؛ دسترسی ممکن است منطقه‌ای محدود شود", items: [], note: "جفت‌های USDT با حجم معاملاتی بالاتر." }
+  };
+  const headersUp = { "Accept": "application/json", "User-Agent": "Mozilla/5.0 (compatible; BHRScanner/1.0; +https://behnamhunter.ir)" };
+  const safeFetchJson = async (url, extra = {}) => {
+    const response = await fetch(url, { headers: { ...headersUp, ...extra }, cf: { cacheTtl: 20, cacheEverything: true } });
+    if (!response.ok) throw new Error("HTTP " + response.status);
+    return response.json();
+  };
+  const score = (pct, volumeRatio = 1) => Math.max(0, Math.min(100, Math.round(Math.abs(Number(pct) || 0) * 5 + Math.max(0, Math.min(4, volumeRatio - 1)) * 12)));
+  const direction = pct => Number(pct) > 0 ? "صعودی" : Number(pct) < 0 ? "نزولی" : "خنثی";
+
+  const jobs = [
+    (async () => {
+      try {
+        const url = "https://cdn.tsetmc.com/api/ClosingPrice/GetMarketMap?market=0&size=1920&sector=0&typeSelected=1&hEven=0";
+        const data = await safeFetchJson(url, { "Referer": "https://www.tsetmc.com/" });
+        const rows = Array.isArray(data) ? data : [];
+        markets.iran.items = rows.filter(x => x && x.lVal18AFC && Number.isFinite(Number(x.percent ?? x.priceChangePercent)))
+          .map(x => {
+            const pct = Number(x.percent ?? x.priceChangePercent) || 0;
+            return { symbol: String(x.lVal18AFC), name: String(x.lVal30 || x.lSecVal || ""), price: Number(x.pDrCotVal || x.pClosing || 0), changePct: pct, volume: Number(x.qTotTran5J || 0), direction: direction(pct), score: score(pct), observedAt, dataTime: null, reason: "تغییر قیمت روزانه در نقشه بازار؛ نیازمند بررسی نمودار و حجم", kind: "رصد روزانه", actionable: false };
+          }).sort((a,b) => b.score-a.score).slice(0, 80);
+        markets.iran.ok = markets.iran.items.length > 0;
+      } catch (e) { markets.iran.error = String(e?.message || "منبع TSETMC در دسترس نیست"); }
+    })(),
+    (async () => {
+      try {
+        const urls = ["most_actives", "day_gainers"].map(id => "https://query1.finance.yahoo.com/v1/finance/screener/predefined/saved?formatted=false&scrIds=" + id + "&count=40&start=0");
+        const results = await Promise.all(urls.map(u => safeFetchJson(u)));
+        const bySymbol = new Map();
+        for (const result of results) {
+          const quotes = result?.finance?.result?.[0]?.quotes || [];
+          for (const q of quotes) if (q?.symbol && Number.isFinite(Number(q.regularMarketPrice))) bySymbol.set(q.symbol, q);
+        }
+        markets.us.items = [...bySymbol.values()].map(q => {
+          const pct = Number(q.regularMarketChangePercent || 0);
+          const vol = Number(q.regularMarketVolume || 0), avg = Number(q.averageDailyVolume3Month || 0);
+          const ratio = avg > 0 ? vol / avg : 1;
+          const t = Number(q.regularMarketTime || 0);
+          return { symbol: q.symbol, name: q.shortName || q.longName || q.symbol, price: Number(q.regularMarketPrice), changePct: pct, volume: vol, direction: direction(pct), score: score(pct, ratio), observedAt, dataTime: t ? new Date(t*1000).toISOString() : null, reason: "تغییر روزانه و رتبه فعالیت/حجم در غربالگر عمومی", kind: "رصد بازار", actionable: false };
+        }).sort((a,b)=>b.score-a.score).slice(0, 50);
+        markets.us.ok = markets.us.items.length > 0;
+      } catch (e) { markets.us.error = String(e?.message || "غربالگر Yahoo Finance در دسترس نیست"); }
+    })(),
+    (async () => {
+      const symbols = ["EURUSD=X","GBPUSD=X","USDJPY=X","USDCHF=X","AUDUSD=X","USDCAD=X","NZDUSD=X","GC=F"];
+      const labels = { "EURUSD=X":"EUR/USD", "GBPUSD=X":"GBP/USD", "USDJPY=X":"USD/JPY", "USDCHF=X":"USD/CHF", "AUDUSD=X":"AUD/USD", "USDCAD=X":"USD/CAD", "NZDUSD=X":"NZD/USD", "GC=F":"طلای جهانی (GC)" };
+      try {
+        const rows = await Promise.all(symbols.map(async symbol => {
+          const data = await safeFetchJson("https://query1.finance.yahoo.com/v8/finance/chart/" + encodeURIComponent(symbol) + "?range=5d&interval=15m");
+          const result = data?.chart?.result?.[0], q = result?.indicators?.quote?.[0], closes = (q?.close || []).filter(x => Number.isFinite(Number(x)));
+          if (!result || closes.length < 5) return null;
+          const last = closes[closes.length-1], prior = closes[closes.length-5], pct = prior ? (last-prior)/prior*100 : 0;
+          const times = result.timestamp || [], t = times.length ? times[times.length-1] : 0;
+          return { symbol: labels[symbol], name: labels[symbol], price: last, changePct: pct, direction: direction(pct), score: score(pct), observedAt, dataTime: t ? new Date(t*1000).toISOString() : null, reason: "شتاب قیمت در چهار کندل ۱۵ دقیقه‌ای اخیر", kind: "رصد کوتاه‌مدت", actionable: false };
+        }));
+        markets.forex.items = rows.filter(Boolean).sort((a,b)=>b.score-a.score);
+        markets.forex.ok = markets.forex.items.length > 0;
+      } catch (e) { markets.forex.error = String(e?.message || "داده فارکس/طلا در دسترس نیست"); }
+    })(),
+    (async () => {
+      try {
+        const data = await safeFetchJson("https://api.binance.com/api/v3/ticker/24hr");
+        if (!Array.isArray(data)) throw new Error("ساختار پاسخ صرافی نامعتبر است");
+        markets.crypto.items = data.filter(x => x.symbol?.endsWith("USDT") && Number(x.quoteVolume) >= 5000000 && Number.isFinite(Number(x.lastPrice)))
+          .sort((a,b)=>Number(b.quoteVolume)-Number(a.quoteVolume)).slice(0, 60).map(x => {
+            const pct = Number(x.priceChangePercent || 0);
+            return { symbol: x.symbol, name: x.symbol, price: Number(x.lastPrice), changePct: pct, volume: Number(x.quoteVolume), direction: direction(pct), score: score(pct), observedAt, dataTime: x.closeTime ? new Date(x.closeTime).toISOString() : null, reason: "تغییر ۲۴ ساعته و حجم معاملات USDT", kind: "رصد ۲۴ ساعته", actionable: false };
+          }).sort((a,b)=>b.score-a.score);
+        markets.crypto.ok = markets.crypto.items.length > 0;
+      } catch (e) { markets.crypto.error = String(e?.message || "داده عمومی Binance در دسترس نیست"); }
+    })()
+  ];
+  await Promise.all(jobs);
+  const payload = { ok: Object.values(markets).some(m=>m.ok), sourceMode: "free-public", updatedAt: observedAt, disclaimer: "این خروجی غربال اولیه است، نه سیگنال خرید/فروش. داده‌ها ممکن است تأخیری یا ناقص باشند. ورود، حد ضرر و هدف بدون داده تاریخی معتبر محاسبه نمی‌شود.", markets };
+  try { if (env.CHAT_STORE) await env.CHAT_STORE.put(cacheKey, JSON.stringify(payload), { expirationTtl: 120 }); } catch (e) { console.error("[BHR_SCANNER_CACHE_WRITE]", e?.message || "cache unavailable"); }
+  return json(payload, 200, { ...headers, "Cache-Control": "public, max-age=20" });
+}
 
 
 export default {
@@ -1118,8 +1211,9 @@ export default {
     // Public, read-only market data may also be opened directly for diagnostics.
     const publicMarketMapRead = path === "/market-map" && request.method === "GET" && !origin;
     const publicCalendarRead = path === "/economic-calendar" && request.method === "GET" && !origin;
+    const publicScannerRead = path === "/opportunity-scanner" && request.method === "GET" && !origin;
 
-    if (!ALLOWED_ORIGINS.includes(origin) && !publicMarketMapRead && !publicCalendarRead) {
+    if (!ALLOWED_ORIGINS.includes(origin) && !publicMarketMapRead && !publicCalendarRead && !publicScannerRead) {
 
       return new Response("Forbidden", { status: 403 });
 
@@ -1262,6 +1356,12 @@ export default {
           detail: String(error?.message || "Unknown error").slice(0, 320)
         }, 502, headers);
       }
+    }
+
+    /* اسکنر فرصت‌های بازار؛ داده‌های عمومی و فقط برای رصد اولیه */
+    if (path === "/opportunity-scanner") {
+      if (request.method !== "GET") return new Response("Method not allowed", { status: 405, headers });
+      return handleOpportunityScanner(env, headers);
     }
 
     /* پراکسی امن نقشه حرارتی بورس ایران */
