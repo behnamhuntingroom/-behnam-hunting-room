@@ -1769,7 +1769,8 @@ document.getElementById("marketSearch").addEventListener("keydown", function(eve
       setText('bhrBtcWorld', btc && typeof btc.price === 'number' ? 'جهانی: ' + dollarFormatter.format(btc.price) : 'قیمت جهانی: ناموجود');
       const brent = byId.brent;
       if (brent && typeof brent.price === 'number' && brent.unit === 'USD') {
-        setText('bhrBrentPrice', (brent.stale ? 'قدیمی · ' : '') + dollarFormatter.format(brent.price));\n        const usd = byId.usd;\n        setText('bhrBrentToman', usd && typeof usd.price === 'number' ? 'معادل تومانی: ' + formatter.format(brent.price * usd.price) + ' تومان' : 'معادل تومانی: ناموجود');
+        setText('bhrBrentPrice', (brent.stale ? 'قدیمی · ' : '') + dollarFormatter.format(brent.price));
+        const usd = byId.usd;\n        setText('bhrBrentToman', usd && typeof usd.price === 'number' ? 'معادل تومانی: ' + formatter.format(brent.price * usd.price) + ' تومان' : 'معادل تومانی: ناموجود');
       } else {
         setText('bhrBrentPrice', 'فعلاً ناموجود');
       }
