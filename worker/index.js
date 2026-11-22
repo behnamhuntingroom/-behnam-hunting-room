@@ -1093,7 +1093,7 @@ async function handleTelegramWebhook(request, env) {
 
 /* BHR Opportunity Scanner: public/free feeds, observation only (no fabricated trade levels). */
 async function handleOpportunityScanner(env, headers) {
-  const cacheKey = "bhr:opportunity-scanner:v2";
+  const cacheKey = "bhr:opportunity-scanner:v3";
   try {
     const cached = env.CHAT_STORE ? await env.CHAT_STORE.get(cacheKey, "json") : null;
     if (cached && cached.updatedAt && Date.now() - Date.parse(cached.updatedAt) < 60 * 1000) {
@@ -1106,7 +1106,7 @@ async function handleOpportunityScanner(env, headers) {
     iran: { ok: false, source: "TSETMC", delay: "زمان انتشار وابسته به بازار ایران", items: [], note: "داده لحظه‌ای/تاریخی هر نماد در این خروجی تضمین نمی‌شود." },
     us: { ok: false, source: "Yahoo Finance public screener", delay: "ممکن است با تأخیر باشد", items: [], note: "سهام پرتراکنش و نمادهای دارای تغییر روزانه برجسته؛ نه تمام نمادهای بورس آمریکا." },
     forex: { ok: false, source: "Yahoo Finance public chart", delay: "ممکن است با تأخیر باشد", items: [], note: "جفت‌ارزهای اصلی و طلای جهانی؛ داده رایگان بدون تضمین SLA." },
-    crypto: { ok: false, source: "Binance public market data", delay: "قیمت ۲۴ ساعته؛ دسترسی ممکن است منطقه‌ای محدود شود", items: [], note: "جفت‌های USDT با حجم معاملاتی بالاتر." }
+    crypto: { ok: false, source: "CoinPaprika public market data", delay: "قیمت و تغییرات ۲۴ ساعته؛ ممکن است با تأخیر باشد", items: [], note: "رمزارزهای پرتراکنش بر پایه حجم دلاری بازار؛ منبع جایگزین عمومی به‌جای Binance." }
   };
   const headersUp = { "Accept": "application/json", "User-Agent": "Mozilla/5.0 (compatible; BHRScanner/1.0; +https://behnamhunter.ir)" };
   const safeFetchJson = async (url, extra = {}) => {
@@ -1179,16 +1179,41 @@ async function handleOpportunityScanner(env, headers) {
       } catch (e) { markets.forex.error = String(e?.message || "داده فارکس/طلا در دسترس نیست"); }
     })(),
     (async () => {
+      const stablecoins = new Set(["USDT","USDC","BUSD","DAI","TUSD","FDUSD","USDE","USDP","USDD","USD1"]);
+      const normalize = rows => rows.filter(x => {
+        const symbol = String(x?.symbol || "").toUpperCase();
+        const quote = x?.quotes?.USD || {};
+        return symbol && !stablecoins.has(symbol) && Number(quote.price) > 0 && Number(quote.volume_24h) >= 5000000;
+      }).sort((a,b)=>Number(b.quotes.USD.volume_24h)-Number(a.quotes.USD.volume_24h)).slice(0,60).map(x => {
+        const quote = x.quotes.USD;
+        const pct = Number(quote.percent_change_24h || 0);
+        return { symbol: String(x.symbol).toUpperCase()+"/USD", name: x.name || x.symbol, price: Number(quote.price), changePct: pct, volume: Number(quote.volume_24h), direction: direction(pct), score: score(pct), observedAt, dataTime: null, reason: "تغییر ۲۴ ساعته و حجم معاملات دلاری؛ داده تجمیعی بازار", kind: "رصد ۲۴ ساعته", actionable: false };
+      });
       try {
-        const data = await safeFetchJson("https://api.binance.com/api/v3/ticker/24hr");
-        if (!Array.isArray(data)) throw new Error("ساختار پاسخ صرافی نامعتبر است");
-        markets.crypto.items = data.filter(x => x.symbol?.endsWith("USDT") && Number(x.quoteVolume) >= 5000000 && Number.isFinite(Number(x.lastPrice)))
-          .sort((a,b)=>Number(b.quoteVolume)-Number(a.quoteVolume)).slice(0, 60).map(x => {
-            const pct = Number(x.priceChangePercent || 0);
-            return { symbol: x.symbol, name: x.symbol, price: Number(x.lastPrice), changePct: pct, volume: Number(x.quoteVolume), direction: direction(pct), score: score(pct), observedAt, dataTime: x.closeTime ? new Date(x.closeTime).toISOString() : null, reason: "تغییر ۲۴ ساعته و حجم معاملات USDT", kind: "رصد ۲۴ ساعته", actionable: false };
-          }).sort((a,b)=>b.score-a.score);
-        markets.crypto.ok = markets.crypto.items.length > 0;
-      } catch (e) { markets.crypto.error = String(e?.message || "داده عمومی Binance در دسترس نیست"); }
+        const data = await safeFetchJson("https://api.coinpaprika.com/v1/tickers?quotes=USD");
+        if (!Array.isArray(data)) throw new Error("CoinPaprika returned an unexpected response");
+        markets.crypto.items = normalize(data);
+        if (!markets.crypto.items.length) throw new Error("CoinPaprika returned no qualifying liquid assets");
+        markets.crypto.source = "CoinPaprika public market data";
+        markets.crypto.ok = true;
+      } catch (primaryError) {
+        try {
+          const data = await safeFetchJson("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=volume_desc&per_page=250&page=1&sparkline=false");
+          if (!Array.isArray(data)) throw new Error("CoinGecko returned an unexpected response");
+          markets.crypto.items = data.filter(x => {
+            const symbol = String(x?.symbol || "").toUpperCase();
+            return symbol && !stablecoins.has(symbol) && Number(x.current_price) > 0 && Number(x.total_volume) >= 5000000;
+          }).sort((a,b)=>Number(b.total_volume)-Number(a.total_volume)).slice(0,60).map(x => {
+            const pct = Number(x.price_change_percentage_24h || 0);
+            return { symbol: String(x.symbol).toUpperCase()+"/USD", name: x.name || x.symbol, price: Number(x.current_price), changePct: pct, volume: Number(x.total_volume), direction: direction(pct), score: score(pct), observedAt, dataTime: x.last_updated || null, reason: "تغییر ۲۴ ساعته و حجم معاملات دلاری؛ داده تجمیعی بازار", kind: "رصد ۲۴ ساعته", actionable: false };
+          });
+          if (!markets.crypto.items.length) throw new Error("CoinGecko returned no qualifying liquid assets");
+          markets.crypto.source = "CoinGecko public market data (fallback)";
+          markets.crypto.ok = true;
+        } catch (fallbackError) {
+          markets.crypto.error = "CoinPaprika: " + String(primaryError?.message || "unavailable") + " | CoinGecko: " + String(fallbackError?.message || "unavailable");
+        }
+      }
     })()
   ];
   await Promise.all(jobs);
