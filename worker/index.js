@@ -1127,7 +1127,23 @@ export default {
 
 
 
-    if (request.method === "OPTIONS") {
+    /* شمارنده بازدیدکنندگان؛ مقدار اولیه ۳۰۴ */
+    if (path === "/visitor-count") {
+      if (request.method !== "GET") return new Response("Method not allowed", { status: 405, headers });
+      if (!env.CHAT_STORE) return json({ ok: false, error: "Storage unavailable" }, 503, headers);
+      try {
+        const key = "bhr:visitor-count:v1";
+        const current = Number(await env.CHAT_STORE.get(key));
+        const next = (Number.isFinite(current) && current >= 304 ? current : 304) + 1;
+        await env.CHAT_STORE.put(key, String(next));
+        return json({ ok: true, count: next }, 200, { ...headers, "Cache-Control": "no-store" });
+      } catch (error) {
+        console.error("[BHR_VISITOR_COUNT_ERROR]", error?.message || "Unknown error");
+        return json({ ok: false, error: "Counter unavailable" }, 500, headers);
+      }
+    }
+
+    if (request.method === "OPTIONS") {
 
       return new Response(null, {
 
