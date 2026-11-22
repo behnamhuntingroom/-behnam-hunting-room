@@ -4630,6 +4630,19 @@ header nav .bhr-nav-account-tools .bhr-auth-nav-button:hover svg{
   filter:contrast(1.12) saturate(1.08);
 }
 </style>
+
+<style id="bhr-main-logo-animated-effect">
+/* Animated golden light pulse on the main homepage logo only */
+#bhr-page-home>.hero>img{
+  animation:lionGlow 3.5s ease-in-out infinite,bhrMainLogoLight 3.2s ease-in-out infinite!important;
+}
+@keyframes bhrMainLogoLight{
+  0%,100%{filter:brightness(1) saturate(1);}
+  45%{filter:brightness(1.16) saturate(1.28) drop-shadow(0 0 9px rgba(242,217,139,.55));}
+  60%{filter:brightness(1.08) saturate(1.16) drop-shadow(0 0 15px rgba(215,180,90,.72));}
+}
+@media(prefers-reduced-motion:reduce){#bhr-page-home>.hero>img{animation:lionGlow 3.5s ease-in-out infinite!important}}
+</style>
 </body>
 
 <style id="bhr-file-attachment-visibility-fix">
