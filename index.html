@@ -4932,23 +4932,31 @@ header .bhr-sun-letters:after{
   const tiles=iranHost.querySelector("[data-bhr-iran-tiles]");
   const summary=iranHost.querySelector("[data-bhr-iran-summary]");
   if(!Array.isArray(rows)||!rows.length)throw new Error("داده‌ای از سرویس بازار دریافت نشد");
-  const valid=rows.filter(x=>x&&x.lVal18AFC);
-  if(!valid.length)throw new Error("ساختار داده دریافتی قابل نمایش نیست");
-  const up=valid.filter(x=>Number(x.percent??x.priceChangePercent)>0).length;
-  const down=valid.filter(x=>Number(x.percent??x.priceChangePercent)<0).length;
-  const flat=valid.length-up-down;
-  summary.innerHTML='<span>نمادها: <b>'+fmt(valid.length)+'</b></span><span class="up">مثبت: <b>'+fmt(up)+'</b></span><span class="down">منفی: <b>'+fmt(down)+'</b></span><span>بدون تغییر: <b>'+fmt(flat)+'</b></span>';
+  const normalized=rows.map(x=>{
+   if(!x)return null;
+   const symbol=x.lVal18AFC||x.lva||"";
+   const price=Number(x.pDrCotVal||x.pClosing||0);
+   const previous=Number(x.py||0);
+   const rawPct=x.percent??x.priceChangePercent;
+   const pct=rawPct!==undefined&&rawPct!==null?Number(rawPct):(price>0&&previous>0?(price-previous)/previous*100:0);
+   return {raw:x,symbol,name:x.lVal30||x.lSecVal||x.lvc||"",price,pct};
+  }).filter(x=>x&&x.symbol&&x.price>0);
+  if(!normalized.length)throw new Error("نماد قابل معامله با قیمت معتبر در پاسخ TSETMC پیدا نشد");
+  const up=normalized.filter(x=>x.pct>0).length;
+  const down=normalized.filter(x=>x.pct<0).length;
+  const flat=normalized.length-up-down;
+  summary.innerHTML='<span>نمادها: <b>'+fmt(normalized.length)+'</b></span><span class="up">مثبت: <b>'+fmt(up)+'</b></span><span class="down">منفی: <b>'+fmt(down)+'</b></span><span>بدون تغییر: <b>'+fmt(flat)+'</b></span>';
   tiles.innerHTML="";
-  valid.sort((a,b)=>Math.abs(Number(b.percent??b.priceChangePercent)||0)-Math.abs(Number(a.percent??a.priceChangePercent)||0));
+  normalized.sort((a,b)=>Math.abs(b.pct)-Math.abs(a.pct));
   const frag=document.createDocumentFragment();
-  valid.slice(0,260).forEach(x=>{
-   const pct=Number(x.percent??x.priceChangePercent)||0;
+  normalized.slice(0,260).forEach(item=>{
+   const x=item.raw,pct=item.pct;
    const tile=document.createElement("div");
    tile.className="bhr-iran-tile "+(pct>0?"positive":pct<0?"negative":"neutral");
-   const symbol=document.createElement("strong");symbol.textContent=x.lVal18AFC;
+   const symbol=document.createElement("strong");symbol.textContent=item.symbol;
    const change=document.createElement("b");change.textContent=(pct>0?"+":"")+fmt(pct)+"٪";
-   const name=document.createElement("small");name.textContent=x.lVal30||x.lSecVal||"";
-   tile.title=(x.lVal30||"")+" | آخرین قیمت: "+fmt(x.pDrCotVal||0)+" | پایانی: "+fmt(x.pClosing||0);
+   const name=document.createElement("small");name.textContent=item.name;
+   tile.title=item.name+" | آخرین قیمت: "+fmt(item.price)+" | پایانی: "+fmt(x.pClosing||0);
    tile.append(symbol,change,name);frag.append(tile);
   });
   tiles.append(frag);
@@ -4959,11 +4967,12 @@ header .bhr-sun-letters:after{
   if(!iranHost||iranBusy)return;
   iranBusy=true;
   try{
-   const url="https://raw.githubusercontent.com/behnamhuntingroom/-behnam-hunting-room/market-data/data/iran-market.json?v="+Date.now();
+   const url="https://tiny-unit-4ed3.behnamhuntingroom.workers.dev/market-map?v="+Date.now();
    const response=await fetch(url,{cache:"no-store",headers:{Accept:"application/json"}});
-   if(!response.ok)throw new Error("پاسخ فایل داده بازار: "+response.status);
+   if(!response.ok)throw new Error("پاسخ سرویس بازار: "+response.status);
    const data=await response.json();
-   renderIran(Array.isArray(data)?data:(data&&Array.isArray(data.marketMap)?data.marketMap:[]),data&&data.updatedAt);
+   const rows=Array.isArray(data)?data:(data&&(Array.isArray(data.marketMap)?data.marketMap:Array.isArray(data.marketwatch)?data.marketwatch:[]));
+   renderIran(rows,data&&data.updatedAt);
   }catch(error){
    setStatus("اطلاعات بورس ایران فعلاً در دسترس نیست؛ دریافت خودکار دوباره تلاش می‌کند.");
    const tiles=iranHost.querySelector("[data-bhr-iran-tiles]");
