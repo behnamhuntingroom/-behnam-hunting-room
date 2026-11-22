@@ -1084,11 +1084,7 @@ header .bhr-main-nav .nav-icon{
 <h1 data-fa="اتاق شکار بهنام" data-en="BEHNAM HUNTING ROOM">اتاق شکار بهنام</h1>
 <p data-fa="تحلیل بازار، آموزش و بررسی سناریوهای معاملاتی با تمرکز بر طلا، نزدک و رمزارزها." data-en="Market analysis, education and trading scenarios focused on Gold, Nasdaq and Crypto.">تحلیل بازار، آموزش و بررسی سناریوهای معاملاتی با تمرکز بر طلا، نزدک و رمزارزها.</p>
 <div class="btn bhr-hunt-slogan" role="note" aria-label="ما شکارچی فرصت‌ها هستیم نه دنبال‌کننده قیمت‌ها" data-fa="ما شکارچی فرصت‌ها هستیم نه دنبال‌کننده قیمت‌ها" data-en="We hunt opportunities, not prices"><span class="bhr-hunt-track"><span>ما شکارچی فرصت‌ها هستیم نه دنبال‌کننده قیمت‌ها</span><span aria-hidden="true">ما شکارچی فرصت‌ها هستیم نه دنبال‌کننده قیمت‌ها</span><span aria-hidden="true">ما شکارچی فرصت‌ها هستیم نه دنبال‌کننده قیمت‌ها</span></span></div>
-<div class="bhr-visitor-counter" id="bhrVisitorCounter" aria-live="polite" aria-label="تعداد بازدیدکنندگان سایت">
-  <span class="bhr-visitor-icon" aria-hidden="true">◉</span>
-  <span>بازدیدکنندگان سایت</span>
-  <strong id="bhrVisitorCount" dir="ltr">۳۰۴</strong>
-</div>
+
 </div>
 <section class="bhr-price-banner" aria-label="قیمت زنده به تومان">
   <div class="bhr-price-head"><span>LIVE IRAN MARKET | قیمت‌های بازار ایران</span><small>همه قیمت‌ها به تومان</small></div>
@@ -3183,8 +3179,13 @@ document.querySelectorAll("#bhr-upgrade button").forEach(b=>{
  </div>
 </aside>
 
-<footer>© BEHNAM HUNTING ROOM
-
+<footer>
+<div class="bhr-visitor-counter" id="bhrVisitorCounter" aria-live="polite" aria-label="تعداد بازدیدکنندگان سایت">
+  <span class="bhr-visitor-icon" aria-hidden="true">◉</span>
+  <span>بازدیدکنندگان سایت</span>
+  <strong id="bhrVisitorCount" dir="ltr">۳۰۴</strong>
+</div>
+<div>© BEHNAM HUNTING ROOM</div>
 </footer>
 
 
@@ -4668,9 +4669,10 @@ header nav .bhr-nav-account-tools .bhr-auth-nav-button:hover svg{
 </style>
 
 <style id="bhr-visitor-counter-style">
-.bhr-visitor-counter{display:inline-flex;align-items:center;justify-content:center;gap:9px;margin:17px auto 0;padding:9px 16px;border:1px solid rgba(215,180,90,.42);border-radius:999px;background:linear-gradient(135deg,rgba(215,180,90,.12),rgba(20,25,34,.72));color:var(--text,#eee);font-size:12px;box-shadow:0 0 18px rgba(215,180,90,.09);direction:rtl}
-.bhr-visitor-counter .bhr-visitor-icon{color:#e5c36e;font-size:15px;text-shadow:0 0 9px rgba(242,217,139,.65)}
-.bhr-visitor-counter strong{min-width:34px;color:#f2d98b;font-size:15px;font-weight:900;letter-spacing:1px;font-variant-numeric:tabular-nums}
+.bhr-visitor-counter{display:flex;align-items:center;justify-content:center;gap:9px;width:max-content;max-width:calc(100% - 32px);margin:14px auto 0;padding:7px 13px;border:1px solid rgba(255,255,255,.10);border-radius:999px;background:rgba(255,255,255,.035);color:rgba(235,235,235,.68);font-size:11px;direction:rtl;box-shadow:none}
+.bhr-visitor-counter .bhr-visitor-icon{color:#8bbcff;font-size:13px}
+.bhr-visitor-counter strong{min-width:30px;color:#a9ceff;font-size:13px;font-weight:800;letter-spacing:.5px;font-variant-numeric:tabular-nums}
+footer .bhr-visitor-counter{margin:0 auto 12px}
 </style>
 <script id="bhr-visitor-counter-script">
 (function(){
