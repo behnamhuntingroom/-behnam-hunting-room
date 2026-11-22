@@ -3348,6 +3348,17 @@ const academy=makePage("bhr-academy-page","آکادمی آموزشی","آموز�
 const tools=makePage("bhr-tools-page","ابزارهای تخصصی ترید","ابزارهای مدیریت ریسک و برنامه‌ریزی معامله");
 const community=makePage("bhr-community-page","تحلیل کاربران","ثبت و مرور تحلیل‌ها و سناریوهای معاملاتی");
 const about=makePage("bhr-about-page","درباره ما","معرفی اتاق شکار بهنام و چارچوب فعالیت آن");
+const features=makePage("bhr-features-page","امکانات سایت","معرفی ابزارها و خدمات اتاق شکار بهنام");
+features.insertAdjacentHTML("beforeend", '<div class="bhr-section"><div class="bhr-up-grid">'+
+ '<article class="bhr-up-card"><h3>قیمت‌های بازار ایران و جهان</h3><p>رصد قیمت دارایی‌های مهم داخلی و جهانی از جمله ارز، طلا، نقره، بیت‌کوین و نفت.</p></article>'+
+ '<article class="bhr-up-card"><h3>نقشه حرارتی بازارها</h3><p>نمایش وضعیت بازارهای ایران، آمریکا، رمزارزها و فارکس به‌صورت نقشه حرارتی.</p></article>'+
+ '<article class="bhr-up-card"><h3>شکارچی فرصت‌ها</h3><p>رصد و دسته‌بندی فرصت‌های بازارهای مالی برای بررسی و تحلیل بیشتر.</p></article>'+
+ '<article class="bhr-up-card"><h3>ابزارهای مدیریت معامله</h3><p>ماشین‌حساب ریسک و ابزارهای ثبت و مرور معاملات برای نظم بیشتر در معامله‌گری.</p></article>'+
+ '<article class="bhr-up-card"><h3>آکادمی والیوم تریدینگ</h3><p>محتوای آموزشی مرحله‌به‌مرحله برای آشنایی و یادگیری والیوم تریدینگ.</p></article>'+
+ '<article class="bhr-up-card"><h3>تحلیل کاربران و اتاق معاملاتی</h3><p>فضای بررسی تحلیل‌ها و دسترسی به روش و سناریوهای معاملاتی BHR.</p></article>'+
+ '<article class="bhr-up-card"><h3>اخبار و تقویم اقتصادی</h3><p>دسترسی به خبرهای بازار و رویدادهای مهم اقتصادی.</p></article>'+
+ '<article class="bhr-up-card"><h3>دستیار هوشمند BHR</h3><p>همراه هوشمند برای بررسی بازارها و پرسش‌های مرتبط با معامله‌گری.</p></article>'+
+ '</div></div>');
 const heatmap=makePage("bhr-heatmap-page","BHR MARKET HEATMAP","نقشه حرارتی بازارهای جهانی؛ سبز برای رشد و قرمز برای افت");
 const assistantPage=makePage("bhr-assistant-page","دستیار هوشمند BHR","تحلیلگر هوشمند بازارها و همراه اختصاصی روش معاملاتی BHR");
 const newsPage=makePage("bhr-news-page","اخبار بازار","خبرهای مهم بازارهای جهانی، خلاصه خبرها و تقویم اقتصادی زنده");
@@ -3408,7 +3419,8 @@ shortcuts.innerHTML=
  '<a class="bhr-shortcut" href="#bhr-page-markets" data-bhr-page="markets"><span class="bhr-shortcut-icon">⌁</span><strong>مرکز بازار</strong><small>مشاهده بازارها در صفحه اصلی</small></a>'+
  '<a class="bhr-shortcut" href="#bhr-page-academy" data-bhr-page="academy"><span class="bhr-shortcut-icon">▤</span><strong>آکادمی آموزشی</strong><small>۹ فصل آموزش والیوم تریدینگ</small></a>'+
  '<a class="bhr-shortcut" href="#bhr-page-room" data-bhr-page="room"><span class="bhr-shortcut-icon">◈</span><strong>اتاق معاملاتی</strong><small>روش BHR و سناریوهای معاملاتی</small></a>'+
- '<a class="bhr-shortcut" href="#bhr-page-about" data-bhr-page="about"><span class="bhr-shortcut-icon">✦</span><strong>درباره ما</strong><small>آشنایی با برند BHR</small></a>';
+ '<a class="bhr-shortcut" href="#bhr-page-about" data-bhr-page="about"><span class="bhr-shortcut-icon">✦</span><strong>درباره ما</strong><small>آشنایی با برند BHR</small></a>'+
+ '<a class="bhr-shortcut" href="#bhr-page-features" data-bhr-page="features"><span class="bhr-shortcut-icon">✧</span><strong>امکانات سایت</strong><small>معرفی ابزارها و خدمات اتاق شکار</small></a>';
 const methodIntro=document.createElement("section");
 methodIntro.className="bhr-home-method-intro";
 methodIntro.innerHTML=
@@ -3478,7 +3490,7 @@ if(brand&&!brand.querySelector(".bhr-sun-mark")){
  mark.innerHTML='<span class="bhr-sun-letters">BHR</span>';
  brand.prepend(mark);
 }
-const pages={home,room,academy,tools,community,about,heatmap,assistant:assistantPage,news:newsPage};
+const pages={home,room,academy,tools,community,about,features,heatmap,assistant:assistantPage,news:newsPage};
 function showPage(requestedKey,updateHash){
  const key=requestedKey==="markets"?"home":(pages[requestedKey]?requestedKey:"home");
  Object.entries(pages).forEach(([name,node])=>node.classList.toggle("is-active",name===key));
@@ -3486,7 +3498,7 @@ function showPage(requestedKey,updateHash){
  if(nav)nav.querySelectorAll("[data-bhr-page]").forEach(a=>{if(a.dataset.bhrPage===requestedKey)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
  window.scrollTo({top:0,behavior:"instant"});
  if(requestedKey==="markets"&&workspace)workspace.scrollIntoView({behavior:"smooth",block:"start"});
- document.title=(requestedKey==="markets"?"مرکز بازار":key==="home"?"اتاق شکار بهنام":({room:"اتاق معاملاتی",academy:"آکادمی آموزشی",tools:"ابزارهای ترید",community:"تحلیل کاربران",about:"درباره ما",heatmap:"نقشه حرارتی بازار",assistant:"دستیار هوشمند BHR",news:"اخبار بازار"}[key]))+" | BEHNAM HUNTING ROOM";
+ document.title=(requestedKey==="markets"?"مرکز بازار":key==="home"?"اتاق شکار بهنام":({room:"اتاق معاملاتی",academy:"آکادمی آموزشی",tools:"ابزارهای ترید",community:"تحلیل کاربران",about:"درباره ما",features:"امکانات سایت",heatmap:"نقشه حرارتی بازار",assistant:"دستیار هوشمند BHR",news:"اخبار بازار"}[key]))+" | BEHNAM HUNTING ROOM";
 }
 document.addEventListener("click",e=>{
   const link=e.target.closest("[data-bhr-page]");
