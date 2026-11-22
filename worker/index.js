@@ -1376,6 +1376,43 @@ export default {
       return handleOpportunityScanner(env, headers);
     }
 
+    /* شاخص کل بورس تهران؛ دریافت مستقیم از API شاخص‌های منتخب TSETMC */
+    if (path === "/market-index") {
+      if (request.method !== "GET") return new Response("Method not allowed", { status: 405, headers });
+      try {
+        const response = await fetch("https://cdn.tsetmc.com/api/Index/GetIndexB1LastAll/SelectedIndexes/1", {
+          headers: {
+            "Accept": "application/json",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36",
+            "Referer": "https://www.tsetmc.com/"
+          },
+          cf: { cacheTtl: 8, cacheEverything: true }
+        });
+        if (!response.ok) throw new Error("TSETMC HTTP " + response.status);
+        const body = await response.json();
+        const indices = Array.isArray(body) ? body : (Array.isArray(body?.indexB1) ? body.indexB1 : []);
+        const row = indices.find(item => String(item?.lVal30 || "").replace(/\s+/g, " ").trim() === "شاخص کل")
+          || indices.find(item => String(item?.lVal30 || "").includes("شاخص کل") && !String(item?.lVal30 || "").includes("هم وزن"));
+        if (!row) throw new Error("شاخص کل در پاسخ TSETMC پیدا نشد");
+        const value = Number(row.xDrNivJIdx004);
+        const change = Number(row.indexChange ?? row.xVarIdxJRfV ?? 0);
+        const percent = Number(row.xVarIdxJRfV ?? 0);
+        if (!Number.isFinite(value) || value <= 0) throw new Error("مقدار شاخص معتبر نیست");
+        return json({
+          ok: true,
+          name: String(row.lVal30 || "شاخص کل"),
+          value,
+          change,
+          percent,
+          time: String(row.hEven || ""),
+          updatedAt: new Date().toISOString()
+        }, 200, { ...headers, "Cache-Control": "public, max-age=8" });
+      } catch (error) {
+        console.error("[BHR_MARKET_INDEX_ERROR]", error?.message || "Unknown error");
+        return json({ ok: false, error: "دریافت شاخص کل از TSETMC ناموفق بود" }, 502, { ...headers, "Cache-Control": "no-store" });
+      }
+    }
+
     /* پراکسی امن نقشه حرارتی بورس ایران */
     if (path === "/market-map") {
       if (request.method !== "GET") {
