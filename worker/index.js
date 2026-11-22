@@ -1093,7 +1093,7 @@ async function handleTelegramWebhook(request, env) {
 
 /* BHR Opportunity Scanner: public/free feeds, observation only (no fabricated trade levels). */
 async function handleOpportunityScanner(env, headers) {
-  const cacheKey = "bhr:opportunity-scanner:v4";
+  const cacheKey = "bhr:opportunity-scanner:v5";
   try {
     const cached = env.CHAT_STORE ? await env.CHAT_STORE.get(cacheKey, "json") : null;
     if (cached && cached.updatedAt && Date.now() - Date.parse(cached.updatedAt) < 60 * 1000) {
@@ -1120,9 +1120,19 @@ async function handleOpportunityScanner(env, headers) {
   const jobs = [
     (async () => {
       try {
-        const url = "https://cdn.tsetmc.com/api/ClosingPrice/GetMarketMap?market=0&size=1920&sector=0&typeSelected=1&hEven=0";
-        const data = await safeFetchJson(url, { "Referer": "https://www.tsetmc.com/" });
-        const rows = Array.isArray(data) ? data : (Array.isArray(data?.marketMap) ? data.marketMap : []);
+        const tsetmcHeaders = { "Referer": "https://www.tsetmc.com/" };
+        let rows = [];
+        let mapError = "";
+        try {
+          const data = await safeFetchJson("https://cdn.tsetmc.com/api/ClosingPrice/GetMarketMap?market=0&size=1920&sector=0&typeSelected=1&hEven=0", tsetmcHeaders);
+          rows = Array.isArray(data) ? data : (Array.isArray(data?.marketMap) ? data.marketMap : (Array.isArray(data?.marketmap) ? data.marketmap : []));
+        } catch (e) { mapError = String(e?.message || e); }
+        if (!rows.length) {
+          const watchUrl = "https://cdn.tsetmc.com/api/ClosingPrice/GetMarketWatch?market=0&industrialGroup=&paperTypes%5B0%5D=1&paperTypes%5B1%5D=2&paperTypes%5B2%5D=3&paperTypes%5B3%5D=4&paperTypes%5B4%5D=5&paperTypes%5B5%5D=6&paperTypes%5B6%5D=7&paperTypes%5B7%5D=8&paperTypes%5B8%5D=9&showTraded=false&withBestLimits=false&hEven=0&RefID=0";
+          const watchData = await safeFetchJson(watchUrl, tsetmcHeaders);
+          rows = Array.isArray(watchData) ? watchData : (Array.isArray(watchData?.marketwatch) ? watchData.marketwatch : (Array.isArray(watchData?.marketWatch) ? watchData.marketWatch : []));
+          if (!rows.length && mapError) throw new Error("GetMarketMap: " + mapError + "; GetMarketWatch returned no symbols");
+        }
         markets.iran.items = rows.map(x => {
             const symbol = String(x?.lva || x?.lVal18AFC || x?.symbol || "").trim();
             const name = String(x?.lvc || x?.lVal30 || x?.lSecVal || x?.name || "").trim();
