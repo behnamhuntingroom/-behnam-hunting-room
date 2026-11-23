@@ -5685,6 +5685,14 @@ header .brand .bhr-brand-emblem img{
 .bhr-primary-monogram{position:relative!important;top:-80px!important}
 </style>
 
+<style id="bhr-primary-logo-caption-spacing">
+/* Pull the hero text upward so it sits closer beneath the visible primary logo. */
+.bhr-primary-monogram{margin-bottom:-90px!important}
+@media(max-width:600px){
+ .bhr-primary-monogram{margin-bottom:-55px!important}
+}
+</style>
+
 <style id="bhr-primary-logo-entrance">
 /* Fast one-time entrance for the main logo; preserve its final position and dimensions. */
 @keyframes bhrPrimaryLogoEntrance{
