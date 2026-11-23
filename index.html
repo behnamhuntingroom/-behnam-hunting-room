@@ -2830,8 +2830,7 @@ if(nav){
   ["bhr-academy","آکادمی رایگان"],
   ["bhr-trading-tools","ابزارهای ترید"],
   ["bhr-command-center","مرکز بازار"],
-  ["bhr-community","تحلیل کاربران"],
-  ["bhr-about","درباره ما"]
+  ["bhr-community","تحلیل کاربران"]
  ];
  links.forEach(([id,label])=>{
   if(document.querySelector('header nav a[href="#'+id+'"]'))return;
@@ -3523,7 +3522,9 @@ if(nav&&cartToggle){
  accountGroup.className="bhr-nav-account-tools";
  accountGroup.append(cartToggle);
  document.querySelectorAll("header .bhr-auth-nav-button").forEach(button=>accountGroup.append(button));
- nav.append(accountGroup);
+ const communityLink=nav.querySelector('a[href="#bhr-community"], a[href="#bhr-page-community"]');
+ if(communityLink)communityLink.insertAdjacentElement("afterend",accountGroup);
+ else nav.append(accountGroup);
 }
 const brand=document.querySelector("header .brand");
 if(brand&&!brand.querySelector(".bhr-sun-mark")){
