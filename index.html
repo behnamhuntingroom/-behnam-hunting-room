@@ -4998,6 +4998,17 @@ header .brand .bhr-brand-emblem img{display:block;width:100%;height:100%;object-
 #bhr-world-clocks-page .bhr-clock-meta{display:flex;justify-content:space-between;gap:8px;margin-top:14px;padding-top:11px;border-top:1px solid var(--line);font-size:11px;color:var(--muted)}
 #bhr-world-clocks-page .bhr-clock-countdown{color:var(--gold2);font-weight:800;direction:ltr;font-variant-numeric:tabular-nums}
 #bhr-world-clocks-page .bhr-clock-footer{margin-top:16px;color:var(--muted);font-size:11px;line-height:1.9;text-align:center}
+#bhr-world-clocks-page .bhr-clock-analog{display:block;width:112px;height:112px;margin:13px auto 5px;overflow:visible;filter:drop-shadow(0 4px 8px #0003)}
+#bhr-world-clocks-page .bhr-clock-analog-face{fill:var(--bg);stroke:var(--gold2);stroke-width:2.4}
+#bhr-world-clocks-page .bhr-clock-analog-tick{stroke:var(--muted);stroke-width:1.5;stroke-linecap:round}
+#bhr-world-clocks-page .bhr-clock-analog-tick.major{stroke:var(--gold2);stroke-width:2.5}
+#bhr-world-clocks-page .bhr-clock-hand{stroke-linecap:round;transform-origin:50px 50px}
+#bhr-world-clocks-page .bhr-clock-hour-hand{stroke:var(--text);stroke-width:4.2}
+#bhr-world-clocks-page .bhr-clock-minute-hand{stroke:var(--gold2);stroke-width:2.8}
+#bhr-world-clocks-page .bhr-clock-second-hand{stroke:#d16b62;stroke-width:1.4}
+#bhr-world-clocks-page .bhr-clock-analog-center{fill:var(--gold2);stroke:var(--bg);stroke-width:1.5}
+@media(max-width:430px){#bhr-world-clocks-page .bhr-clock-analog{width:120px;height:120px}}
+
 @media(max-width:760px){#bhr-world-clocks-page .bhr-clock-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#bhr-world-clocks-page .bhr-clock-card{padding:14px}}
 @media(max-width:430px){#bhr-world-clocks-page .bhr-clock-grid{grid-template-columns:1fr}#bhr-world-clocks-page .bhr-clock-time{font-size:34px}}
 </style>
@@ -5022,7 +5033,7 @@ header .brand .bhr-brand-emblem img{display:block;width:100%;height:100%;object-
  const cards=sessions.map((x,i)=>{
   const el=document.createElement("article");
   el.className="bhr-clock-card";
-  el.innerHTML='<div class="bhr-clock-card-head"><div><div class="bhr-clock-city">'+x.flag+' '+x.city+'</div><div class="bhr-clock-country">'+x.country+'</div></div><span class="bhr-clock-status is-closed" data-status>بسته</span></div><div class="bhr-clock-time" data-time>--:--:--</div><div class="bhr-clock-date" data-date>—</div><div class="bhr-clock-meta"><span data-session>ساعات مرجع</span><span class="bhr-clock-countdown" data-countdown>—</span></div>';
+  el.innerHTML='<div class="bhr-clock-card-head"><div><div class="bhr-clock-city">'+x.flag+' '+x.city+'</div><div class="bhr-clock-country">'+x.country+'</div></div><span class="bhr-clock-status is-closed" data-status>بسته</span></div><svg class="bhr-clock-analog" viewBox="0 0 100 100" role="img" aria-label="ساعت آنالوگ محلی"><circle class="bhr-clock-analog-face" cx="50" cy="50" r="46"/><g class="bhr-clock-analog-tick"><path d="M50 8v6 M50 86v6 M8 50h6 M86 50h6 M20.3 20.3l4.2 4.2 M75.5 75.5l4.2 4.2 M79.7 20.3l-4.2 4.2 M24.5 75.5l-4.2 4.2"/></g><g class="bhr-clock-analog-tick major"><path d="M50 5v8 M50 87v8 M5 50h8 M87 50h8"/></g><line class="bhr-clock-hand bhr-clock-hour-hand" data-hour-hand x1="50" y1="50" x2="50" y2="29"/><line class="bhr-clock-hand bhr-clock-minute-hand" data-minute-hand x1="50" y1="50" x2="50" y2="17"/><line class="bhr-clock-hand bhr-clock-second-hand" data-second-hand x1="50" y1="55" x2="50" y2="12"/><circle class="bhr-clock-analog-center" cx="50" cy="50" r="3.2"/></svg><div class="bhr-clock-time" data-time>--:--:--</div><div class="bhr-clock-date" data-date>—</div><div class="bhr-clock-meta"><span data-session>ساعات مرجع</span><span class="bhr-clock-countdown" data-countdown>—</span></div>';
   grid.append(el);
   return el;
  });
@@ -5058,6 +5069,9 @@ header .brand .bhr-brand-emblem img{display:block;width:100%;height:100%;object-
    status.textContent=open?"باز":"بسته";
    status.className="bhr-clock-status "+(open?"is-open":"is-closed");
    card.querySelector("[data-time]").textContent=pad(p.hour)+":"+pad(p.minute)+":"+pad(p.second);
+   card.querySelector("[data-hour-hand]").setAttribute("transform","rotate("+((p.hour%12)*30+p.minute*0.5)+" 50 50)");
+   card.querySelector("[data-minute-hand]").setAttribute("transform","rotate("+(p.minute*6+p.second*0.1)+" 50 50)");
+   card.querySelector("[data-second-hand]").setAttribute("transform","rotate("+(p.second*6)+" 50 50)");
    card.querySelector("[data-date]").textContent=new Intl.DateTimeFormat("fa-IR",{timeZone:x.zone,weekday:"long",year:"numeric",month:"long",day:"numeric"}).format(now);
    card.querySelector("[data-session]").textContent=pad(x.open)+":00 تا "+pad(x.close)+":00";
    let target={year:p.year,month:p.month,day:p.day,hour:open?x.close:x.open,minute:0,second:0};
