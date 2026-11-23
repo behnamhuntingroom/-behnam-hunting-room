@@ -13,9 +13,10 @@
   "theme_color": "#080909",
   "icons": [
     {
-      "src": "./Logo.jpg",
-      "type": "image/jpeg",
-      "purpose": "any"
+      "src": "./pwa-icon.svg?v=20261123",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any maskable"
     }
   ]
 }
