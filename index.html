@@ -1090,6 +1090,41 @@ header nav #bhrCartCount{min-width:16px!important;height:16px!important;padding:
 }
 </style>
 
+
+<style id="bhr-world-clocks-premium-design">
+#bhr-world-clocks-page .bhr-clock-grid{gap:22px;align-items:stretch}
+#bhr-world-clocks-page .bhr-clock-card{position:relative;isolation:isolate;overflow:hidden;padding:21px 20px 18px;border:1px solid rgba(211,173,91,.48);border-radius:22px;background:radial-gradient(ellipse at 50% 34%,rgba(196,151,61,.13),transparent 52%),linear-gradient(155deg,#202329 0%,#101317 48%,#080a0d 100%);box-shadow:0 18px 38px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,238,183,.12);transition:transform .3s ease,border-color .3s ease,box-shadow .3s ease}
+#bhr-world-clocks-page .bhr-clock-card:before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.22;background:repeating-linear-gradient(125deg,transparent 0 13px,rgba(255,255,255,.045) 14px,transparent 15px 29px);mask-image:linear-gradient(135deg,#000,transparent 78%)}
+#bhr-world-clocks-page .bhr-clock-card:after{content:"BHR  •  WORLD MARKET TIME";position:absolute;left:18px;top:18px;color:rgba(235,204,130,.28);font:700 8px/1 Arial,sans-serif;letter-spacing:1.4px;direction:ltr}
+#bhr-world-clocks-page .bhr-clock-card:hover{transform:translateY(-5px);border-color:#f1d58d;box-shadow:0 24px 48px rgba(0,0,0,.48),0 0 24px rgba(215,180,90,.15),inset 0 1px 0 rgba(255,238,183,.2)}
+#bhr-world-clocks-page .bhr-clock-card-head{position:relative;z-index:1;min-height:38px;padding-bottom:12px;border-bottom:1px solid rgba(215,180,90,.18)}
+#bhr-world-clocks-page .bhr-clock-city{font-size:17px;text-shadow:0 0 14px rgba(215,180,90,.18)}
+#bhr-world-clocks-page .bhr-clock-country{margin-top:2px;letter-spacing:1.2px;font-size:10px}
+#bhr-world-clocks-page .bhr-clock-status{padding:5px 11px;backdrop-filter:blur(8px)}
+#bhr-world-clocks-page .bhr-clock-status.is-open{color:#70e3ad;border-color:#3acb8a77;background:linear-gradient(120deg,#0b6d4933,#16a36a12);box-shadow:0 0 14px #16a36a18}
+#bhr-world-clocks-page .bhr-clock-status.is-closed{color:#f08b83;border-color:#d16b6266;background:linear-gradient(120deg,#8f302d2b,#d16b6210)}
+#bhr-world-clocks-page .bhr-clock-stage{position:relative;display:grid;place-items:center;margin:14px auto 0;padding:5px 0 2px}
+#bhr-world-clocks-page .bhr-clock-analog{width:174px;height:174px;margin:0;overflow:visible;filter:drop-shadow(0 9px 13px #000b) drop-shadow(0 0 13px rgba(215,180,90,.13))}
+#bhr-world-clocks-page .bhr-clock-analog-face{fill:url(#bhrDial);stroke:#b68b3d;stroke-width:1.2}
+#bhr-world-clocks-page .bhr-clock-hand{stroke-linecap:round;transform:none!important;transform-origin:50% 50%;filter:drop-shadow(0 1px 2px #000b)}
+#bhr-world-clocks-page .bhr-clock-hour-hand{stroke:#f8f0d8;stroke-width:4.1}
+#bhr-world-clocks-page .bhr-clock-minute-hand{stroke:url(#bhrGoldHand);stroke-width:2.8}
+#bhr-world-clocks-page .bhr-clock-second-hand{stroke:#ef776d;stroke-width:1.35}
+#bhr-world-clocks-page .bhr-clock-analog-center{fill:#f5d887;stroke:#16191c;stroke-width:1.2}
+#bhr-world-clocks-page .bhr-clock-live-label{margin-top:-1px;color:rgba(229,196,119,.62);font:700 8px/1.5 Arial,sans-serif;letter-spacing:2.4px;direction:ltr}
+#bhr-world-clocks-page .bhr-clock-time{margin:7px 0 0;color:#f4e6c4;font-size:clamp(29px,3.2vw,37px);letter-spacing:2px;text-shadow:0 0 18px rgba(215,180,90,.17)}
+#bhr-world-clocks-page .bhr-clock-date{margin-top:2px;color:#b6aa91;letter-spacing:.35px}
+#bhr-world-clocks-page .bhr-clock-meta{margin-top:15px;padding:11px 12px;border:1px solid rgba(215,180,90,.17);border-radius:11px;background:rgba(0,0,0,.2);align-items:center}
+#bhr-world-clocks-page .bhr-clock-countdown{color:#f0d48b}
+:root[data-theme="light"] #bhr-world-clocks-page .bhr-clock-card{background:radial-gradient(ellipse at 50% 34%,rgba(196,151,61,.15),transparent 52%),linear-gradient(155deg,#fffdf7,#f1eadb 60%,#e5dcc9);border-color:rgba(128,91,18,.38);box-shadow:0 15px 34px rgba(75,58,24,.13),inset 0 1px 0 #fff}
+:root[data-theme="light"] #bhr-world-clocks-page .bhr-clock-card:after{color:rgba(128,91,18,.38)}
+:root[data-theme="light"] #bhr-world-clocks-page .bhr-clock-time{color:#292318;text-shadow:none}
+:root[data-theme="light"] #bhr-world-clocks-page .bhr-clock-date{color:#6e624b}
+:root[data-theme="light"] #bhr-world-clocks-page .bhr-clock-meta{background:rgba(255,255,255,.48);border-color:rgba(128,91,18,.2)}
+@media(max-width:760px){#bhr-world-clocks-page .bhr-clock-grid{gap:14px}#bhr-world-clocks-page .bhr-clock-card{padding:17px 14px}}
+@media(max-width:430px){#bhr-world-clocks-page .bhr-clock-analog{width:184px;height:184px}#bhr-world-clocks-page .bhr-clock-card{padding:18px}}
+@media(prefers-reduced-motion:reduce){#bhr-world-clocks-page .bhr-clock-card{transition:none}}
+</style>
 </head>
 <body>
 <header>
@@ -5033,7 +5068,7 @@ header .brand .bhr-brand-emblem img{display:block;width:100%;height:100%;object-
  const cards=sessions.map((x,i)=>{
   const el=document.createElement("article");
   el.className="bhr-clock-card";
-  el.innerHTML='<div class="bhr-clock-card-head"><div><div class="bhr-clock-city">'+x.flag+' '+x.city+'</div><div class="bhr-clock-country">'+x.country+'</div></div><span class="bhr-clock-status is-closed" data-status>بسته</span></div><svg class="bhr-clock-analog" viewBox="0 0 100 100" role="img" aria-label="ساعت آنالوگ محلی"><circle class="bhr-clock-analog-face" cx="50" cy="50" r="46"/><g class="bhr-clock-analog-tick"><path d="M50 8v6 M50 86v6 M8 50h6 M86 50h6 M20.3 20.3l4.2 4.2 M75.5 75.5l4.2 4.2 M79.7 20.3l-4.2 4.2 M24.5 75.5l-4.2 4.2"/></g><g class="bhr-clock-analog-tick major"><path d="M50 5v8 M50 87v8 M5 50h8 M87 50h8"/></g><line class="bhr-clock-hand bhr-clock-hour-hand" data-hour-hand x1="50" y1="50" x2="50" y2="29"/><line class="bhr-clock-hand bhr-clock-minute-hand" data-minute-hand x1="50" y1="50" x2="50" y2="17"/><line class="bhr-clock-hand bhr-clock-second-hand" data-second-hand x1="50" y1="55" x2="50" y2="12"/><circle class="bhr-clock-analog-center" cx="50" cy="50" r="3.2"/></svg><div class="bhr-clock-time" data-time>--:--:--</div><div class="bhr-clock-date" data-date>—</div><div class="bhr-clock-meta"><span data-session>ساعات مرجع</span><span class="bhr-clock-countdown" data-countdown>—</span></div>';
+  el.innerHTML='<div class="bhr-clock-card-head"><div><div class="bhr-clock-city">'+x.flag+' '+x.city+'</div><div class="bhr-clock-country">'+x.country+'</div></div><span class="bhr-clock-status is-closed" data-status>بسته</span></div><div class="bhr-clock-stage"><svg class="bhr-clock-analog" viewBox="0 0 120 120" role="img" aria-label="ساعت آنالوگ محلی"><defs><radialGradient id="bhrDial" cx="35%" cy="25%" r="78%"><stop offset="0%" stop-color="#34404a"/><stop offset="48%" stop-color="#151b21"/><stop offset="100%" stop-color="#07090c"/></radialGradient><linearGradient id="bhrBezel" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#fff0b5"/><stop offset="20%" stop-color="#8b6728"/><stop offset="45%" stop-color="#f6d987"/><stop offset="70%" stop-color="#6c4b19"/><stop offset="100%" stop-color="#e9c66c"/></linearGradient><linearGradient id="bhrGoldHand" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fff0b2"/><stop offset="100%" stop-color="#b88b37"/></linearGradient></defs><circle cx="60" cy="60" r="57" fill="#050607" stroke="url(#bhrBezel)" stroke-width="2.6"/><circle cx="60" cy="60" r="53.5" fill="none" stroke="#fff1c2" stroke-opacity=".35" stroke-width=".7"/><circle class="bhr-clock-analog-face" cx="60" cy="60" r="50" fill="url(#bhrDial)" stroke="#b68b3d" stroke-width="1.2"/><circle cx="60" cy="60" r="43" fill="none" stroke="#d8b45d" stroke-opacity=".5" stroke-width=".7"/><circle cx="60" cy="60" r="39" fill="none" stroke="#d8b45d" stroke-width="2" stroke-dasharray="1.15 2.93" stroke-linecap="round"/><circle cx="60" cy="60" r="43" fill="none" stroke="#f3d98e" stroke-width="3" stroke-dasharray="1.8 20.71"/><g fill="#f6e5b6" font-family="Arial,sans-serif" font-size="8" font-weight="700" text-anchor="middle"><text x="60" y="26">12</text><text x="94" y="63">3</text><text x="60" y="99">6</text><text x="26" y="63">9</text></g><path d="M60 14v5 M106 60h-5 M60 106v-5 M14 60h5" stroke="#fff0b2" stroke-width="1.4" stroke-linecap="round"/><line class="bhr-clock-hand bhr-clock-hour-hand" data-hour-hand x1="60" y1="60" x2="60" y2="39"/><line class="bhr-clock-hand bhr-clock-minute-hand" data-minute-hand x1="60" y1="60" x2="60" y2="29"/><line class="bhr-clock-hand bhr-clock-second-hand" data-second-hand x1="60" y1="65" x2="60" y2="21"/><circle cx="60" cy="60" r="5.3" fill="#080a0c" stroke="url(#bhrBezel)" stroke-width="2"/><circle class="bhr-clock-analog-center" cx="60" cy="60" r="2.4"/></svg><div class="bhr-clock-live-label">LOCAL MARKET TIME</div></div><div class="bhr-clock-time" data-time>--:--:--</div><div class="bhr-clock-date" data-date>—</div><div class="bhr-clock-meta"><span data-session>ساعات مرجع</span><span class="bhr-clock-countdown" data-countdown>—</span></div>';
   grid.append(el);
   return el;
  });
