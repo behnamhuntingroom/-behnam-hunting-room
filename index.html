@@ -5666,3 +5666,17 @@ header .brand .bhr-brand-emblem img{
 }
 .bhr-primary-monogram img{transform:none!important;object-fit:contain!important;}
 </style>
+
+<style id="bhr-primary-logo-height-final">
+/* Reduce only the visible height of the primary logo; keep its 650px frame width. */
+.bhr-primary-monogram{width:min(650px,82vw)!important;overflow:hidden!important}
+.bhr-primary-monogram img{
+ width:100%!important;
+ height:auto!important;
+ transform:scaleY(.72)!important;
+ transform-origin:center!important;
+}
+@media(max-width:600px){
+ .bhr-primary-monogram{width:96vw!important}
+}
+</style>
