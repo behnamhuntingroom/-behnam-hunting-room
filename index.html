@@ -524,8 +524,8 @@ header #bhrCartCount{
 <meta name="apple-mobile-web-app-title" content="اتاق شکار">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="./manifest.webmanifest">
-<link rel="apple-touch-icon" href="./LOGO.png?v=7c2d88d">
-<link rel="icon" href="./LOGO.png?v=7c2d88d" type="image/png">
+<link rel="apple-touch-icon" href="./pwa-icon-192.png?v=20261124">
+<link rel="icon" href="./pwa-icon-192.png?v=20261124" type="image/png">
 
 <style id="bhr-cart-style">
 #bhrCartToggle{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border:1px solid var(--gold);border-radius:12px;background:linear-gradient(135deg,rgba(215,180,90,.16),rgba(255,255,255,.04));color:var(--gold2);font:inherit;font-size:13px;cursor:pointer;white-space:nowrap;transition:.2s}
@@ -1153,7 +1153,7 @@ header nav #bhrCartCount{min-width:16px!important;height:16px!important;padding:
 </header>
 <main>
 <div class="wrap hero" id="home">
-<div class="bhr-primary-monogram" role="img" aria-label="لوگوی رسمی BEHNAM HUNTING ROOM"><img src="./LOGO.png?v=7c2d88d" alt="لوگوی رسمی BEHNAM HUNTING ROOM"></div>
+<div class="bhr-primary-monogram" role="img" aria-label="لوگوی رسمی BEHNAM HUNTING ROOM"><img src="./pwa-icon-192.png?v=20261124" alt="لوگوی رسمی BEHNAM HUNTING ROOM"></div>
 <div class="eyebrow">TRADE • LEARN • PROFIT</div>
 <h1 data-fa="اتاق شکار بهنام" data-en="BEHNAM HUNTING ROOM">اتاق شکار بهنام</h1>
 <p data-fa="تحلیل بازار، آموزش و بررسی سناریوهای معاملاتی با تمرکز بر طلا، نزدک و رمزارزها." data-en="Market analysis, education and trading scenarios focused on Gold, Nasdaq and Crypto.">تحلیل بازار، آموزش و بررسی سناریوهای معاملاتی با تمرکز بر طلا، نزدک و رمزارزها.</p>
@@ -3299,7 +3299,7 @@ document.querySelectorAll("#bhr-upgrade button").forEach(b=>{
 /* Register the installable mobile app service worker */
 if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js", { scope: "./" })
+    navigator.serviceWorker.register("./sw.js", { scope: "./", updateViaCache: "none" })
       .catch(error => console.warn("BHR service worker registration failed:", error));
   });
 }

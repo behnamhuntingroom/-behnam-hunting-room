@@ -1,9 +1,10 @@
-const CACHE_NAME = "bhr-pwa-v1";
+const CACHE_NAME = "bhr-pwa-v2";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
-  "./Logo.jpg"
+  "./pwa-icon-192.png?v=20261124",
+  "./pwa-icon.svg?v=20261124"
 ];
 
 self.addEventListener("install", event => {
@@ -28,7 +29,6 @@ self.addEventListener("activate", event => {
 self.addEventListener("fetch", event => {
   const request = event.request;
   const url = new URL(request.url);
-
   if (request.method !== "GET" || url.origin !== self.location.origin) return;
 
   if (request.mode === "navigate") {
