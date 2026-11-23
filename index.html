@@ -5706,3 +5706,86 @@ header .brand .bhr-brand-emblem img{
 }
 </style>
 
+
+
+<style id="bhr-ambient-piano-control">
+#bhr-ambient-piano{
+ position:fixed;left:18px;bottom:18px;z-index:9998;
+ display:flex;align-items:center;gap:8px;
+ padding:9px 13px;border:1px solid rgba(212,175,95,.38);
+ border-radius:999px;background:rgba(8,15,25,.88);
+ color:#e8d8b0;font:600 12px/1.4 inherit;
+ box-shadow:0 5px 20px rgba(0,0,0,.28);
+ backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+ cursor:pointer;transition:background .2s,border-color .2s,transform .2s;
+}
+#bhr-ambient-piano:hover{background:rgba(22,31,43,.96);border-color:rgba(212,175,95,.7);transform:translateY(-1px)}
+#bhr-ambient-piano .bhr-piano-dot{width:7px;height:7px;border-radius:50%;background:#89919b;box-shadow:0 0 0 3px rgba(137,145,155,.12)}
+#bhr-ambient-piano[aria-pressed="true"] .bhr-piano-dot{background:#a9d9b0;box-shadow:0 0 9px rgba(130,220,150,.65)}
+@media(max-width:600px){#bhr-ambient-piano{left:10px;bottom:12px;padding:8px 11px;font-size:11px}}
+</style>
+<button id="bhr-ambient-piano" type="button" aria-pressed="false" aria-label="روشن کردن موسیقی آرام پیانو">
+ <span class="bhr-piano-dot" aria-hidden="true"></span><span id="bhr-ambient-piano-label">♫ موسیقی آرام: خاموش</span>
+</button>
+<script id="bhr-original-ambient-piano">
+(()=>{
+ const button=document.getElementById("bhr-ambient-piano");
+ const label=document.getElementById("bhr-ambient-piano-label");
+ if(!button||!label)return;
+ let ctx=null,master=null,timer=null,playing=false,step=0;
+ const melody=[55,60,64,67,64,60,57,60,62,65,69,65,62,60,55,59];
+ const hz=n=>440*Math.pow(2,(n-69)/12);
+ function note(midi,when,duration,volume){
+  const fundamental=hz(midi);
+  const partials=[[1,0.72],[2,0.19],[3,0.065],[4,0.025]];
+  partials.forEach(([ratio,level],index)=>{
+   const osc=ctx.createOscillator(),gain=ctx.createGain(),filter=ctx.createBiquadFilter();
+   osc.type=index===0?"triangle":"sine";
+   osc.frequency.setValueAtTime(fundamental*ratio,when);
+   if(index===0)osc.detune.setValueAtTime(-2,when);
+   filter.type="lowpass";filter.frequency.setValueAtTime(2600,when);filter.Q.value=0.35;
+   const peak=volume*level;
+   gain.gain.setValueAtTime(0.0001,when);
+   gain.gain.exponentialRampToValueAtTime(Math.max(0.0002,peak),when+0.018);
+   gain.gain.exponentialRampToValueAtTime(0.0001,when+duration);
+   osc.connect(filter);filter.connect(gain);gain.connect(master);
+   osc.start(when);osc.stop(when+duration+0.04);
+  });
+ }
+ function playStep(){
+  if(!playing||!ctx)return;
+  const now=ctx.currentTime+0.04;
+  const n=melody[step%melody.length];
+  note(n,now,2.5,0.085);
+  if(step%4===0)note(n-12,now,3.1,0.045);
+  step++;
+ }
+ async function start(){
+  const AudioContext=window.AudioContext||window.webkitAudioContext;
+  if(!AudioContext){label.textContent="مرورگر از پخش موسیقی پشتیبانی نمی‌کند";return}
+  if(!ctx){ctx=new AudioContext();master=ctx.createGain();master.gain.value=0.0001;master.connect(ctx.destination)}
+  await ctx.resume();
+  playing=true;step=0;
+  master.gain.cancelScheduledValues(ctx.currentTime);
+  master.gain.setValueAtTime(Math.max(0.0001,master.gain.value),ctx.currentTime);
+  master.gain.linearRampToValueAtTime(0.22,ctx.currentTime+2.8);
+  playStep();timer=window.setInterval(playStep,1900);
+  button.setAttribute("aria-pressed","true");
+  button.setAttribute("aria-label","خاموش کردن موسیقی آرام پیانو");
+  label.textContent="♫ موسیقی آرام: روشن";
+ }
+ function stop(){
+  playing=false;if(timer){clearInterval(timer);timer=null}
+  if(ctx&&master){
+   master.gain.cancelScheduledValues(ctx.currentTime);
+   master.gain.setValueAtTime(Math.max(0.0001,master.gain.value),ctx.currentTime);
+   master.gain.linearRampToValueAtTime(0.0001,ctx.currentTime+1.4);
+   window.setTimeout(()=>{if(!playing&&ctx)ctx.suspend()},1500);
+  }
+  button.setAttribute("aria-pressed","false");
+  button.setAttribute("aria-label","روشن کردن موسیقی آرام پیانو");
+  label.textContent="♫ موسیقی آرام: خاموش";
+ }
+ button.addEventListener("click",()=>{if(playing)stop();else start().catch(()=>{label.textContent="برای پخش دوباره کلیک کنید"})});
+})();
+</script>
