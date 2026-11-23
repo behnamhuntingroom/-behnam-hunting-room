@@ -3569,6 +3569,17 @@ if(brand&&!brand.querySelector(".bhr-sun-mark")){
  brand.prepend(mark);
 }
 const pages={home,room,academy,tools,community,about,features,heatmap,assistant:assistantPage,news:newsPage,clocks:clockPage};
+Object.values(pages).forEach(page=>{
+ const back=document.createElement("button");
+ back.type="button";back.className="bhr-page-back";
+ back.setAttribute("aria-label","بازگشت به صفحه قبل");
+ back.innerHTML='<span aria-hidden="true">↩</span><span>بازگشت به صفحه قبل</span>';
+ back.addEventListener("click",()=>{
+  if(history.length>1){history.back();return;}
+  if(page!==home)showPage("home",true);
+ });
+ page.insertBefore(back,page.firstChild);
+});
 function showPage(requestedKey,updateHash){
  const key=requestedKey==="markets"?"home":(pages[requestedKey]?requestedKey:"home");
  Object.entries(pages).forEach(([name,node])=>node.classList.toggle("is-active",name===key));
@@ -6260,3 +6271,29 @@ header .brand .bhr-brand-emblem img{
 <style id="bhr-desktop-logo-caption-raise">
 @media(min-width:761px){.bhr-primary-monogram{margin-bottom:-150px!important}}
 </style>
+
+<style id="bhr-light-mode-contrast-and-back-nav">
+:root[data-theme="light"] .bhr-price-banner .bhr-price-item small{color:#d7c9a5!important}
+:root[data-theme="light"] .bhr-price-banner .bhr-price-item .bhr-world-price{color:#a9e6ca!important}
+:root[data-theme="light"] #instagram-promo .wrap>div{
+ border-color:rgba(128,91,18,.3)!important;
+ background:linear-gradient(120deg,#fffaf0,#ffffff 58%,#f8eedc)!important;
+ box-shadow:0 12px 30px rgba(55,43,20,.12)!important
+}
+:root[data-theme="light"] #instagram-promo h2{color:#684507!important;text-shadow:none!important}
+:root[data-theme="light"] #instagram-promo p{color:#374151!important;text-shadow:none!important}
+:root[data-theme="light"] #instagram-promo a[aria-label^="YouTube"]{
+ color:#26313b!important;background:#fff!important;border-color:rgba(128,91,18,.35)!important
+}
+.bhr-page-back{
+ display:inline-flex!important;align-items:center;justify-content:center;gap:8px;
+ min-height:42px!important;margin:0 4% 14px auto;padding:7px 12px!important;
+ border:1px solid var(--line)!important;border-radius:10px!important;
+ background:var(--panel)!important;color:var(--gold2)!important;
+ font:inherit;font-size:12px!important;cursor:pointer
+}
+.bhr-page-back:hover{border-color:var(--gold2)!important;background:var(--goldGlow)!important}
+.bhr-page-back:focus-visible{outline:2px solid var(--gold2);outline-offset:3px}
+@media(max-width:760px){.bhr-page-back{font-size:11px!important;margin-bottom:10px}}
+</style>
+
