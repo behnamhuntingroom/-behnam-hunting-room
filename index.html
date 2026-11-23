@@ -5109,6 +5109,13 @@ header .bhr-sun-letters:after{
 .bhr-heatmap-tabs .bhr-heatmap-tab-icon{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;font-family:Arial,sans-serif;font-size:19px;line-height:1;opacity:1;filter:none;text-shadow:0 1px 3px #0005}
 .bhr-heatmap-tabs .bhr-crypto-tab-icon{color:#f7931a;font-weight:900}
 .bhr-heatmap-tabs .bhr-forex-tab-icon{color:#38bdf8;font-size:25px;font-weight:900}
+/* Keep heatmap market tabs readable in both themes */
+#bhr-heatmap-page .bhr-heatmap-tabs button{color:#f8fafc!important}
+#bhr-heatmap-page .bhr-heatmap-tabs button.active{color:#f5bd4f!important}
+#bhr-heatmap-page .bhr-heatmap-tabs button>span:not(.bhr-heatmap-tab-icon){color:inherit!important}
+#bhr-heatmap-page .bhr-heatmap-tabs .bhr-heatmap-tab-icon{font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif!important;opacity:1!important;filter:none!important}
+#bhr-heatmap-page .bhr-heatmap-tabs .bhr-crypto-tab-icon{font-family:Arial,sans-serif!important;color:#f7931a!important}
+#bhr-heatmap-page .bhr-heatmap-tabs .bhr-forex-tab-icon{font-family:Arial,sans-serif!important;color:#38bdf8!important}
 .bhr-heatmap-caption,.bhr-heatmap-source{text-align:center;color:var(--muted);font-size:12px;line-height:1.8;margin:8px 0 14px}
 .bhr-heatmap-widget{width:100%;min-height:540px;border-radius:12px;overflow:hidden}
 .bhr-heatmap-widget iframe{width:100%!important;max-width:100%!important}
