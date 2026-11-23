@@ -3570,6 +3570,7 @@ if(brand&&!brand.querySelector(".bhr-sun-mark")){
 }
 const pages={home,room,academy,tools,community,about,features,heatmap,assistant:assistantPage,news:newsPage,clocks:clockPage};
 Object.values(pages).forEach(page=>{
+ if(page===home)return;
  const back=document.createElement("button");
  back.type="button";back.className="bhr-page-back";
  back.setAttribute("aria-label","بازگشت به صفحه قبل");
@@ -5001,7 +5002,7 @@ header .brand .bhr-brand-emblem img{display:block;width:100%;height:100%;object-
 :root[data-theme="light"] #bhr-method .bhr-method-lead{color:#d8cfba!important}
 :root[data-theme="light"] #bhr-method .bhr-method-pillar p{color:#c9c0ad!important}
 :root[data-theme="light"] #bhr-method .bhr-method-process{color:#ead9ac!important}
-:root[data-theme="light"] #bhr-iran-index{
+:root[data-theme="light"] .bhr-iran-index{
   background:linear-gradient(120deg,#fffdf7,#f1ead9)!important;
   border-color:rgba(128,91,18,.32)!important;
 }
@@ -6296,5 +6297,26 @@ header .brand .bhr-brand-emblem img{
 .bhr-page-back:hover{border-color:var(--gold2)!important;background:var(--goldGlow)!important}
 .bhr-page-back:focus-visible{outline:2px solid var(--gold2);outline-offset:3px}
 @media(max-width:760px){.bhr-page-back{font-size:11px!important;margin-bottom:10px}}
+</style>
+
+<style id="bhr-light-mode-iran-index-tg-fix">
+:root[data-theme="light"] .bhr-iran-index{
+ background:linear-gradient(120deg,#fffdf7,#f1ead9)!important;
+ border-color:rgba(128,91,18,.32)!important
+}
+:root[data-theme="light"] .bhr-iran-index-title,
+:root[data-theme="light"] .bhr-iran-index-title strong{color:#684507!important}
+:root[data-theme="light"] .bhr-iran-index-title span{color:#475569!important}
+:root[data-theme="light"] .bhr-iran-index-value{color:#20252b!important}
+:root[data-theme="light"] .bhr-iran-index-metrics{color:#334155!important}
+:root[data-theme="light"] .bhr-iran-index-metrics .positive{color:#087443!important}
+:root[data-theme="light"] .bhr-iran-index-metrics .negative{color:#b42318!important}
+:root[data-theme="light"] #instagram-promo a[aria-label^="Telegram"]{
+ background:#fff!important;border-color:rgba(42,171,238,.6)!important
+}
+:root[data-theme="light"] #instagram-promo a[aria-label^="Telegram"],
+:root[data-theme="light"] #instagram-promo a[aria-label^="Telegram"] *{
+ color:#1f2937!important
+}
 </style>
 
