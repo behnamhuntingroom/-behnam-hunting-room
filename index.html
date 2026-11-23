@@ -1057,7 +1057,7 @@ header .bhr-main-nav .nav-icon{
 </head>
 <body>
 <header>
-<a class="brand" href="#home" aria-label="BEHNAM HUNTING ROOM"><span class="bhr-brand-emblem" aria-hidden="true"><svg viewBox="0 0 100 100"><defs><linearGradient id="bhrGoldOne" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff3bd"/><stop offset=".5" stop-color="#d7a844"/><stop offset="1" stop-color="#8d6422"/></linearGradient></defs><path d="M17 42C29 8 69 4 84 26" fill="none" stroke="url(#bhrGoldOne)" stroke-width="3" stroke-linecap="round"/><path d="M72 13l17 5-8 16" fill="none" stroke="url(#bhrGoldOne)" stroke-width="3" stroke-linejoin="round"/><text x="50" y="66" text-anchor="middle" font-family="Georgia,serif" font-size="38" font-weight="700" letter-spacing="-4" fill="url(#bhrGoldOne)">BHR</text><path d="M22 76C38 91 68 88 82 69" fill="none" stroke="url(#bhrGoldOne)" stroke-width="2.5" stroke-linecap="round"/></svg></span><span class="bhr-brand-name"><span class="bhr-brand-behnam">BEHNAM</span><span class="bhr-brand-huntingroom"><span class="bhr-brand-hunting">HUNTING</span> <span class="bhr-brand-room">ROOM</span></span></span></a>
+<a class="brand" href="#home" aria-label="BEHNAM HUNTING ROOM"><span class="bhr-brand-emblem" aria-hidden="true"><img src="./LOGO.png" alt=""></span><span class="bhr-brand-name"><span class="bhr-brand-behnam">BEHNAM</span><span class="bhr-brand-huntingroom"><span class="bhr-brand-hunting">HUNTING</span> <span class="bhr-brand-room">ROOM</span></span></span></a>
 <nav class="bhr-main-nav">
 <a href="#home" aria-label="خانه"><svg class="nav-icon bhr-nav-home" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8 1.8 11.1a1.2 1.2 0 0 0 1.5 1.9L4.5 12v8.1c0 .9.7 1.6 1.6 1.6h4.2v-6.1h3.4v6.1h4.2c.9 0 1.6-.7 1.6-1.6V12l1.2 1a1.2 1.2 0 0 0 1.5-1.9L12 2.8z"/></svg><span data-fa="خانه" data-en="Home">خانه</span></a>
 <a href="#markets" aria-label="بازارها"><svg class="nav-icon bhr-nav-markets" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20h18v2H1V2h2v18zm3-3.2 4.1-5.1 3.2 2.5 5.2-7.1 2.1 1.5-6.8 9.2-3.3-2.6-2.5 3.1-2-1.5z"/><path d="M16.5 5H22v5.5z"/></svg><span data-fa="بازارها" data-en="Markets">بازارها</span></a>
@@ -1082,7 +1082,7 @@ header .bhr-main-nav .nav-icon{
 </header>
 <main>
 <div class="wrap hero" id="home">
-<div class="bhr-primary-monogram" role="img" aria-label="لوگوی شماره ۱، مونوگرام BHR"><img src="./bhr-logo-option-1.svg" alt="BEHNAM HUNTING ROOM — BHR monogram"></div>
+<div class="bhr-primary-monogram" role="img" aria-label="لوگوی رسمی BEHNAM HUNTING ROOM"><img src="./LOGO.png" alt="لوگوی رسمی BEHNAM HUNTING ROOM"></div>
 <div class="eyebrow">TRADE • LEARN • PROFIT</div>
 <h1 data-fa="اتاق شکار بهنام" data-en="BEHNAM HUNTING ROOM">اتاق شکار بهنام</h1>
 <p data-fa="تحلیل بازار، آموزش و بررسی سناریوهای معاملاتی با تمرکز بر طلا، نزدک و رمزارزها." data-en="Market analysis, education and trading scenarios focused on Gold, Nasdaq and Crypto.">تحلیل بازار، آموزش و بررسی سناریوهای معاملاتی با تمرکز بر طلا، نزدک و رمزارزها.</p>
@@ -4858,13 +4858,13 @@ header .brand .bhr-brand-hunting,header .brand .bhr-brand-room{color:inherit!imp
 
 
 <style id="bhr-monogram-logo-one">
-/* Replace the temporary badge and bear/bull artwork with the BHR monogram identity */
-header .brand .bhr-brand-emblem{padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;flex:0 0 48px!important;width:48px!important;height:48px!important}
+/* Exact artwork from the user's uploaded LOGO.png; preserve animated wordmark. */
+header .brand .bhr-brand-emblem{overflow:hidden!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;flex:0 0 48px!important;width:48px!important;height:48px!important}
 header .brand .bhr-brand-emblem:after{display:none!important}
-header .brand .bhr-brand-emblem svg{display:block;width:100%;height:100%;filter:drop-shadow(0 0 7px rgba(215,180,90,.25))}
-.bhr-primary-monogram{width:min(330px,68vw);height:auto;margin:0 auto 18px;display:grid;place-items:center}
+header .brand .bhr-brand-emblem img{display:block;width:100%;height:100%;object-fit:cover;object-position:16% center;filter:drop-shadow(0 0 7px rgba(215,180,90,.25))}
+.bhr-primary-monogram{width:min(900px,94vw);height:auto;margin:0 auto 18px;display:grid;place-items:center}
 .bhr-primary-monogram img{display:block;width:100%;height:auto;overflow:hidden;border-radius:14px;filter:drop-shadow(0 10px 25px rgba(215,180,90,.2))}
-@media(max-width:600px){header .brand .bhr-brand-emblem{flex-basis:40px!important;width:40px!important;height:40px!important}.bhr-primary-monogram{width:min(260px,78vw)}}
+@media(max-width:600px){header .brand .bhr-brand-emblem{flex-basis:40px!important;width:40px!important;height:40px!important}.bhr-primary-monogram{width:96vw}}
 </style>
 
 </body>
