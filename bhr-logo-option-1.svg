@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 850" role="img" aria-labelledby="title desc">
+<title id="title">BEHNAM HUNTING ROOM — BHR monogram</title><desc id="desc">Gold BHR monogram with an upward arrow and sweep, silver BEHNAM and gold HUNTING ROOM lettering on a black trading-chart background.</desc>
+<defs>
+ <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff3bd"/><stop offset=".3" stop-color="#f5c85e"/><stop offset=".62" stop-color="#bd8426"/><stop offset="1" stop-color="#fff0a5"/></linearGradient>
+ <linearGradient id="silver" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff"/><stop offset=".55" stop-color="#c8cbd0"/><stop offset="1" stop-color="#777b82"/></linearGradient>
+ <radialGradient id="glow"><stop stop-color="#d9a83f" stop-opacity=".22"/><stop offset="1" stop-color="#d9a83f" stop-opacity="0"/></radialGradient>
+ <filter id="soft"><feGaussianBlur stdDeviation="12"/></filter>
+</defs>
+<rect width="900" height="850" rx="34" fill="#050606"/>
+<rect x="4" y="4" width="892" height="842" rx="31" fill="none" stroke="#c9a44f" stroke-opacity=".78" stroke-width="2"/>
+<ellipse cx="450" cy="330" rx="360" ry="300" fill="url(#glow)"/>
+<g opacity=".22" stroke="#9d772f" stroke-width="2">
+ <path d="M40 430V350h14v80M80 430V300h14v130M120 430V260h14v170M160 430V320h14v110M200 430V230h14v200M700 430V310h14v120M740 430V245h14v185M780 430V200h14v230M820 430V280h14v150"/>
+ <path d="M47 350v-40m40-10v-40m40-40v-36m40 76v-42m40-80v-45m500 213v-38m40-65v-40m40-45v-42m40 80v-50" stroke="#d5a844" stroke-width="4"/>
+</g>
+<path d="M200 310 C265 115 520 82 665 170" fill="none" stroke="url(#gold)" stroke-width="13" stroke-linecap="round"/>
+<path d="M632 118 L744 108 L700 218" fill="none" stroke="url(#gold)" stroke-width="15" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="450" y="410" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="225" font-weight="bold" letter-spacing="-20" fill="url(#gold)" stroke="#6f4b16" stroke-width="2" paint-order="stroke">BHR</text>
+<path d="M210 452 C290 570 550 566 680 435" fill="none" stroke="url(#gold)" stroke-width="12" stroke-linecap="round"/>
+<path d="M90 500H810" stroke="url(#gold)" stroke-width="3" opacity=".9"/>
+<text x="450" y="625" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="104" font-weight="700" letter-spacing="7" fill="url(#silver)">BEHNAM</text>
+<path d="M55 658H845" stroke="url(#gold)" stroke-width="3"/>
+<text x="450" y="735" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="66" font-weight="600" letter-spacing="3" fill="url(#gold)">HUNTING ROOM</text>
+<path d="M160 778H740" stroke="url(#gold)" stroke-width="2" opacity=".7"/>
+</svg>
