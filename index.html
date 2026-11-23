@@ -3364,6 +3364,7 @@ features.insertAdjacentHTML("beforeend", '<div class="bhr-section"><div class="b
 const heatmap=makePage("bhr-heatmap-page","BHR MARKET HEATMAP","نقشه حرارتی بازارهای جهانی؛ سبز برای رشد و قرمز برای افت");
 const assistantPage=makePage("bhr-assistant-page","دستیار هوشمند BHR","تحلیلگر هوشمند بازارها و همراه اختصاصی روش معاملاتی BHR");
 const newsPage=makePage("bhr-news-page","اخبار بازار","خبرهای مهم بازارهای جهانی، خلاصه خبرها و تقویم اقتصادی زنده");
+const clockPage=makePage("bhr-world-clocks-page","ساعت بازارهای جهانی","ساعت زنده شش مرکز مهم بازار؛ با محاسبه خودکار ساعت تابستانی و زمستانی");
 heatmap.insertAdjacentHTML("beforeend", `
  <section class="bhr-heatmap-panel">
   <div class="bhr-heatmap-tabs" role="tablist" aria-label="انتخاب بازار">
@@ -3472,6 +3473,7 @@ if(nav){
  '<a href="#bhr-page-room" data-bhr-page="room">◈ <span>اتاق معاملاتی</span></a>'+
  '<a href="#bhr-page-academy" data-bhr-page="academy">▤ <span>آکادمی</span></a>'+
  '<a href="#bhr-page-markets" data-bhr-page="markets">⌁ <span>مرکز بازار</span></a>'+
+ '<a href="#bhr-page-clocks" data-bhr-page="clocks">◷ <span>ساعت بازارها</span></a>'+
  '<a href="#bhr-page-tools" data-bhr-page="tools">⚙ <span>ابزارها</span></a>'+
  '<a href="#bhr-page-community" data-bhr-page="community">♧ <span>تحلیل کاربران</span></a>'+
  
@@ -3493,7 +3495,7 @@ if(brand&&!brand.querySelector(".bhr-sun-mark")){
  mark.innerHTML='<span class="bhr-sun-letters">BHR</span>';
  brand.prepend(mark);
 }
-const pages={home,room,academy,tools,community,about,features,heatmap,assistant:assistantPage,news:newsPage};
+const pages={home,room,academy,tools,community,about,features,heatmap,assistant:assistantPage,news:newsPage,clocks:clockPage};
 function showPage(requestedKey,updateHash){
  const key=requestedKey==="markets"?"home":(pages[requestedKey]?requestedKey:"home");
  Object.entries(pages).forEach(([name,node])=>node.classList.toggle("is-active",name===key));
@@ -3501,7 +3503,7 @@ function showPage(requestedKey,updateHash){
  if(nav)nav.querySelectorAll("[data-bhr-page]").forEach(a=>{if(a.dataset.bhrPage===requestedKey)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
  window.scrollTo({top:0,behavior:"instant"});
  if(requestedKey==="markets"&&workspace)workspace.scrollIntoView({behavior:"smooth",block:"start"});
- document.title=(requestedKey==="markets"?"مرکز بازار":key==="home"?"اتاق شکار بهنام":({room:"اتاق معاملاتی",academy:"آکادمی آموزشی",tools:"ابزارهای ترید",community:"تحلیل کاربران",about:"درباره ما",features:"امکانات سایت",heatmap:"نقشه حرارتی بازار",assistant:"دستیار هوشمند BHR",news:"اخبار بازار"}[key]))+" | BEHNAM HUNTING ROOM";
+ document.title=(requestedKey==="markets"?"مرکز بازار":key==="home"?"اتاق شکار بهنام":({room:"اتاق معاملاتی",academy:"آکادمی آموزشی",tools:"ابزارهای ترید",community:"تحلیل کاربران",about:"درباره ما",features:"امکانات سایت",heatmap:"نقشه حرارتی بازار",assistant:"دستیار هوشمند BHR",news:"اخبار بازار",clocks:"ساعت بازارهای جهانی"}[key]))+" | BEHNAM HUNTING ROOM";
 }
 document.addEventListener("click",e=>{
   const link=e.target.closest("[data-bhr-page]");
@@ -4941,6 +4943,100 @@ header .brand .bhr-brand-emblem img{display:block;width:100%;height:100%;object-
   color:#4b5563!important;
 }
 </style>
+
+
+<style id="bhr-world-market-clocks-style">
+#bhr-world-clocks-page .bhr-clock-wrap{width:min(1120px,92%);margin:0 auto 34px}
+#bhr-world-clocks-page .bhr-clock-intro{margin:12px 0 18px;padding:14px 17px;border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--muted);font-size:13px;line-height:2}
+#bhr-world-clocks-page .bhr-clock-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+#bhr-world-clocks-page .bhr-clock-card{min-width:0;padding:18px;border:1px solid var(--line);border-radius:17px;background:var(--card);box-shadow:0 10px 28px #0002}
+#bhr-world-clocks-page .bhr-clock-card-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#bhr-world-clocks-page .bhr-clock-city{font-size:16px;font-weight:900;color:var(--gold2)}
+#bhr-world-clocks-page .bhr-clock-country{font-size:11px;color:var(--muted)}
+#bhr-world-clocks-page .bhr-clock-status{font-size:11px;font-weight:800;padding:4px 9px;border-radius:20px;border:1px solid}
+#bhr-world-clocks-page .bhr-clock-status.is-open{color:#16a36a;border-color:#16a36a66;background:#16a36a12}
+#bhr-world-clocks-page .bhr-clock-status.is-closed{color:#d16b62;border-color:#d16b6266;background:#d16b6212}
+#bhr-world-clocks-page .bhr-clock-time{font:800 clamp(27px,4vw,36px)/1.3 Arial,Tahoma,sans-serif;direction:ltr;text-align:center;letter-spacing:1px;color:var(--text);margin:15px 0 4px;font-variant-numeric:tabular-nums}
+#bhr-world-clocks-page .bhr-clock-date{text-align:center;color:var(--muted);font-size:11px}
+#bhr-world-clocks-page .bhr-clock-meta{display:flex;justify-content:space-between;gap:8px;margin-top:14px;padding-top:11px;border-top:1px solid var(--line);font-size:11px;color:var(--muted)}
+#bhr-world-clocks-page .bhr-clock-countdown{color:var(--gold2);font-weight:800;direction:ltr;font-variant-numeric:tabular-nums}
+#bhr-world-clocks-page .bhr-clock-footer{margin-top:16px;color:var(--muted);font-size:11px;line-height:1.9;text-align:center}
+@media(max-width:760px){#bhr-world-clocks-page .bhr-clock-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#bhr-world-clocks-page .bhr-clock-card{padding:14px}}
+@media(max-width:430px){#bhr-world-clocks-page .bhr-clock-grid{grid-template-columns:1fr}#bhr-world-clocks-page .bhr-clock-time{font-size:34px}}
+</style>
+<script id="bhr-world-market-clocks">
+(()=> {
+ "use strict";
+ const page=document.getElementById("bhr-world-clocks-page");
+ if(!page)return;
+ const sessions=[
+  {city:"ولینگتون",country:"نیوزیلند",flag:"🇳🇿",zone:"Pacific/Auckland",open:8,close:17},
+  {city:"سیدنی",country:"استرالیا",flag:"🇦🇺",zone:"Australia/Sydney",open:8,close:17},
+  {city:"توکیو",country:"ژاپن",flag:"🇯🇵",zone:"Asia/Tokyo",open:9,close:18},
+  {city:"لندن",country:"بریتانیا",flag:"🇬🇧",zone:"Europe/London",open:8,close:17},
+  {city:"نیویورک",country:"ایالات متحده",flag:"🇺🇸",zone:"America/New_York",open:8,close:17},
+  {city:"تورنتو",country:"کانادا",flag:"🇨🇦",zone:"America/Toronto",open:8,close:17}
+ ];
+ const wrap=document.createElement("div");
+ wrap.className="bhr-clock-wrap";
+ wrap.innerHTML='<div class="bhr-clock-intro">ساعت هر شهر مستقیماً از منطقه زمانی رسمی همان شهر محاسبه می‌شود. تغییر ساعت تابستانی و زمستانی به‌صورت خودکار اعمال می‌شود. ساعات نمایش‌داده‌شده، بازه مرجع روز کاری محلی (دوشنبه تا جمعه) هستند؛ ساعت دقیق باز و بسته‌شدن ممکن است با نوع بازار، بورس یا کارگزار تفاوت داشته باشد.</div><div class="bhr-clock-grid" id="bhrWorldClockGrid"></div><div class="bhr-clock-footer">به‌روزرسانی ساعت‌ها: هر ثانیه · زمان دستگاه شما مبنای محاسبه است · منطقه زمانی: IANA</div>';
+ page.append(wrap);
+ const grid=wrap.querySelector("#bhrWorldClockGrid");
+ const cards=sessions.map((x,i)=>{
+  const el=document.createElement("article");
+  el.className="bhr-clock-card";
+  el.innerHTML='<div class="bhr-clock-card-head"><div><div class="bhr-clock-city">'+x.flag+' '+x.city+'</div><div class="bhr-clock-country">'+x.country+'</div></div><span class="bhr-clock-status is-closed" data-status>بسته</span></div><div class="bhr-clock-time" data-time>--:--:--</div><div class="bhr-clock-date" data-date>—</div><div class="bhr-clock-meta"><span data-session>ساعات مرجع</span><span class="bhr-clock-countdown" data-countdown>—</span></div>';
+  grid.append(el);
+  return el;
+ });
+ const parts=(date,zone)=>{
+  const values={};
+  new Intl.DateTimeFormat("en-GB",{timeZone:zone,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hourCycle:"h23"}).formatToParts(date).forEach(p=>{if(p.type!=="literal")values[p.type]=p.value});
+  return {year:+values.year,month:+values.month,day:+values.day,hour:+values.hour,minute:+values.minute,second:+values.second};
+ };
+ const weekday=(date,zone)=>new Intl.DateTimeFormat("en-US",{timeZone:zone,weekday:"short"}).format(date);
+ const isWeekday=name=>name!=="Sat"&&name!=="Sun";
+ const utcForLocal=(p,zone)=>{
+  const target=Date.UTC(p.year,p.month-1,p.day,p.hour,p.minute,p.second||0);
+  let guess=target;
+  for(let n=0;n<4;n++){
+   const z=parts(new Date(guess),zone);
+   const represented=Date.UTC(z.year,z.month-1,z.day,z.hour,z.minute,z.second);
+   guess+=target-represented;
+  }
+  return new Date(guess);
+ };
+ const pad=n=>String(n).padStart(2,"0");
+ const countdown=ms=>{
+  const sec=Math.max(0,Math.floor(ms/1000));
+  const days=Math.floor(sec/86400),hours=Math.floor(sec%86400/3600),mins=Math.floor(sec%3600/60),secs=sec%60;
+  return (days?days+"d ":"")+pad(hours)+":"+pad(mins)+":"+pad(secs);
+ };
+ function update(){
+  const now=new Date();
+  sessions.forEach((x,i)=>{
+   const card=cards[i],p=parts(now,x.zone),day=weekday(now,x.zone),minute=p.hour*60+p.minute;
+   const open=isWeekday(day)&&minute>=x.open*60&&minute<x.close*60;
+   const status=card.querySelector("[data-status]");
+   status.textContent=open?"باز":"بسته";
+   status.className="bhr-clock-status "+(open?"is-open":"is-closed");
+   card.querySelector("[data-time]").textContent=pad(p.hour)+":"+pad(p.minute)+":"+pad(p.second);
+   card.querySelector("[data-date]").textContent=new Intl.DateTimeFormat("fa-IR",{timeZone:x.zone,weekday:"long",year:"numeric",month:"long",day:"numeric"}).format(now);
+   card.querySelector("[data-session]").textContent=pad(x.open)+":00 تا "+pad(x.close)+":00";
+   let target={year:p.year,month:p.month,day:p.day,hour:open?x.close:x.open,minute:0,second:0};
+   if(!open&&(!isWeekday(day)||minute>=x.open*60)){
+    let d=new Date(Date.UTC(p.year,p.month-1,p.day));
+    do{d.setUTCDate(d.getUTCDate()+1)}while(!isWeekday(new Intl.DateTimeFormat("en-US",{timeZone:x.zone,weekday:"short"}).format(utcForLocal({year:d.getUTCFullYear(),month:d.getUTCMonth()+1,day:d.getUTCDate(),hour:12,minute:0},x.zone))));
+    target={year:d.getUTCFullYear(),month:d.getUTCMonth()+1,day:d.getUTCDate(),hour:x.open,minute:0,second:0};
+   }
+   const targetDate=utcForLocal(target,x.zone);
+   card.querySelector("[data-countdown]").textContent=(open?"بسته‌شدن ":"بازگشایی ")+countdown(targetDate-now);
+  });
+ }
+ update();
+ setInterval(update,1000);
+})();
+</script>
 
 </body>
 
