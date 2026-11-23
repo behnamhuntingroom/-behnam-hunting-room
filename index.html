@@ -5684,3 +5684,17 @@ header .brand .bhr-brand-emblem img{
 /* Move the complete primary logo slightly upward without changing its size or header. */
 .bhr-primary-monogram{position:relative!important;top:-80px!important}
 </style>
+
+<style id="bhr-primary-logo-entrance">
+/* Fast one-time entrance for the main logo; preserve its final position and dimensions. */
+@keyframes bhrPrimaryLogoEntrance{
+  0%{transform:translateX(105vw);opacity:0}
+  78%{transform:translateX(-10px);opacity:1}
+  100%{transform:translateX(0);opacity:1}
+}
+.bhr-primary-monogram{animation:bhrPrimaryLogoEntrance .78s cubic-bezier(.18,.82,.24,1) both!important}
+@media(prefers-reduced-motion:reduce){
+  .bhr-primary-monogram{animation:none!important;opacity:1!important;transform:none!important}
+}
+</style>
+
