@@ -3367,10 +3367,10 @@ const newsPage=makePage("bhr-news-page","اخبار بازار","خبرهای م
 heatmap.insertAdjacentHTML("beforeend", `
  <section class="bhr-heatmap-panel">
   <div class="bhr-heatmap-tabs" role="tablist" aria-label="انتخاب بازار">
-   <button type="button" class="active" data-bhr-heatmap="stocks" role="tab" aria-selected="true">بورس آمریکا</button>
-   <button type="button" data-bhr-heatmap="iran" role="tab" aria-selected="false">بورس ایران</button>
-   <button type="button" data-bhr-heatmap="crypto" role="tab" aria-selected="false">ارزهای دیجیتال</button>
-   <button type="button" data-bhr-heatmap="forex" role="tab" aria-selected="false">فارکس</button>
+   <button type="button" class="active" data-bhr-heatmap="stocks" role="tab" aria-selected="true"><span class="bhr-heatmap-tab-icon" aria-hidden="true">🇺🇸</span><span>بورس آمریکا</span></button>
+   <button type="button" data-bhr-heatmap="iran" role="tab" aria-selected="false"><span class="bhr-heatmap-tab-icon" aria-hidden="true">🇮🇷</span><span>بورس ایران</span></button>
+   <button type="button" data-bhr-heatmap="crypto" role="tab" aria-selected="false"><span class="bhr-heatmap-tab-icon bhr-crypto-tab-icon" aria-hidden="true">₿</span><span>ارزهای دیجیتال</span></button>
+   <button type="button" data-bhr-heatmap="forex" role="tab" aria-selected="false"><span class="bhr-heatmap-tab-icon bhr-forex-tab-icon" aria-hidden="true">⇄</span><span>فارکس</span></button>
   </div>
   <div class="bhr-heatmap-caption">نمایش تغییرات بازار به‌صورت زنده از TradingView؛ برای مشاهده جزئیات روی هر خانه بروید یا آن را انتخاب کنید.</div>
   <div class="bhr-heatmap-widget" data-bhr-heatmap-host="stocks"></div>
@@ -5105,6 +5105,10 @@ header .bhr-sun-letters:after{
 .bhr-iran-heatmap-fallback a{display:inline-block;padding:9px 16px;border-radius:9px;background:var(--gold);color:#151515!important;text-decoration:none!important;font-weight:800}
 .bhr-heatmap-tabs button{border:1px solid var(--line);border-radius:10px;padding:10px 18px;background:#15191f;color:var(--text);font:inherit;cursor:pointer}
 .bhr-heatmap-tabs button.active{border-color:var(--gold2);color:var(--gold2);box-shadow:0 0 14px var(--goldGlow)}
+.bhr-heatmap-tabs button{display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.bhr-heatmap-tabs .bhr-heatmap-tab-icon{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;font-family:Arial,sans-serif;font-size:19px;line-height:1;opacity:1;filter:none;text-shadow:0 1px 3px #0005}
+.bhr-heatmap-tabs .bhr-crypto-tab-icon{color:#f7931a;font-weight:900}
+.bhr-heatmap-tabs .bhr-forex-tab-icon{color:#38bdf8;font-size:25px;font-weight:900}
 .bhr-heatmap-caption,.bhr-heatmap-source{text-align:center;color:var(--muted);font-size:12px;line-height:1.8;margin:8px 0 14px}
 .bhr-heatmap-widget{width:100%;min-height:540px;border-radius:12px;overflow:hidden}
 .bhr-heatmap-widget iframe{width:100%!important;max-width:100%!important}
