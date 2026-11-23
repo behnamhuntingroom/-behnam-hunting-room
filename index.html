@@ -4867,6 +4867,81 @@ header .brand .bhr-brand-emblem img{display:block;width:100%;height:100%;object-
 @media(max-width:600px){header .brand .bhr-brand-emblem{flex-basis:40px!important;width:40px!important;height:40px!important}.bhr-primary-monogram{width:96vw}}
 </style>
 
+
+<style id="bhr-light-mode-readability-audit">
+/* Site-wide light-theme contrast pass. Dark theme and layout remain untouched. */
+:root[data-theme="light"] body{
+  color:#20252b!important;
+  --text:#20252b;
+  --muted:#4b5563;
+  --gold:#76500b;
+  --gold2:#684507;
+  --line:rgba(112,83,28,.28);
+}
+:root[data-theme="light"] body :is(h1,h2,h3,h4,h5,h6,p,li,small,label,td,th,dt,dd,summary,figcaption,caption){
+  color:#26313b!important;
+  text-shadow:none!important;
+}
+:root[data-theme="light"] body :is(.muted,.note,.subtitle,.description,.status,.meta,.caption,.hint,.help-text,.secondary-text,.text-muted){
+  color:#4b5563!important;
+}
+:root[data-theme="light"] body a:not(.bhr-shortcut):not(.bhr-nav-cart):not(.bhr-auth-nav-button){
+  color:#65470d;
+}
+:root[data-theme="light"] body :is(input,select,textarea){
+  color:#20252b!important;
+  background:#fff!important;
+  border-color:#a9a08d!important;
+}
+:root[data-theme="light"] body :is(input,textarea)::placeholder{
+  color:#68717d!important;
+  opacity:1!important;
+}
+:root[data-theme="light"] body :is(button,.theme-btn,.lang){
+  text-shadow:none!important;
+}
+:root[data-theme="light"] body :is(.positive,.negative,.up,.down,.gain,.loss,.bullish,.bearish,[class~="green"],[class~="red"]){
+  font-weight:700;
+}
+/* Preserve intentional market-direction colors and dark branded panels. */
+:root[data-theme="light"] #bhr-method,
+:root[data-theme="light"] #bhr-method :is(h1,h2,h3,h4,h5,h6,p,li,small,b,strong,span){
+  color:inherit!important;
+}
+:root[data-theme="light"] #bhr-method{color:#f4ead0!important}
+:root[data-theme="light"] #bhr-method .bhr-method-kicker{color:#d7b45a!important}
+:root[data-theme="light"] #bhr-method h2,
+:root[data-theme="light"] #bhr-method .bhr-method-pillars b{color:#f2d98b!important}
+:root[data-theme="light"] #bhr-method .bhr-method-lead{color:#d8cfba!important}
+:root[data-theme="light"] #bhr-method .bhr-method-pillar p{color:#c9c0ad!important}
+:root[data-theme="light"] #bhr-method .bhr-method-process{color:#ead9ac!important}
+:root[data-theme="light"] #bhr-iran-index{
+  background:linear-gradient(120deg,#fffdf7,#f1ead9)!important;
+  border-color:rgba(128,91,18,.32)!important;
+}
+:root[data-theme="light"] .bhr-iran-index-title{color:#684507!important}
+:root[data-theme="light"] .bhr-iran-index-title span,
+:root[data-theme="light"] .bhr-iran-index-metrics{color:#4b5563!important}
+:root[data-theme="light"] .bhr-iran-index-value{color:#20252b!important}
+:root[data-theme="light"] .bhr-iran-index-metrics .positive{color:#087443!important}
+:root[data-theme="light"] .bhr-iran-index-metrics .negative{color:#b42318!important}
+:root[data-theme="light"] .bhr-iran-map-foot,
+:root[data-theme="light"] .bhr-iran-map-status{color:#465363!important}
+:root[data-theme="light"] #bhr-user-panel-box,
+:root[data-theme="light"] #bhr-auth-box,
+:root[data-theme="light"] #bhr-support-panel{
+  color:#20252b!important;
+}
+:root[data-theme="light"] #bhr-user-panel-box :is(p,small,label,span,li),
+:root[data-theme="light"] #bhr-auth-box :is(p,small,label,span,li),
+:root[data-theme="light"] #bhr-support-panel :is(p,small,label,span,li){color:#26313b!important}
+:root[data-theme="light"] #bhr-user-panel-box :is(h1,h2,h3,h4),
+:root[data-theme="light"] #bhr-auth-box h3{color:#684507!important}
+:root[data-theme="light"] body :is(.bhr-news-meta,.bhr-up-status,.bhr-economic-date,.bhr-economic-source,.bhr-economic-empty){
+  color:#4b5563!important;
+}
+</style>
+
 </body>
 
 <style id="bhr-file-attachment-visibility-fix">
