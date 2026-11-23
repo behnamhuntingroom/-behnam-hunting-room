@@ -1128,7 +1128,7 @@ header nav #bhrCartCount{min-width:16px!important;height:16px!important;padding:
 </head>
 <body>
 <header>
-<a class="brand" href="#home" aria-label="BEHNAM HUNTING ROOM"><span class="bhr-brand-name"><span class="bhr-brand-behnam">BEHNAM</span><span class="bhr-brand-huntingroom"><span class="bhr-brand-hunting">HUNTING</span> <span class="bhr-brand-room">ROOM</span></span></span></a>
+<a class="brand" href="#bhr-page-home" data-bhr-page="home" aria-label="بازگشت به خانه"><span class="bhr-brand-name"><span class="bhr-brand-behnam">BEHNAM</span><span class="bhr-brand-huntingroom"><span class="bhr-brand-hunting">HUNTING</span> <span class="bhr-brand-room">ROOM</span></span></span></a>
 <nav class="bhr-main-nav">
 <a href="#home" aria-label="خانه"><svg class="nav-icon bhr-nav-home" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8 1.8 11.1a1.2 1.2 0 0 0 1.5 1.9L4.5 12v8.1c0 .9.7 1.6 1.6 1.6h4.2v-6.1h3.4v6.1h4.2c.9 0 1.6-.7 1.6-1.6V12l1.2 1a1.2 1.2 0 0 0 1.5-1.9L12 2.8z"/></svg><span data-fa="خانه" data-en="Home">خانه</span></a>
 <a href="#markets" aria-label="بازارها"><svg class="nav-icon bhr-nav-markets" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20h18v2H1V2h2v18zm3-3.2 4.1-5.1 3.2 2.5 5.2-7.1 2.1 1.5-6.8 9.2-3.3-2.6-2.5 3.1-2-1.5z"/><path d="M16.5 5H22v5.5z"/></svg><span data-fa="بازارها" data-en="Markets">بازارها</span></a>
@@ -3485,6 +3485,7 @@ const shortcuts=document.createElement("div");
 shortcuts.className="bhr-home-shortcuts";
 shortcuts.innerHTML=
  '<a class="bhr-shortcut bhr-shortcut-heatmap" href="#bhr-page-heatmap" data-bhr-page="heatmap"><span class="bhr-shortcut-icon bhr-heatmap-shortcut-icon" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><strong>نقشه حرارتی</strong><small>بورس ایران، بورس آمریکا، ارزهای دیجیتال و فارکس</small></a>'+
+ '<a class="bhr-shortcut bhr-shortcut-clocks" href="#bhr-page-clocks" data-bhr-page="clocks"><span class="bhr-shortcut-icon">◷</span><strong>ساعت بازارهای جهانی</strong><small>ساعت زنده ۶ مرکز مالی جهان</small></a>'+
  '<a class="bhr-shortcut bhr-shortcut-news" href="#bhr-page-news" data-bhr-page="news"><span class="bhr-shortcut-icon">▤</span><strong>اخبار اقتصادی ایران</strong><small>تیترهای تازه با به‌روزرسانی خودکار</small></a>'+
  '<a class="bhr-shortcut bhr-shortcut-assistant" href="#bhr-page-assistant" data-bhr-page="assistant"><span class="bhr-shortcut-icon">✧</span><strong>دستیار هوشمند BHR</strong><small>تحلیل و پاسخ‌گویی هوشمند بازارها</small></a>'+
  '<a class="bhr-shortcut" href="#bhr-page-tools" data-bhr-page="tools"><span class="bhr-shortcut-icon">⚙</span><strong>نرم‌افزارها و پلتفرم‌های معاملاتی</strong><small>ماشین‌حساب و ابزارهای مدیریت معامله</small></a>'+
@@ -5261,6 +5262,108 @@ header .brand .bhr-brand-emblem img{display:block;width:100%;height:100%;object-
 }
 </style>
 
+
+<style id="bhr-mobile-layout-correction-2026">
+/* Final mobile pass: compact cards, clear market shortcuts, home access and visible world clocks. */
+@media(max-width:760px){
+ html,body{max-width:100%;overflow-x:hidden!important}
+ header{position:relative!important;padding:12px 12px 9px!important;gap:8px!important}
+ header>.brand{position:relative!important;display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;min-height:42px!important;padding-inline:44px!important}
+ header>.brand:after{
+  content:"⌂";position:absolute;right:2px;top:50%;transform:translateY(-50%);
+  display:grid;place-items:center;width:38px;height:38px;border:1px solid rgba(232,198,107,.75);
+  border-radius:12px;background:linear-gradient(145deg,rgba(215,180,90,.2),rgba(15,15,13,.92));
+  color:#f2d98b;font:900 23px/1 Arial,sans-serif;box-shadow:0 3px 12px rgba(215,180,90,.18)
+ }
+ header>nav>a[data-bhr-page="home"]{display:none!important}
+ header>nav>a[data-bhr-page="clocks"]{order:-2!important;border-color:rgba(215,180,90,.55)!important;color:#f5d98c!important}
+ header>nav{gap:6px!important;padding-top:7px!important}
+ header>nav>a,header>nav>button,header>nav .bhr-nav-account-tools>*{min-height:35px!important;padding:6px 9px!important;font-size:10px!important}
+ .bhr-page-view{padding:11px 0 22px!important;min-height:0!important}
+ .bhr-page-heading{width:calc(100% - 24px)!important;margin:7px auto 13px!important}
+ .bhr-page-heading h1{font-size:21px!important;line-height:1.45!important}
+ .bhr-page-heading p{font-size:11px!important;line-height:1.7!important}
+ .bhr-section{padding:13px 0!important}
+ .bhr-up-card,.bhr-card,.card,.bhr-panel,.bhr-up-item{padding:12px!important;border-radius:13px!important}
+ .bhr-up-card h3,.bhr-card h3,.card h3{font-size:14px!important;margin-bottom:5px!important}
+ .bhr-up-card p,.bhr-card p,.card p{font-size:11px!important;line-height:1.7!important}
+ #bhr-home-market-workspace{display:flex!important;flex-direction:column!important;gap:10px!important;width:100%!important;margin:5px auto 0!important}
+ #bhr-home-market-workspace .market-sidebar,
+ #bhr-home-market-workspace .market-main{width:calc(100% - 20px)!important;max-width:620px!important;margin:0 auto!important}
+ #bhr-home-market-workspace .market-sidebar{order:0!important}
+ #bhr-home-market-workspace .market-main{order:1!important}
+ #bhr-home-market-workspace .bhr-home-shortcuts-sidebar{margin-top:5px!important}
+ #bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-home-shortcuts{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;width:100%!important
+ }
+ #bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-shortcut{
+  min-height:66px!important;height:100%!important;padding:8px 7px!important;
+  grid-template-columns:22px minmax(0,1fr)!important;column-gap:5px!important;row-gap:0!important;
+  border-radius:11px!important;box-shadow:0 4px 12px rgba(0,0,0,.16)!important
+ }
+ #bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-shortcut .bhr-shortcut-icon{
+  font-size:17px!important;grid-column:1!important;grid-row:1/span 2!important
+ }
+ #bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-shortcut strong{font-size:10px!important;line-height:1.4!important}
+ #bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-shortcut small{font-size:8px!important;line-height:1.35!important;margin:0!important}
+ #bhr-home-market-workspace .bhr-shortcut-heatmap{border-color:rgba(255,139,50,.48)!important}
+ #bhr-home-market-workspace .bhr-shortcut-clocks{border-color:rgba(215,180,90,.52)!important}
+ #bhr-home-market-workspace .market-main .market-search{padding:12px!important;margin:0 auto 10px!important;border-radius:13px!important}
+ #bhr-home-market-workspace .market-main .bhr-chart-panel{padding:7px!important;margin:0 auto 12px!important;border-radius:13px!important}
+ #bhrTradingViewChart{height:340px!important;min-height:300px!important}
+ .market-symbols-list{gap:6px!important}
+ .market-symbol-button{padding:8px!important}
+ .symbol-directory{margin:12px 0!important;padding:11px!important;border-radius:13px!important}
+ .bhr-price-banner{width:calc(100% - 20px)!important;padding:10px!important;margin:8px auto 12px!important}
+ .bhr-price-item{padding:8px 5px!important}
+ #bhr-heatmap-page .bhr-heatmap-panel{
+  width:calc(100% - 20px)!important;margin:8px auto 15px!important;padding:8px!important;border-radius:13px!important
+ }
+ #bhr-heatmap-page .bhr-heatmap-tabs{gap:5px!important}
+ #bhr-heatmap-page .bhr-heatmap-tabs button{min-height:36px!important;padding:7px 4px!important;font-size:10px!important;border-radius:9px!important}
+ #bhr-heatmap-page .bhr-heatmap-caption{font-size:9px!important;line-height:1.6!important;margin:7px 2px!important}
+ #bhr-heatmap-page .bhr-heatmap-widget{
+  min-height:350px!important;height:350px!important;max-height:350px!important;
+  width:100%!important;overflow:hidden!important;border-radius:10px!important
+ }
+ #bhr-heatmap-page .bhr-heatmap-widget iframe{
+  width:100%!important;height:350px!important;min-height:350px!important;max-width:100%!important
+ }
+ #bhr-heatmap-page .bhr-iran-economic-news{width:calc(100% - 20px)!important;margin:10px auto!important}
+ #bhr-heatmap-page .bhr-iran-economic-news .bhr-news-item{padding:10px!important}
+ #bhr-heatmap-page .bhr-iran-economic-news .bhr-news-item a{font-size:11px!important;line-height:1.7!important}
+ #bhr-world-clocks-page .bhr-clock-wrap{width:calc(100% - 20px)!important;margin:0 auto 18px!important}
+ #bhr-world-clocks-page .bhr-clock-intro{padding:9px 11px!important;margin:7px 0 10px!important;font-size:10px!important;line-height:1.7!important}
+ #bhr-world-clocks-page .bhr-clock-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+ #bhr-world-clocks-page .bhr-clock-card{min-width:0!important;padding:10px 7px!important;border-radius:13px!important}
+ #bhr-world-clocks-page .bhr-clock-card:after{display:none!important}
+ #bhr-world-clocks-page .bhr-clock-card-head{gap:4px!important;min-height:0!important;padding-bottom:6px!important}
+ #bhr-world-clocks-page .bhr-clock-city{font-size:12px!important}
+ #bhr-world-clocks-page .bhr-clock-country{font-size:9px!important}
+ #bhr-world-clocks-page .bhr-clock-status{font-size:9px!important;padding:3px 6px!important}
+ #bhr-world-clocks-page .bhr-clock-stage{margin:6px auto 0!important;padding:0!important}
+ #bhr-world-clocks-page .bhr-clock-analog{width:min(31vw,118px)!important;height:auto!important}
+ #bhr-world-clocks-page .bhr-clock-live-label{font-size:6px!important;letter-spacing:1px!important}
+ #bhr-world-clocks-page .bhr-clock-time{font-size:clamp(17px,5vw,23px)!important;letter-spacing:0!important;margin:4px 0 0!important}
+ #bhr-world-clocks-page .bhr-clock-date{font-size:9px!important;line-height:1.5!important}
+ #bhr-world-clocks-page .bhr-clock-meta{display:flex!important;flex-direction:column!important;gap:3px!important;margin-top:7px!important;padding:6px 4px!important;font-size:9px!important;text-align:center!important}
+ #bhr-world-clocks-page .bhr-clock-countdown{font-size:9px!important}
+ #bhr-world-clocks-page .bhr-clock-footer{font-size:9px!important;margin-top:10px!important}
+ #bhr-news-page .bhr-news-page-grid{width:calc(100% - 20px)!important;gap:9px!important}
+ #bhr-news-page .bhr-up-card{padding:11px!important}
+ #bhr-assistant-page #bhr-smart-assistant{padding:12px!important}
+ #bhr-assistant-page .bhr-assistant-chat{height:300px!important;min-height:230px!important}
+}
+@media(max-width:380px){
+ #bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-shortcut{min-height:62px!important;padding:7px 5px!important;grid-template-columns:19px minmax(0,1fr)!important}
+ #bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-shortcut strong{font-size:9px!important}
+ #bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-shortcut small{font-size:7px!important}
+ #bhr-heatmap-page .bhr-heatmap-widget,#bhr-heatmap-page .bhr-heatmap-widget iframe{height:320px!important;min-height:320px!important;max-height:320px!important}
+ #bhr-world-clocks-page .bhr-clock-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ #bhr-world-clocks-page .bhr-clock-analog{width:min(29vw,102px)!important}
+ #bhr-world-clocks-page .bhr-clock-time{font-size:17px!important}
+}
+</style>
 </body>
 
 <style id="bhr-file-attachment-visibility-fix">
