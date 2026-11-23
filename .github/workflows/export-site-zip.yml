@@ -1,0 +1,19 @@
+name: Export website ZIP
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/export-site-zip.yml'
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create website archive
+        run: |
+          zip -r BEHNAM_HUNTING_ROOM_backup_2026-11-23.zip . -x '.git/*'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: BEHNAM_HUNTING_ROOM_backup_2026-11-23
+          path: BEHNAM_HUNTING_ROOM_backup_2026-11-23.zip
+          retention-days: 7
