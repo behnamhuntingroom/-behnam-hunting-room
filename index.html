@@ -5732,60 +5732,87 @@ header .brand .bhr-brand-emblem img{
  const button=document.getElementById("bhr-ambient-piano");
  const label=document.getElementById("bhr-ambient-piano-label");
  if(!button||!label)return;
- let ctx=null,master=null,timer=null,playing=false,step=0;
- const melody=[55,60,64,67,64,60,57,60,62,65,69,65,62,60,55,59];
- const hz=n=>440*Math.pow(2,(n-69)/12);
- function note(midi,when,duration,volume){
-  const fundamental=hz(midi);
-  const partials=[[1,0.72],[2,0.19],[3,0.065],[4,0.025]];
-  partials.forEach(([ratio,level],index)=>{
-   const osc=ctx.createOscillator(),gain=ctx.createGain(),filter=ctx.createBiquadFilter();
-   osc.type=index===0?"triangle":"sine";
-   osc.frequency.setValueAtTime(fundamental*ratio,when);
-   if(index===0)osc.detune.setValueAtTime(-2,when);
-   filter.type="lowpass";filter.frequency.setValueAtTime(2600,when);filter.Q.value=0.35;
-   const peak=volume*level;
-   gain.gain.setValueAtTime(0.0001,when);
-   gain.gain.exponentialRampToValueAtTime(Math.max(0.0002,peak),when+0.018);
-   gain.gain.exponentialRampToValueAtTime(0.0001,when+duration);
-   osc.connect(filter);filter.connect(gain);gain.connect(master);
-   osc.start(when);osc.stop(when+duration+0.04);
+ let ctx=null,master=null,piano=null,playing=false,loading=false,stopTimer=null;
+ const scriptUrl="https://cdn.jsdelivr.net/npm/soundfont-player@0.12.0/dist/soundfont-player.js";
+ const progression=[
+  {bass:50,chord:[57,62,66,69],mel:[74,78,81,78,76,74]},
+  {bass:49,chord:[57,61,64,69],mel:[73,76,78,81,78,76]},
+  {bass:47,chord:[54,59,62,66],mel:[71,74,78,81,78,74]},
+  {bass:43,chord:[50,55,59,62],mel:[71,74,79,78,74,71]},
+  {bass:45,chord:[52,57,61,64],mel:[73,76,81,78,76,73]},
+  {bass:40,chord:[47,52,55,59],mel:[71,76,79,76,74,71]},
+  {bass:45,chord:[52,57,60,64],mel:[72,76,79,81,79,76]},
+  {bass:50,chord:[57,62,66,69],mel:[74,78,81,83,81,78]}
+ ];
+ const noteSet=[40,43,45,47,49,50,52,54,55,57,59,60,61,62,64,66,69,71,72,73,74,76,78,79,81,83];
+ function loadLibrary(){
+  return new Promise((resolve,reject)=>{
+   if(window.Soundfont){resolve();return}
+   const existing=document.querySelector('script[data-bhr-soundfont="1"]');
+   if(existing){existing.addEventListener("load",resolve,{once:true});existing.addEventListener("error",reject,{once:true});return}
+   const s=document.createElement("script");s.src=scriptUrl;s.async=true;s.dataset.bhrSoundfont="1";
+   s.onload=resolve;s.onerror=()=>reject(new Error("soundfont library unavailable"));
+   document.head.appendChild(s);
   });
  }
- function playStep(){
-  if(!playing||!ctx)return;
-  const now=ctx.currentTime+0.04;
-  const n=melody[step%melody.length];
-  note(n,now,2.5,0.085);
-  if(step%4===0)note(n-12,now,3.1,0.045);
-  step++;
+ function playPhrase(){
+  if(!playing||!piano||!ctx)return;
+  const now=ctx.currentTime+0.18;
+  const barSeconds=4;
+  for(let bar=0;bar<8;bar++){
+   const p=progression[bar],t=now+bar*barSeconds;
+   piano.play(p.bass,t,{duration:3.65,gain:0.25});
+   p.chord.forEach((n,i)=>piano.play(n,t+0.12+i*0.075,{duration:3.2,gain:0.16}));
+   const melodyTimes=[0.55,1.2,1.95,2.65,3.15,3.55];
+   p.mel.forEach((n,i)=>piano.play(n,t+melodyTimes[i],{duration:i===2?1.5:0.95,gain:0.34}));
+   if(bar%2===0){
+    piano.play(p.chord[1]+12,t+2.05,{duration:1.8,gain:0.12});
+   }
+  }
+  window.setTimeout(()=>{if(playing)playPhrase()},barSeconds*8*1000-450);
  }
  async function start(){
-  const AudioContext=window.AudioContext||window.webkitAudioContext;
-  if(!AudioContext){label.textContent="مرورگر از پخش موسیقی پشتیبانی نمی‌کند";return}
-  if(!ctx){ctx=new AudioContext();master=ctx.createGain();master.gain.value=0.0001;master.connect(ctx.destination)}
-  await ctx.resume();
-  playing=true;step=0;
-  master.gain.cancelScheduledValues(ctx.currentTime);
-  master.gain.setValueAtTime(Math.max(0.0001,master.gain.value),ctx.currentTime);
-  master.gain.linearRampToValueAtTime(0.22,ctx.currentTime+2.8);
-  playStep();timer=window.setInterval(playStep,1900);
-  button.setAttribute("aria-pressed","true");
-  button.setAttribute("aria-label","خاموش کردن موسیقی آرام پیانو");
-  label.textContent="♫ موسیقی آرام: روشن";
+  if(loading)return;loading=true;
+  try{
+   const AudioContext=window.AudioContext||window.webkitAudioContext;
+   if(!AudioContext)throw new Error("audio unavailable");
+   if(!ctx){ctx=new AudioContext();master=ctx.createGain();master.gain.value=0.0001;master.connect(ctx.destination)}
+   await ctx.resume();
+   await loadLibrary();
+   if(!piano){
+    label.textContent="♫ در حال آماده‌سازی پیانو...";
+    piano=await window.Soundfont.instrument(ctx,"acoustic_grand_piano",{
+     soundfont:"MusyngKite",format:"mp3",destination:master,gain:0.78,
+     adsr:[0.025,0.22,0.68,1.65],notes:noteSet
+    });
+   }
+   if(stopTimer){clearTimeout(stopTimer);stopTimer=null}
+   playing=true;
+   master.gain.cancelScheduledValues(ctx.currentTime);
+   master.gain.setValueAtTime(Math.max(0.0001,master.gain.value),ctx.currentTime);
+   master.gain.linearRampToValueAtTime(0.62,ctx.currentTime+2.8);
+   button.setAttribute("aria-pressed","true");
+   button.setAttribute("aria-label","خاموش کردن موسیقی پیانوی آرام");
+   label.textContent="♫ موسیقی پیانو: روشن";
+   playPhrase();
+  }catch(e){
+   label.textContent="پخش موسیقی ممکن نشد؛ دوباره کلیک کنید";
+   button.setAttribute("aria-pressed","false");
+  }finally{loading=false}
  }
  function stop(){
-  playing=false;if(timer){clearInterval(timer);timer=null}
+  playing=false;
   if(ctx&&master){
    master.gain.cancelScheduledValues(ctx.currentTime);
    master.gain.setValueAtTime(Math.max(0.0001,master.gain.value),ctx.currentTime);
-   master.gain.linearRampToValueAtTime(0.0001,ctx.currentTime+1.4);
-   window.setTimeout(()=>{if(!playing&&ctx)ctx.suspend()},1500);
+   master.gain.linearRampToValueAtTime(0.0001,ctx.currentTime+1.8);
+   if(stopTimer)clearTimeout(stopTimer);
+   stopTimer=window.setTimeout(()=>{if(!playing&&ctx){if(piano&&piano.stop)piano.stop();ctx.suspend()}},1900);
   }
   button.setAttribute("aria-pressed","false");
-  button.setAttribute("aria-label","روشن کردن موسیقی آرام پیانو");
-  label.textContent="♫ موسیقی آرام: خاموش";
+  button.setAttribute("aria-label","روشن کردن موسیقی پیانوی آرام");
+  label.textContent="♫ موسیقی پیانو: خاموش";
  }
- button.addEventListener("click",()=>{if(playing)stop();else start().catch(()=>{label.textContent="برای پخش دوباره کلیک کنید"})});
+ button.addEventListener("click",()=>{if(playing)stop();else start()});
 })();
 </script>
