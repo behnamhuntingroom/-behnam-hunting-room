@@ -5131,6 +5131,136 @@ header .brand .bhr-brand-emblem img{display:block;width:100%;height:100%;object-
 })();
 </script>
 
+
+<style id="bhr-mobile-premium-redesign">
+/* BHR mobile redesign: consistent spacing, hierarchy, navigation and touch targets */
+@media(max-width:760px){
+ html{scroll-padding-top:12px;scroll-behavior:smooth}
+ body{font-size:14px;line-height:1.85;padding-bottom:18px!important;background-attachment:scroll}
+ header{
+  position:relative!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;
+  gap:11px!important;padding:13px 14px 10px!important;margin:0 0 12px!important;
+  border:0!important;border-bottom:1px solid rgba(215,180,90,.28)!important;border-radius:0 0 18px 18px!important;
+  background:linear-gradient(145deg,rgba(25,25,23,.98),rgba(8,10,11,.98))!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.25)!important
+ }
+ header>.brand{align-self:center!important;max-width:100%;margin:0 auto!important}
+ header>.header-tools{order:2!important;display:flex!important;align-items:center!important;justify-content:center!important;
+  flex-wrap:nowrap!important;gap:7px!important;width:100%!important;min-width:0!important}
+ header>.header-tools>*{min-width:0!important}
+ header .theme-btn,header .lang,header .datebox{font-size:11px!important;padding:7px 9px!important}
+ header>nav,header>.bhr-main-nav{
+  order:3!important;display:flex!important;flex-wrap:nowrap!important;align-items:center!important;justify-content:flex-start!important;
+  gap:7px!important;width:100%!important;min-width:0!important;margin:0!important;padding:9px 0 2px!important;
+  border-top:1px solid rgba(215,180,90,.17)!important;border-radius:0!important;
+  overflow-x:auto!important;overflow-y:hidden!important;overscroll-behavior-x:contain;scrollbar-width:none!important;
+  -webkit-overflow-scrolling:touch
+ }
+ header>nav::-webkit-scrollbar{display:none}
+ header>nav>a,header>nav>button,header>nav .bhr-nav-account-tools>*{
+  display:inline-flex!important;flex:0 0 auto!important;align-items:center!important;justify-content:center!important;
+  gap:6px!important;width:auto!important;min-width:max-content!important;min-height:39px!important;
+  padding:7px 11px!important;border:1px solid rgba(215,180,90,.24)!important;border-radius:11px!important;
+  background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.025))!important;
+  color:#f1dfb2!important;font-size:11px!important;line-height:1.4!important;white-space:nowrap!important
+ }
+ header>nav>a:active,header>nav>button:active{transform:scale(.97)}
+ header>nav .bhr-nav-account-tools{display:inline-flex!important;flex:0 0 auto!important;gap:6px!important;margin:0!important}
+ header>nav .bhr-nav-account-tools>*{display:inline-flex!important}
+ header nav .nav-icon,header nav svg{width:16px!important;height:16px!important;flex:0 0 16px!important}
+ main,#bhr-upgrade,.bhr-page-view,.bhr-page,.page-content{min-width:0!important;max-width:100%!important}
+ .bhr-page-view{padding:15px 0 28px!important;min-height:0!important}
+ .bhr-section{padding:19px 0!important;scroll-margin-top:12px}
+ .bhr-section-title,.bhr-page-heading h1,.bhr-page-heading h2{font-size:clamp(20px,5.6vw,26px)!important;line-height:1.55!important;margin-bottom:8px!important}
+ .bhr-section-sub,.bhr-page-heading p{font-size:12px!important;line-height:1.9!important;padding-inline:15px}
+ .bhr-up-grid,.bhr-platform-grid,.bhr-news-page-grid,.bhr-panel-layout,.bhr-grid,.services,.quotes{
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:12px!important;width:calc(100% - 24px)!important;
+  max-width:620px!important;margin-inline:auto!important
+ }
+ .bhr-up-card,.bhr-card,.card,.bhr-panel,.bhr-up-item,.bhr-price-banner,.bhr-home-method-intro{
+  min-width:0!important;border-radius:16px!important;padding:15px!important
+ }
+ .bhr-up-card h3,.bhr-card h3{font-size:16px!important;line-height:1.65!important}
+ .bhr-up-card p,.bhr-card p{font-size:12px!important;line-height:1.95!important}
+ button,.bhr-up-btn,.bhr-up-card button,input,select,textarea{font:inherit}
+ button,.bhr-up-btn,.bhr-up-card button{min-height:42px;touch-action:manipulation}
+ input,select,textarea,.bhr-up-input,.bhr-up-select,.bhr-up-textarea{
+  max-width:100%!important;min-width:0!important;font-size:16px!important;border-radius:11px!important
+ }
+ .bhr-up-row{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:8px!important}
+ .bhr-up-row>*{min-width:0!important;width:100%!important}
+ .bhr-price-banner{width:calc(100% - 24px)!important;margin:12px auto 16px!important;padding:13px!important}
+ .bhr-price-head{align-items:flex-start!important;flex-wrap:wrap!important;font-size:13px!important}
+ .bhr-price-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+ .bhr-price-item{min-width:0!important;padding:11px 7px!important;border-radius:13px!important}
+ .bhr-price-item .bhr-price-label{min-height:28px!important;gap:5px!important}
+ .bhr-price-item strong{font-size:clamp(14px,4vw,18px)!important;overflow-wrap:anywhere}
+ .bhr-price-status{font-size:10px!important;line-height:1.7}
+ #bhr-page-home>.hero{padding:0 0 12px!important;margin:0 auto 12px!important}
+ #bhr-page-home>.hero img{display:block;width:100%!important;max-width:100%!important;height:auto!important;object-fit:contain!important;margin:0 auto 12px!important}
+ .bhr-primary-monogram{width:96vw!important;max-width:100%!important;top:-20px!important;margin-bottom:-30px!important}
+ #bhr-home-market-workspace{display:flex!important;flex-direction:column!important;gap:13px!important;width:100%!important;margin:8px auto 0!important}
+ #bhr-home-market-workspace .market-sidebar,#bhr-home-market-workspace .market-main,
+ .market-sidebar,.market-main{width:calc(100% - 24px)!important;max-width:620px!important;min-width:0!important;margin:0 auto!important}
+ #bhr-home-market-workspace .market-sidebar{order:0!important}
+ #bhr-home-market-workspace .market-main{order:1!important}
+ #bhr-home-market-workspace .bhr-home-shortcuts{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+ #bhr-home-market-workspace .bhr-shortcut{
+  display:grid!important;grid-template-columns:28px minmax(0,1fr)!important;grid-template-rows:auto auto!important;
+  min-width:0!important;min-height:76px!important;height:100%!important;padding:11px 9px!important;
+  border-radius:14px!important;gap:2px 7px!important;align-content:center!important
+ }
+ #bhr-home-market-workspace .bhr-shortcut .bhr-shortcut-icon{grid-column:1!important;grid-row:1/span 2!important;margin:0!important;font-size:20px!important}
+ #bhr-home-market-workspace .bhr-shortcut strong{grid-column:2!important;grid-row:1!important;font-size:11px!important;line-height:1.5!important}
+ #bhr-home-market-workspace .bhr-shortcut small{grid-column:2!important;grid-row:2!important;font-size:9px!important;line-height:1.5!important}
+ .market-workspace{display:flex!important;flex-direction:column!important;gap:12px!important}
+ .market-sidebar,.market-main{position:static!important}
+ .market-search{display:flex!important;flex-wrap:wrap!important;gap:8px!important}
+ .market-search input{width:100%!important}
+ .market-symbols-list{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important}
+ .market-symbol-button{padding:10px 8px!important;min-width:0!important}
+ .bhr-chart-panel{padding:8px!important;border-radius:13px!important}
+ #bhrTradingViewChart{height:430px!important;min-height:340px!important}
+ .bhr-tv-widget,.tradingview-widget-container{width:100%!important;max-width:100%!important;min-width:0!important;overflow:hidden!important}
+ .bhr-tv-widget iframe,.tradingview-widget-container iframe{max-width:100%!important}
+ .bhr-news-page-grid{grid-template-columns:minmax(0,1fr)!important}
+ .bhr-news-list,.bhr-economic-list{padding:8px 0!important;gap:8px!important}
+ .bhr-news-item,.bhr-economic-event{padding:11px!important;border-radius:12px!important}
+ .bhr-economic-values{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5px!important}
+ .bhr-economic-value{padding:8px 4px!important;min-width:0!important}
+ .bhr-economic-value small{font-size:9px!important}
+ .bhr-economic-value strong{font-size:11px!important;overflow-wrap:anywhere}
+ .bhr-assistant-chat{height:min(52vh,440px)!important;min-height:260px!important;padding:11px!important}
+ .bhr-assistant-message{max-width:94%!important;font-size:12px!important;line-height:1.9!important}
+ #bhrAssistantForm{gap:6px!important}
+ #bhr-support-launcher{right:14px!important;bottom:14px!important;width:50px!important;height:50px!important}
+ .bhr-clock-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+ #bhr-world-clocks-page .bhr-clock-card{padding:13px 9px!important}
+ #bhr-world-clocks-page .bhr-clock-analog{width:min(39vw,150px)!important;height:auto!important}
+ #bhr-world-clocks-page .bhr-clock-time{font-size:clamp(20px,5.7vw,28px)!important;letter-spacing:1px!important}
+ table{display:block!important;width:100%!important;max-width:100%!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch}
+ img,video,canvas,iframe{max-width:100%!important}
+ p,a,h1,h2,h3,small,strong,span{overflow-wrap:anywhere}
+}
+@media(max-width:430px){
+ header{padding:11px 10px 8px!important;gap:9px!important}
+ header>.header-tools{gap:5px!important}
+ header>.header-tools button,header>.header-tools a{font-size:10px!important;padding:6px 7px!important}
+ header>nav{gap:5px!important}
+ header>nav>a,header>nav>button,header>nav .bhr-nav-account-tools>*{min-height:37px!important;padding:6px 9px!important;font-size:10px!important}
+ #bhr-home-market-workspace .bhr-home-shortcuts{gap:7px!important}
+ #bhr-home-market-workspace .bhr-shortcut{min-height:72px!important;padding:9px 7px!important;grid-template-columns:24px minmax(0,1fr)!important}
+ #bhr-home-market-workspace .bhr-shortcut strong{font-size:10px!important}
+ #bhr-home-market-workspace .bhr-shortcut small{font-size:8px!important}
+ .bhr-clock-grid{grid-template-columns:minmax(0,1fr)!important}
+ #bhr-world-clocks-page .bhr-clock-card{padding:16px!important}
+ #bhr-world-clocks-page .bhr-clock-analog{width:178px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #bhr-mobile-premium-redesign *,#bhr-mobile-premium-redesign *:before,#bhr-mobile-premium-redesign *:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
+}
+</style>
+
 </body>
 
 <style id="bhr-file-attachment-visibility-fix">
