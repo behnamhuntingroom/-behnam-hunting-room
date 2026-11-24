@@ -1181,7 +1181,7 @@ header nav #bhrCartCount{min-width:16px!important;height:16px!important;padding:
 #bhr-world-clocks-page .bhr-overlap-live.is-idle{color:#f0a29a}
 #bhr-world-clocks-page .bhr-overlap-title{margin-top:10px;color:#f4dfaa;font-size:20px;font-weight:900}
 #bhr-world-clocks-page .bhr-overlap-description{margin-top:4px;color:#c0d9ca;font-size:12px;line-height:1.9}
-#bhr-world-clocks-page .bhr-overlap-bottom{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px}
+#bhr-world-clocks-page .bhr-overlap-bottom{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:16px}
 #bhr-world-clocks-page .bhr-overlap-bottom>div{min-width:0;padding:10px 12px;border:1px solid rgba(226,207,157,.2);border-radius:12px;background:rgba(0,0,0,.18)}
 #bhr-world-clocks-page .bhr-overlap-bottom small{display:block;color:#b8cfc1;font-size:10px}
 #bhr-world-clocks-page .bhr-overlap-bottom strong{display:block;margin-top:4px;color:#f5e5bb;font:800 16px/1.4 Arial,Tahoma,sans-serif;direction:ltr;font-variant-numeric:tabular-nums}
@@ -1198,7 +1198,7 @@ header nav #bhrCartCount{min-width:16px!important;height:16px!important;padding:
 :root[data-theme="light"] #bhr-world-clocks-page .bhr-overlap-title{color:#244a35!important}
 :root[data-theme="light"] #bhr-world-clocks-page .bhr-overlap-description,:root[data-theme="light"] #bhr-world-clocks-page .bhr-overlap-bottom small{color:#526b5c!important}
 :root[data-theme="light"] #bhr-world-clocks-page .bhr-overlap-bottom strong{color:#244a35!important}
-@media(max-width:600px){#bhr-world-clocks-page .bhr-clock-overlap{padding:16px 13px}#bhr-world-clocks-page .bhr-overlap-title{font-size:17px}#bhr-world-clocks-page .bhr-overlap-bottom{gap:6px}#bhr-world-clocks-page .bhr-overlap-bottom>div{padding:9px 7px}#bhr-world-clocks-page .bhr-overlap-bottom strong{font-size:12px}}
+@media(max-width:600px){#bhr-world-clocks-page .bhr-clock-overlap{padding:16px 13px}#bhr-world-clocks-page .bhr-overlap-title{font-size:17px}#bhr-world-clocks-page .bhr-overlap-bottom{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}#bhr-world-clocks-page .bhr-overlap-bottom>div{padding:9px 7px}#bhr-world-clocks-page .bhr-overlap-bottom strong{font-size:12px}}
 </style>
 
 <style id="bhr-desktop-site-search">
@@ -5225,7 +5225,7 @@ header .brand .bhr-brand-emblem img{display:block;width:100%;height:100%;object-
  ];
  const wrap=document.createElement("div");
  wrap.className="bhr-clock-wrap";
- wrap.innerHTML='<div class="bhr-clock-intro">ساعت هر شهر مستقیماً از منطقه زمانی رسمی همان شهر محاسبه می‌شود. تغییر ساعت تابستانی و زمستانی به‌صورت خودکار اعمال می‌شود. ساعات نمایش‌داده‌شده، بازه مرجع روز کاری محلی (دوشنبه تا جمعه) هستند؛ ساعت دقیق باز و بسته‌شدن ممکن است با نوع بازار، بورس یا کارگزار تفاوت داشته باشد.</div><section class="bhr-clock-overlap" id="bhrClockOverlap" aria-live="polite"><div class="bhr-overlap-topline"><span class="bhr-overlap-kicker">BHR MARKET SESSION</span><span class="bhr-overlap-live" data-overlap-state>در حال محاسبه</span></div><div class="bhr-overlap-title">هم‌پوشانی بازار لندن و نیویورک</div><div class="bhr-overlap-description" data-overlap-description>زمان مشترک فعالیت دو بازار برای رصد نقدشوندگی طلا</div><div class="bhr-overlap-bottom"><div><small>زمان لندن</small><strong data-overlap-london>—</strong></div><div><small>زمان نیویورک</small><strong data-overlap-newyork>—</strong></div><div><small data-overlap-count-label>تا شروع هم‌پوشانی</small><strong data-overlap-countdown>—</strong></div></div></section><div class="bhr-clock-grid" id="bhrWorldClockGrid"></div><div class="bhr-clock-footer">به‌روزرسانی ساعت‌ها: هر ثانیه · زمان دستگاه شما مبنای محاسبه است · منطقه زمانی: IANA</div>';
+ wrap.innerHTML='<div class="bhr-clock-intro">ساعت هر شهر مستقیماً از منطقه زمانی رسمی همان شهر محاسبه می‌شود. تغییر ساعت تابستانی و زمستانی به‌صورت خودکار اعمال می‌شود. ساعات نمایش‌داده‌شده، بازه مرجع روز کاری محلی (دوشنبه تا جمعه) هستند؛ ساعت دقیق باز و بسته‌شدن ممکن است با نوع بازار، بورس یا کارگزار تفاوت داشته باشد.</div><section class="bhr-clock-overlap" id="bhrClockOverlap" aria-live="polite"><div class="bhr-overlap-topline"><span class="bhr-overlap-kicker">BHR MARKET SESSION</span><span class="bhr-overlap-live" data-overlap-state>در حال محاسبه</span></div><div class="bhr-overlap-title">هم‌پوشانی بازار لندن و نیویورک</div><div class="bhr-overlap-description" data-overlap-description>زمان مشترک فعالیت دو بازار برای رصد نقدشوندگی طلا</div><div class="bhr-overlap-bottom"><div><small>بازه لندن</small><strong data-overlap-london>—</strong></div><div><small>بازه نیویورک</small><strong data-overlap-newyork>—</strong></div><div><small data-overlap-tehran-label>شروع به وقت تهران</small><strong data-overlap-tehran>—</strong></div><div><small data-overlap-count-label>مدت باقی‌مانده تا شروع</small><strong data-overlap-countdown>—</strong></div></div></section><div class="bhr-clock-grid" id="bhrWorldClockGrid"></div><div class="bhr-clock-footer">به‌روزرسانی ساعت‌ها: هر ثانیه · زمان دستگاه شما مبنای محاسبه است · منطقه زمانی: IANA</div>';
  page.append(wrap);
  const grid=wrap.querySelector("#bhrWorldClockGrid");
  const cards=sessions.map((x,i)=>{
@@ -5284,15 +5284,19 @@ header .brand .bhr-brand-emblem img{display:block;width:100%;height:100%;object-
   const count=overlapPanel.querySelector("[data-overlap-countdown]");
   const londonTime=overlapPanel.querySelector("[data-overlap-london]");
   const nyTime=overlapPanel.querySelector("[data-overlap-newyork]");
+  const tehranLabel=overlapPanel.querySelector("[data-overlap-tehran-label]");
+  const tehranTime=overlapPanel.querySelector("[data-overlap-tehran]");
   if(!window){
    state.textContent="بدون هم‌پوشانی نزدیک";state.className="bhr-overlap-live is-idle";
    desc.textContent="برای روزهای کاری آینده بازه مشترکی پیدا نشد.";
-   londonTime.textContent="—";nyTime.textContent="—";count.textContent="—";return;
+   londonTime.textContent="—";nyTime.textContent="—";tehranTime.textContent="—";count.textContent="—";return;
   }
   state.textContent=active?"هم‌اکنون فعال":"جلسه بعدی";
   state.className="bhr-overlap-live "+(active?"is-active":"is-upcoming");
-  desc.textContent=active?"هر دو بازار در ساعات مرجع کاری فعال‌اند؛ این بازه معمولاً برای بررسی نقدشوندگی طلا مهم است.":"شمارش معکوس تا شروع بازه مشترک ساعات کاری لندن و نیویورک.";
-  countLabel.textContent=active?"پایان هم‌پوشانی در":"شروع هم‌پوشانی در";
+  desc.textContent=active?"هم‌پوشانی فعال است؛ زمان باقی‌مانده تا پایان را دنبال کن.":"ساعت شروع واقعی و شمارش معکوس جدا نمایش داده شده‌اند تا زمان جلسه اشتباه نشود.";
+  countLabel.textContent=active?"زمان باقی‌مانده تا پایان":"مدت باقی‌مانده تا شروع";
+  tehranLabel.textContent=active?"پایان به وقت تهران":"شروع به وقت تهران";
+  tehranTime.textContent=clockText(active?window.end:window.start,"Asia/Tehran");
   count.textContent=countdown((active?window.end:window.start)-now);
   londonTime.textContent=clockText(window.start,london.zone)+" – "+clockText(window.end,london.zone);
   nyTime.textContent=clockText(window.start,newYork.zone)+" – "+clockText(window.end,newYork.zone);
