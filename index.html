@@ -3708,7 +3708,7 @@ if(workspace&&marketSidebar){
   if(e.target.closest(".bhr-hunter-close")){
    const card=hunterActiveCard();
    hunterPanel.hidden=true;
-   if(card){card.classList.remove("bhr-expanded");card.append(...Array.from(hunterPanel.childNodes));}
+   if(card)card.classList.remove("bhr-expanded");
    hunterPanel.remove();
    return;
   }
