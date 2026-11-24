@@ -1235,7 +1235,7 @@ async function handleOpportunityScanner(env, headers) {
 
 /* BHR live quotes: Wallex for USDT/BTC and NerkhAra for physical gold/silver + spot references. */
 async function handleLivePrices(env, headers) {
-  const cacheKey = "bhr:live-prices:v1";
+  const cacheKey = "bhr:live-prices:v2";
   try {
     const cached = env.CHAT_STORE ? await env.CHAT_STORE.get(cacheKey, "json") : null;
     if (cached?.updatedAt && Date.now() - Date.parse(cached.updatedAt) < 8000) {
@@ -1247,32 +1247,58 @@ async function handleLivePrices(env, headers) {
 
   const requestHeaders = {
     "Accept": "application/json",
-    "User-Agent": "BEHNAM-HUNTING-ROOM/1.0 (+https://behnamhunter.ir)"
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/124.0.0.0 Safari/537.36",
+    "Referer": "https://bitpin.org/"
   };
 
   try {
-    const [wallexResponse, localResponse] = await Promise.all([
-      fetch("https://api.wallex.ir/v1/markets", {
+    let usdtToman = 0;
+    let btcUsd = 0;
+    let usdtChange = 0;
+    let btcChange = 0;
+    let cryptoSource = "";
+
+    // اول Bitpin؛ داده عمومی و بدون نیاز به کلید API.
+    try {
+      const response = await fetch("https://api.bitpin.org/api/v1/mkt/tickers/", {
         headers: requestHeaders,
         cf: { cacheTtl: 5, cacheEverything: true }
-      }),
-      fetch("https://nerkhara.com/api/v1/latest.json", {
-        headers: requestHeaders,
-        cf: { cacheTtl: 30, cacheEverything: true }
-      })
-    ]);
-
-    if (!wallexResponse.ok) throw new Error("Wallex HTTP " + wallexResponse.status);
-    const wallexBody = await wallexResponse.json();
-    const symbols = wallexBody?.result?.symbols || wallexBody?.result?.markets || {};
-    const usdtMarket = symbols.USDTTMN;
-    const btcMarket = symbols.BTCUSDT;
-    const usdtToman = Number(usdtMarket?.stats?.lastPrice);
-    const btcUsd = Number(btcMarket?.stats?.lastPrice);
-    if (!wallexBody?.success || !(usdtToman > 0) || !(btcUsd > 0)) {
-      throw new Error("Wallex did not return valid USDTTMN and BTCUSDT market prices");
+      });
+      if (!response.ok) throw new Error("Bitpin HTTP " + response.status);
+      const body = await response.json();
+      const rows = Array.isArray(body) ? body : (Array.isArray(body?.results) ? body.results : []);
+      const findTicker = (...names) => rows.find(row => names.includes(String(row?.symbol || row?.market || "").toUpperCase()));
+      const usdt = findTicker("USDT_IRT", "USDT/IRT", "USDTIRT");
+      const btc = findTicker("BTC_USDT", "BTC/USDT", "BTCUSDT");
+      usdtToman = Number(usdt?.price ?? usdt?.last);
+      btcUsd = Number(btc?.price ?? btc?.last);
+      usdtChange = Number(usdt?.daily_change_percentage ?? usdt?.change ?? 0);
+      btcChange = Number(btc?.daily_change_percentage ?? btc?.change ?? 0);
+      if (!(usdtToman > 0) || !(btcUsd > 0)) throw new Error("Bitpin ticker symbols or prices not found");
+      cryptoSource = "Bitpin";
+    } catch (bitpinError) {
+      // مسیر جایگزین: Wallex؛ اگر CDN آن در دسترس باشد.
+      const response = await fetch("https://api.wallex.ir/v1/markets", {
+        headers: { ...requestHeaders, "Referer": "https://wallex.ir/" },
+        cf: { cacheTtl: 5, cacheEverything: true }
+      });
+      if (!response.ok) throw new Error("Bitpin unavailable (" + String(bitpinError?.message || bitpinError) + "); Wallex HTTP " + response.status);
+      const body = await response.json();
+      const symbols = body?.result?.symbols || body?.result?.markets || {};
+      const usdt = symbols.USDTTMN;
+      const btc = symbols.BTCUSDT;
+      usdtToman = Number(usdt?.stats?.lastPrice);
+      btcUsd = Number(btc?.stats?.lastPrice);
+      usdtChange = Number(usdt?.stats?.["24h_ch"] ?? 0);
+      btcChange = Number(btc?.stats?.["24h_ch"] ?? 0);
+      if (!body?.success || !(usdtToman > 0) || !(btcUsd > 0)) throw new Error("Wallex returned invalid market prices");
+      cryptoSource = "Wallex";
     }
 
+    const localResponse = await fetch("https://nerkhara.com/api/v1/latest.json", {
+      headers: requestHeaders,
+      cf: { cacheTtl: 30, cacheEverything: true }
+    });
     let byId = {};
     let localUpdatedAt = null;
     if (localResponse.ok) {
@@ -1300,12 +1326,12 @@ async function handleLivePrices(env, headers) {
 
     const payload = {
       ok: true,
-      source: { crypto: "Wallex", iranMetals: "NerkhAra", worldMetals: "NerkhAra" },
+      source: { crypto: cryptoSource, iranMetals: "NerkhAra", worldMetals: "NerkhAra" },
       updatedAt: new Date().toISOString(),
       localUpdatedAt,
       data: {
-        usdt: { toman: usdtToman, usd: 1, change24h: Number(usdtMarket?.stats?.["24h_ch"] ?? 0), stale: false },
-        btc: { toman: btcUsd * usdtToman, usd: btcUsd, change24h: Number(btcMarket?.stats?.["24h_ch"] ?? 0), stale: false },
+        usdt: { toman: usdtToman, usd: 1, change24h: usdtChange, stale: false },
+        btc: { toman: btcUsd * usdtToman, usd: btcUsd, change24h: btcChange, stale: false },
         gold18k: {
           toman: gold?.price ?? null,
           usd: xauUsdOz > 0 ? xauUsdOz * 0.75 / ounceGrams : null,
@@ -1333,8 +1359,8 @@ async function handleLivePrices(env, headers) {
     console.error("[BHR_LIVE_PRICES_ERROR]", error?.message || "Unknown error");
     return json({
       ok: false,
-      error: "دریافت قیمت از والکس یا منبع فلزات ناموفق بود",
-      detail: String(error?.message || "Unknown error").slice(0, 240)
+      error: "دریافت قیمت از منابع رمزارز یا فلزات ناموفق بود",
+      detail: String(error?.message || "Unknown error").slice(0, 320)
     }, 502, { ...headers, "Cache-Control": "no-store" });
   }
 }
