@@ -3638,7 +3638,7 @@ if(workspace&&marketSidebar){
   '</div>';
 
  workspace.append(toolsSidebar);
- const hunterMain=workspace.querySelector('.market-main');
+ const hunterActiveCard=()=>toolsSidebar.querySelector('.bhr-tool-card.bhr-expanded');
  const hunterToolNames=[
   ["watchlist","واچ‌لیست هوشمند","پیگیری نمادهای منتخب"],
   ["alerts","هشدار قیمت","ثبت سطح هشدار دلخواه"],
@@ -3660,7 +3660,7 @@ if(workspace&&marketSidebar){
  hunterPanel.className="bhr-hunter-workbench";
  hunterPanel.hidden=true;
  hunterPanel.setAttribute("aria-live","polite");
- hunterMain.append(hunterPanel);
+ /* The panel is moved into the selected card when a tool opens. */
  const hunterStore={
   get(key){try{return JSON.parse(localStorage.getItem("bhrHunter_"+key)||"[]")}catch(e){return[]}},
   set(key,value){try{localStorage.setItem("bhrHunter_"+key,JSON.stringify(value));return true}catch(e){return false}}
@@ -3693,16 +3693,27 @@ if(workspace&&marketSidebar){
   if(key==="risk")body='<form data-hunter-form="risk" class="bhr-hunter-form"><div class="bhr-hunter-fields"><label>موجودی حساب<input name="capital" type="number" min="0" step="any" required placeholder="مثلاً 10000"></label><label>ریسک هر معامله (%)<input name="risk" type="number" min="0.01" max="100" step="any" value="1" required></label></div><div class="bhr-hunter-fields"><label>قیمت ورود<input name="entry" type="number" step="any" required></label><label>حد ضرر<input name="stop" type="number" step="any" required></label></div><label>ارزش هر واحد حرکت به ازای یک واحد حجم<input name="unit" type="number" min="0.000001" step="any" value="1" required></label><button class="bhr-hunter-primary">محاسبه حجم معامله</button></form><div class="bhr-hunter-result" id="bhrHunterRiskResult">حجم پیشنهادی و مبلغ ریسک پس از محاسبه نمایش داده می‌شود.</div><small class="bhr-hunter-disclaimer">محاسبه‌گر آموزشی است؛ ارزش قرارداد، کارمزد و اسلیپیج را جداگانه بررسی کن.</small>';
   if(key==="scanner")body='<form data-hunter-form="scanner" class="bhr-hunter-form"><label>بازار<select name="market"><option>همه بازارها</option><option>طلا و فلزات</option><option>فارکس</option><option>ارز دیجیتال</option><option>بورس ایران</option><option>بورس آمریکا</option></select></label><label>شرایطی که می‌خواهی بررسی کنی<select name="setup"><option>شکست ساختار (BOS)</option><option>بازگشت به ناحیه عرضه/تقاضا</option><option>هم‌جهتی VWAP و دلتا</option><option>شکست سقف/کف روز</option></select></label><button class="bhr-hunter-primary">ساخت چک‌لیست جست‌وجو</button></form><div class="bhr-hunter-result" id="bhrHunterScanResult">این اسکنر هنوز داده بازار را اسکن نمی‌کند؛ شرایط انتخابی را به چک‌لیست بررسی دستی تبدیل می‌کند.</div>';
   hunterPanel.innerHTML='<div class="bhr-hunter-panel-head"><div><span>HUNTER TOOLS / WORKSPACE</span><h2>'+item[1]+'</h2><p>'+intro+'</p></div><button type="button" class="bhr-hunter-close" aria-label="بستن ابزار">×</button></div><div class="bhr-hunter-panel-body">'+body+'</div>';
+  const card=toolsSidebar.querySelector('[data-hunter-tool="'+key+'"]');
+  if(!card)return;
+  toolsSidebar.querySelectorAll(".bhr-tool-card.bhr-expanded").forEach(other=>{
+   if(other!==card)other.classList.remove("bhr-expanded");
+  });
+  card.classList.add("bhr-expanded");
+  card.append(hunterPanel);
   hunterPanel.hidden=false;
-  hunterMain.classList.add("bhr-hunter-tool-open");
-  hunterPanel.scrollIntoView({behavior:"smooth",block:"start"});
  }
  toolsSidebar.addEventListener("click",e=>{const card=e.target.closest("[data-hunter-tool]");if(card)hunterOpen(card.dataset.hunterTool)});
  toolsSidebar.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.matches("[data-hunter-tool]")){e.preventDefault();hunterOpen(e.target.dataset.hunterTool)}});
  hunterPanel.addEventListener("click",e=>{
-  if(e.target.closest(".bhr-hunter-close")){hunterPanel.hidden=true;hunterMain.classList.remove("bhr-hunter-tool-open");return}
+  if(e.target.closest(".bhr-hunter-close")){
+   const card=hunterActiveCard();
+   hunterPanel.hidden=true;
+   if(card){card.classList.remove("bhr-expanded");card.append(...Array.from(hunterPanel.childNodes));}
+   hunterPanel.remove();
+   return;
+  }
   const del=e.target.closest("[data-hunter-delete]");if(del){const key=del.dataset.hunterDelete;const list=hunterStore.get(key);list.splice(Number(del.dataset.index),1);hunterStore.set(key,list);hunterOpen(key==="symbols"?"symbol":key);return}
-  const pageLink=e.target.closest("[data-bhr-page]");if(pageLink){hunterPanel.hidden=true;hunterMain.classList.remove("bhr-hunter-tool-open")}
+  const pageLink=e.target.closest("[data-bhr-page]");if(pageLink){hunterPanel.hidden=true;}
  });
  hunterPanel.addEventListener("submit",e=>{
   const form=e.target.closest("[data-hunter-form]");if(!form)return;e.preventDefault();
@@ -6812,4 +6823,39 @@ header .brand .bhr-brand-emblem img{
 .bhr-hunter-health span{display:grid;gap:3px}.bhr-hunter-health b{font-size:13px}.bhr-hunter-health small,.bhr-hunter-disclaimer{font-size:11px;color:var(--muted)}
 @media(max-width:1050px){#bhr-home-market-workspace .bhr-hunter-workbench{grid-column:1;grid-row:2}}
 @media(max-width:600px){#bhr-home-market-workspace .bhr-hunter-workbench{padding:15px}.bhr-hunter-fields,.bhr-hunter-info-grid{grid-template-columns:1fr}.bhr-hunter-panel-head h2{font-size:19px}}
+</style>
+
+
+<style id="bhr-hunter-tools-inline-expansion">
+#bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded{
+ display:block!important;cursor:default!important;transform:none!important;
+ border-color:rgba(226,190,105,.9)!important;
+ box-shadow:0 10px 28px rgba(0,0,0,.24),0 0 0 1px rgba(226,190,105,.12)!important;
+}
+#bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded>.bhr-hunter-workbench{
+ display:block!important;width:100%;box-sizing:border-box;margin-top:14px;padding-top:13px;
+ border-top:1px solid rgba(226,190,105,.28);
+}
+#bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded .bhr-hunter-panel-head{
+ display:grid;grid-template-columns:minmax(0,1fr) 28px;gap:7px;padding-bottom:10px;
+}
+#bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded .bhr-hunter-panel-head>div>span{font-size:8px}
+#bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded .bhr-hunter-panel-head h2{font-size:14px;line-height:1.6;margin:5px 0}
+#bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded .bhr-hunter-panel-head p{font-size:10px;line-height:1.8}
+#bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded .bhr-hunter-close{width:28px;height:28px;min-width:28px;font-size:19px}
+#bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded .bhr-hunter-panel-body{gap:10px;padding-top:11px}
+#bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded .bhr-hunter-form{gap:9px}
+#bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded .bhr-hunter-form label{font-size:10px}
+#bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded .bhr-hunter-form input,
+#bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded .bhr-hunter-form select,
+#bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded .bhr-hunter-form textarea{padding:8px;font-size:11px}
+#bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded .bhr-hunter-fields,
+#bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded .bhr-hunter-info-grid{grid-template-columns:1fr}
+#bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded .bhr-hunter-primary{width:100%;padding:9px 8px;font-size:11px}
+#bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded .bhr-hunter-empty,
+#bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded .bhr-hunter-result,
+#bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded .bhr-hunter-info-grid article{padding:10px;font-size:10px}
+#bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded .bhr-hunter-saved-row{padding:8px;font-size:10px}
+#bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded .bhr-hunter-health>div{padding:8px}
+#bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded .bhr-hunter-health small{font-size:9px}
 </style>
