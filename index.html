@@ -3638,6 +3638,7 @@ if(workspace&&marketSidebar){
   '</div>';
 
  workspace.append(toolsSidebar);
+ const hunterMain=workspace.querySelector('.market-main');
  const hunterToolNames=[
   ["watchlist","واچ‌لیست هوشمند","پیگیری نمادهای منتخب"],
   ["alerts","هشدار قیمت","ثبت سطح هشدار دلخواه"],
@@ -3659,7 +3660,7 @@ if(workspace&&marketSidebar){
  hunterPanel.className="bhr-hunter-workbench";
  hunterPanel.hidden=true;
  hunterPanel.setAttribute("aria-live","polite");
- marketMain.append(hunterPanel);
+ hunterMain.append(hunterPanel);
  const hunterStore={
   get(key){try{return JSON.parse(localStorage.getItem("bhrHunter_"+key)||"[]")}catch(e){return[]}},
   set(key,value){try{localStorage.setItem("bhrHunter_"+key,JSON.stringify(value));return true}catch(e){return false}}
@@ -3693,15 +3694,15 @@ if(workspace&&marketSidebar){
   if(key==="scanner")body='<form data-hunter-form="scanner" class="bhr-hunter-form"><label>بازار<select name="market"><option>همه بازارها</option><option>طلا و فلزات</option><option>فارکس</option><option>ارز دیجیتال</option><option>بورس ایران</option><option>بورس آمریکا</option></select></label><label>شرایطی که می‌خواهی بررسی کنی<select name="setup"><option>شکست ساختار (BOS)</option><option>بازگشت به ناحیه عرضه/تقاضا</option><option>هم‌جهتی VWAP و دلتا</option><option>شکست سقف/کف روز</option></select></label><button class="bhr-hunter-primary">ساخت چک‌لیست جست‌وجو</button></form><div class="bhr-hunter-result" id="bhrHunterScanResult">این اسکنر هنوز داده بازار را اسکن نمی‌کند؛ شرایط انتخابی را به چک‌لیست بررسی دستی تبدیل می‌کند.</div>';
   hunterPanel.innerHTML='<div class="bhr-hunter-panel-head"><div><span>HUNTER TOOLS / WORKSPACE</span><h2>'+item[1]+'</h2><p>'+intro+'</p></div><button type="button" class="bhr-hunter-close" aria-label="بستن ابزار">×</button></div><div class="bhr-hunter-panel-body">'+body+'</div>';
   hunterPanel.hidden=false;
-  marketMain.classList.add("bhr-hunter-tool-open");
+  hunterMain.classList.add("bhr-hunter-tool-open");
   hunterPanel.scrollIntoView({behavior:"smooth",block:"start"});
  }
  toolsSidebar.addEventListener("click",e=>{const card=e.target.closest("[data-hunter-tool]");if(card)hunterOpen(card.dataset.hunterTool)});
  toolsSidebar.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.matches("[data-hunter-tool]")){e.preventDefault();hunterOpen(e.target.dataset.hunterTool)}});
  hunterPanel.addEventListener("click",e=>{
-  if(e.target.closest(".bhr-hunter-close")){hunterPanel.hidden=true;marketMain.classList.remove("bhr-hunter-tool-open");return}
+  if(e.target.closest(".bhr-hunter-close")){hunterPanel.hidden=true;hunterMain.classList.remove("bhr-hunter-tool-open");return}
   const del=e.target.closest("[data-hunter-delete]");if(del){const key=del.dataset.hunterDelete;const list=hunterStore.get(key);list.splice(Number(del.dataset.index),1);hunterStore.set(key,list);hunterOpen(key==="symbols"?"symbol":key);return}
-  const pageLink=e.target.closest("[data-bhr-page]");if(pageLink){hunterPanel.hidden=true;marketMain.classList.remove("bhr-hunter-tool-open")}
+  const pageLink=e.target.closest("[data-bhr-page]");if(pageLink){hunterPanel.hidden=true;hunterMain.classList.remove("bhr-hunter-tool-open")}
  });
  hunterPanel.addEventListener("submit",e=>{
   const form=e.target.closest("[data-hunter-form]");if(!form)return;e.preventDefault();
