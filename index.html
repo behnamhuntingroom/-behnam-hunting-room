@@ -3696,12 +3696,12 @@ if(workspace&&marketSidebar){
  hunterPanel.className="bhr-hunter-workbench";
  hunterPanel.hidden=true;
  hunterPanel.setAttribute("aria-live","polite");
- const watchlistPage=document.createElement("div");
- watchlistPage.className="bhr-watchlist-page";
- watchlistPage.setAttribute("role","dialog");
- watchlistPage.setAttribute("aria-modal","true");
- watchlistPage.setAttribute("aria-label","واچ‌لیست هوشمند");
- /* The panel is moved into the selected card when a tool opens. */
+ const hunterToolPage=document.createElement("div");
+ hunterToolPage.className="bhr-watchlist-page";
+ hunterToolPage.setAttribute("role","dialog");
+ hunterToolPage.setAttribute("aria-modal","true");
+ hunterToolPage.setAttribute("aria-label","ابزار اتاق شکار");
+ /* Every Hunter Tool opens in the same independent full-page workspace. */
  const hunterStore={
   get(key){try{return JSON.parse(localStorage.getItem("bhrHunter_"+key)||"[]")}catch(e){return[]}},
   set(key,value){try{localStorage.setItem("bhrHunter_"+key,JSON.stringify(value));return true}catch(e){return false}}
@@ -3736,28 +3736,17 @@ if(workspace&&marketSidebar){
   hunterPanel.innerHTML='<div class="bhr-hunter-panel-head"><div><span>HUNTER TOOLS / WORKSPACE</span><h2>'+item[1]+'</h2><p>'+intro+'</p></div><button type="button" class="bhr-hunter-close" aria-label="بازگشت">'+(key==="watchlist"?"← بازگشت":"×")+'</button></div><div class="bhr-hunter-panel-body">'+body+'</div>';
   const card=toolsSidebar.querySelector('[data-hunter-tool="'+key+'"]');
   if(!card)return;
-  if(key==="watchlist"){
-   watchlistPage.replaceChildren(hunterPanel);
-   document.body.append(watchlistPage);
-   hunterPanel.hidden=false;
-   return;
-  }
-  toolsSidebar.querySelectorAll(".bhr-tool-card.bhr-expanded").forEach(other=>{
-   if(other!==card)other.classList.remove("bhr-expanded");
-  });
-  card.classList.add("bhr-expanded");
-  card.append(hunterPanel);
+  hunterToolPage.setAttribute("aria-label",item[1]);
+  hunterToolPage.replaceChildren(hunterPanel);
+  document.body.append(hunterToolPage);
   hunterPanel.hidden=false;
  }
  toolsSidebar.addEventListener("click",e=>{const card=e.target.closest("[data-hunter-tool]");if(card)hunterOpen(card.dataset.hunterTool)});
  toolsSidebar.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.matches("[data-hunter-tool]")){e.preventDefault();hunterOpen(e.target.dataset.hunterTool)}});
  hunterPanel.addEventListener("click",e=>{
   if(e.target.closest(".bhr-hunter-close")){
-   if(watchlistPage.contains(hunterPanel)){watchlistPage.remove();return}
-   const card=hunterActiveCard();
+   hunterToolPage.remove();
    hunterPanel.hidden=true;
-   if(card)card.classList.remove("bhr-expanded");
-   hunterPanel.remove();
    return;
   }
   const del=e.target.closest("[data-hunter-delete]");if(del){const key=del.dataset.hunterDelete;const list=hunterStore.get(key);list.splice(Number(del.dataset.index),1);hunterStore.set(key,list);hunterOpen(key==="symbols"?"symbol":key);return}
