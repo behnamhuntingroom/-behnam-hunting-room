@@ -3748,7 +3748,15 @@ if(searchToggle&&!$("bhrSiteSearchPanel")){
  document.body.append(panel);
  const input=$("bhrSiteSearchInput"),results=$("bhrSiteSearchResults");
  const closeSearch=()=>{panel.hidden=true;searchToggle.setAttribute("aria-expanded","false");mobileSearchToggle.setAttribute("aria-expanded","false");};
- const openSearch=(trigger=searchToggle)=>{panel.hidden=false;searchToggle.setAttribute("aria-expanded","true");mobileSearchToggle.setAttribute("aria-expanded","true");input.value="";renderSearch("");setTimeout(()=>input.focus(),30);};
+ const openSearch=(trigger=searchToggle)=>{
+  panel.hidden=false;searchToggle.setAttribute("aria-expanded","true");mobileSearchToggle.setAttribute("aria-expanded","true");
+  const anchor=trigger||searchToggle;const rect=anchor.getBoundingClientRect();
+  const panelWidth=Math.min(430,window.innerWidth-24);
+  const left=Math.max(12,Math.min(rect.right-panelWidth,window.innerWidth-panelWidth-12));
+  panel.style.left=left+"px";panel.style.right="auto";panel.style.top=(rect.bottom+8)+"px";
+  requestAnimationFrame(()=>{if(rect.bottom+8+panel.offsetHeight>window.innerHeight-12){panel.style.top=Math.max(12,rect.top-panel.offsetHeight-8)+"px";}});
+  input.value="";renderSearch("");setTimeout(()=>input.focus(),30);
+ };
  const normalizeSearch=value=>String(value||"").toLocaleLowerCase("fa").replace(/[يى]/g,"ی").replace(/ك/g,"ک").replace(/\s+/g," ").trim();
  const getSearchItems=()=>{
   const items=[];
