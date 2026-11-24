@@ -3636,8 +3636,97 @@ if(workspace&&marketSidebar){
   '<div class="bhr-tool-card"><span>⚖</span><strong>مدیریت ریسک</strong><small>محاسبه حجم و ریسک معامله</small></div>'+
   '<div class="bhr-tool-card"><span>⌁</span><strong>اسکنر فرصت‌ها</strong><small>شناسایی موقعیت‌های قابل بررسی</small></div>'+
   '</div>';
+
  workspace.append(toolsSidebar);
+ const hunterToolNames=[
+  ["watchlist","واچ‌لیست هوشمند","پیگیری نمادهای منتخب"],
+  ["alerts","هشدار قیمت","ثبت سطح هشدار دلخواه"],
+  ["calendar","تقویم اقتصادی","برنامه‌ریزی رویدادهای مهم"],
+  ["heatmap","نقشه حرارتی پیشرفته","نمایش و دسترسی به نقشه بازار"],
+  ["journal","ژورنال معاملاتی","ثبت و مرور معاملات"],
+  ["ai","AI HUNTER","ساخت چک‌لیست تحلیل معاملاتی"],
+  ["symbol","صفحه اختصاصی نمادها","پرونده و یادداشت هر نماد"],
+  ["health","سلامت داده‌های بازار","وضعیت اتصال و منبع داده"],
+  ["risk","مدیریت ریسک","محاسبه حجم و ریسک معامله"],
+  ["scanner","اسکنر فرصت‌ها","فیلتر و ثبت فرصت‌های قابل بررسی"]
+ ];
+ toolsSidebar.querySelectorAll(".bhr-tool-card").forEach((card,index)=>{
+  card.dataset.hunterTool=hunterToolNames[index][0];
+  card.setAttribute("role","button");card.setAttribute("tabindex","0");
+  card.setAttribute("aria-label","باز کردن "+hunterToolNames[index][1]);
+ });
+ const hunterPanel=document.createElement("section");
+ hunterPanel.className="bhr-hunter-workbench";
+ hunterPanel.hidden=true;
+ hunterPanel.setAttribute("aria-live","polite");
+ marketMain.append(hunterPanel);
+ const hunterStore={
+  get(key){try{return JSON.parse(localStorage.getItem("bhrHunter_"+key)||"[]")}catch(e){return[]}},
+  set(key,value){try{localStorage.setItem("bhrHunter_"+key,JSON.stringify(value));return true}catch(e){return false}}
+ };
+ const hunterEsc=value=>String(value??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+ function hunterOpen(key){
+  const item=hunterToolNames.find(x=>x[0]===key);if(!item)return;
+  const rows=(key==="watchlist"?hunterStore.get("watchlist"):key==="alerts"?hunterStore.get("alerts"):key==="journal"?hunterStore.get("journal"):[]).map((v,i)=>'<div class="bhr-hunter-saved-row"><span><b>'+hunterEsc(v.name||v.symbol||v.title)+'</b><small>'+hunterEsc(v.detail||v.date||"ثبت‌شده در این مرورگر")+'</small></span><button type="button" data-hunter-delete="'+key+'" data-index="'+i+'">حذف</button></div>').join("");
+  const intro={
+   watchlist:"نمادهای موردنظر را اضافه کن؛ فهرست در همین مرورگر ذخیره می‌شود.",
+   alerts:"سطح قیمت و شرط موردنظر را ثبت کن. در این نسخه هشدار خودکار یا پوش‌نوتیفیکیشن فعال نیست.",
+   calendar:"این بخش فعلاً دفتر برنامه‌ریزی رویدادهاست؛ زمان‌بندی زنده به منبع اقتصادی متصل نشده است.",
+   heatmap:"برای مشاهده نقشه‌های موجود سایت وارد نقشه حرارتی شو. داده‌های این بخش نمونه یا ساختگی نیستند.",
+   journal:"معاملاتت را ثبت کن تا سابقه و یادداشت‌ها در همین مرورگر باقی بمانند.",
+   ai:"اطلاعات معامله را وارد کن تا چک‌لیست ساختاریافته تحلیل آماده شود؛ این نسخه هنوز به مدل هوش مصنوعی متصل نیست.",
+   symbol:"نماد را جست‌وجو و یادداشت اختصاصی خودت را ذخیره کن؛ قیمت و اطلاعات زنده در این نسخه دریافت نمی‌شود.",
+   health:"وضعیت اتصال ابزارهای زنده در این نسخه از داخل مرورگر قابل تأیید نیست؛ این پنل فقط وضعیت نسخه آزمایشی را نشان می‌دهد.",
+   risk:"سرمایه، درصد ریسک و فاصله حد ضرر را وارد کن تا حجم پیشنهادی بر اساس فرمول ریسک محاسبه شود.",
+   scanner:"شرایطی را که دنبال می‌کنی انتخاب کن و فرصت‌ها را به واچ‌لیست منتقل کن؛ اسکن خودکار بازار هنوز فعال نیست."
+  }[key];
+  let body="";
+  if(key==="watchlist")body='<form data-hunter-form="watchlist" class="bhr-hunter-form"><label>نماد یا دارایی<input name="name" required placeholder="مثلاً XAUUSD یا BTCUSDT"></label><label>یادداشت کوتاه<input name="detail" placeholder="سطح مهم یا دلیل پیگیری"></label><button class="bhr-hunter-primary">افزودن به واچ‌لیست</button></form><div class="bhr-hunter-list">'+(rows||'<div class="bhr-hunter-empty">هنوز نمادی اضافه نشده است.</div>')+'</div>';
+  if(key==="alerts")body='<form data-hunter-form="alerts" class="bhr-hunter-form"><label>نماد<input name="name" required placeholder="مثلاً XAUUSD"></label><div class="bhr-hunter-fields"><label>قیمت هدف<input name="price" type="number" step="any" required placeholder="مثلاً 2050"></label><label>شرط<select name="condition"><option>بالاتر از</option><option>پایین‌تر از</option></select></label></div><button class="bhr-hunter-primary">ثبت هشدار</button></form><div class="bhr-hunter-list">'+(rows||'<div class="bhr-hunter-empty">هنوز هشداری ثبت نشده است.</div>')+'</div>';
+  if(key==="calendar")body='<div class="bhr-hunter-info-grid"><article><b>رویدادهای بانک مرکزی</b><span>تصمیم نرخ بهره و نشست‌های پولی را در تقویم شخصی یادداشت کن.</span></article><article><b>داده‌های تورمی</b><span>CPI، PCE و شاخص قیمت تولیدکننده را زیر نظر داشته باش.</span></article><article><b>بازار کار</b><span>NFP، نرخ بیکاری و درخواست بیمه بیکاری.</span></article><article><b>رویدادهای ایران</b><span>گزارش‌های رسمی، عرضه‌ها و اطلاعیه‌های اثرگذار بر بازار.</span></article></div><div class="bhr-hunter-empty">تقویم زنده هنوز متصل نیست؛ تاریخ یا رویداد مهم را در ژورنال خودت ثبت کن.</div>';
+  if(key==="heatmap")body='<div class="bhr-hunter-info-grid"><article><b>بورس ایران</b><span>نقشه بازار و نمادهای داخلی</span><a href="#bhr-page-heatmap" data-bhr-page="heatmap">باز کردن نقشه حرارتی ←</a></article><article><b>بورس آمریکا</b><span>بررسی عملکرد نمادها و شاخص‌ها</span><a href="#bhr-page-heatmap" data-bhr-page="heatmap">باز کردن نقشه حرارتی ←</a></article><article><b>ارزهای دیجیتال</b><span>نمای کلی قدرت و ضعف بازار کریپتو</span><a href="#bhr-page-heatmap" data-bhr-page="heatmap">باز کردن نقشه حرارتی ←</a></article><article><b>فارکس</b><span>نمای مقایسه‌ای جفت‌ارزها</span><a href="#bhr-page-heatmap" data-bhr-page="heatmap">باز کردن نقشه حرارتی ←</a></article></div>';
+  if(key==="journal")body='<form data-hunter-form="journal" class="bhr-hunter-form"><label>نماد<input name="name" required placeholder="مثلاً XAUUSD"></label><div class="bhr-hunter-fields"><label>جهت معامله<select name="direction"><option>خرید (Long)</option><option>فروش (Short)</option></select></label><label>نتیجه<select name="result"><option>باز</option><option>سود</option><option>ضرر</option><option>سر به سر</option></select></label></div><div class="bhr-hunter-fields"><label>قیمت ورود<input name="entry" type="number" step="any"></label><label>قیمت خروج<input name="exit" type="number" step="any"></label></div><label>یادداشت و دلیل ورود<textarea name="detail" rows="3" placeholder="ستاپ، حد ضرر، احساسات و نکات معامله..."></textarea></label><button class="bhr-hunter-primary">ذخیره معامله</button></form><div class="bhr-hunter-list">'+(rows||'<div class="bhr-hunter-empty">هنوز معامله‌ای ثبت نشده است.</div>')+'</div>';
+  if(key==="ai")body='<form data-hunter-form="ai" class="bhr-hunter-form"><label>نماد و تایم‌فریم<input name="name" required placeholder="مثلاً XAUUSD — 5m"></label><label>جهت و ساختار بازار<textarea name="structure" rows="3" placeholder="روند، سقف و کف‌ها، نواحی نقدینگی..."></textarea></label><label>شواهد و سناریو<textarea name="detail" rows="3" placeholder="دلتا، والیوم، VWAP، نقطه ورود و ابطال..."></textarea></label><button class="bhr-hunter-primary">ساخت چک‌لیست تحلیل</button></form><div class="bhr-hunter-result" id="bhrHunterAiResult">پس از تکمیل فرم، چک‌لیست تحلیل در همین قسمت نمایش داده می‌شود.</div>';
+  if(key==="symbol")body='<form data-hunter-form="symbol" class="bhr-hunter-form"><label>نماد موردنظر<input name="name" required placeholder="نام نماد را وارد کن"></label><label>یادداشت اختصاصی<textarea name="detail" rows="3" placeholder="سطوح کلیدی، سناریوها و نکات مهم..."></textarea></label><button class="bhr-hunter-primary">ذخیره پرونده نماد</button></form><div class="bhr-hunter-list">'+(hunterStore.get("symbols").map((v,i)=>'<div class="bhr-hunter-saved-row"><span><b>'+hunterEsc(v.name)+'</b><small>'+hunterEsc(v.detail)+'</small></span><button type="button" data-hunter-delete="symbols" data-index="'+i+'">حذف</button></div>').join("")||'<div class="bhr-hunter-empty">پرونده‌ای ذخیره نشده است.</div>')+'</div>';
+  if(key==="health")body='<div class="bhr-hunter-health"><div><i></i><span><b>رابط کاربری</b><small>فعال — ابزارهای آزمایشی در مرورگر اجرا می‌شوند</small></span></div><div><i class="warn"></i><span><b>داده‌های زنده</b><small>وضعیت اتصال از این پنل تأیید نشده است</small></span></div><div><i class="warn"></i><span><b>هشدار خودکار</b><small>در نسخه فعلی غیرفعال است</small></span></div><div><i class="warn"></i><span><b>همگام‌سازی ابری</b><small>اطلاعات فقط در همین مرورگر ذخیره می‌شود</small></span></div></div>';
+  if(key==="risk")body='<form data-hunter-form="risk" class="bhr-hunter-form"><div class="bhr-hunter-fields"><label>موجودی حساب<input name="capital" type="number" min="0" step="any" required placeholder="مثلاً 10000"></label><label>ریسک هر معامله (%)<input name="risk" type="number" min="0.01" max="100" step="any" value="1" required></label></div><div class="bhr-hunter-fields"><label>قیمت ورود<input name="entry" type="number" step="any" required></label><label>حد ضرر<input name="stop" type="number" step="any" required></label></div><label>ارزش هر واحد حرکت به ازای یک واحد حجم<input name="unit" type="number" min="0.000001" step="any" value="1" required></label><button class="bhr-hunter-primary">محاسبه حجم معامله</button></form><div class="bhr-hunter-result" id="bhrHunterRiskResult">حجم پیشنهادی و مبلغ ریسک پس از محاسبه نمایش داده می‌شود.</div><small class="bhr-hunter-disclaimer">محاسبه‌گر آموزشی است؛ ارزش قرارداد، کارمزد و اسلیپیج را جداگانه بررسی کن.</small>';
+  if(key==="scanner")body='<form data-hunter-form="scanner" class="bhr-hunter-form"><label>بازار<select name="market"><option>همه بازارها</option><option>طلا و فلزات</option><option>فارکس</option><option>ارز دیجیتال</option><option>بورس ایران</option><option>بورس آمریکا</option></select></label><label>شرایطی که می‌خواهی بررسی کنی<select name="setup"><option>شکست ساختار (BOS)</option><option>بازگشت به ناحیه عرضه/تقاضا</option><option>هم‌جهتی VWAP و دلتا</option><option>شکست سقف/کف روز</option></select></label><button class="bhr-hunter-primary">ساخت چک‌لیست جست‌وجو</button></form><div class="bhr-hunter-result" id="bhrHunterScanResult">این اسکنر هنوز داده بازار را اسکن نمی‌کند؛ شرایط انتخابی را به چک‌لیست بررسی دستی تبدیل می‌کند.</div>';
+  hunterPanel.innerHTML='<div class="bhr-hunter-panel-head"><div><span>HUNTER TOOLS / WORKSPACE</span><h2>'+item[1]+'</h2><p>'+intro+'</p></div><button type="button" class="bhr-hunter-close" aria-label="بستن ابزار">×</button></div><div class="bhr-hunter-panel-body">'+body+'</div>';
+  hunterPanel.hidden=false;
+  marketMain.classList.add("bhr-hunter-tool-open");
+  hunterPanel.scrollIntoView({behavior:"smooth",block:"start"});
+ }
+ toolsSidebar.addEventListener("click",e=>{const card=e.target.closest("[data-hunter-tool]");if(card)hunterOpen(card.dataset.hunterTool)});
+ toolsSidebar.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.matches("[data-hunter-tool]")){e.preventDefault();hunterOpen(e.target.dataset.hunterTool)}});
+ hunterPanel.addEventListener("click",e=>{
+  if(e.target.closest(".bhr-hunter-close")){hunterPanel.hidden=true;marketMain.classList.remove("bhr-hunter-tool-open");return}
+  const del=e.target.closest("[data-hunter-delete]");if(del){const key=del.dataset.hunterDelete;const list=hunterStore.get(key);list.splice(Number(del.dataset.index),1);hunterStore.set(key,list);hunterOpen(key==="symbols"?"symbol":key);return}
+  const pageLink=e.target.closest("[data-bhr-page]");if(pageLink){hunterPanel.hidden=true;marketMain.classList.remove("bhr-hunter-tool-open")}
+ });
+ hunterPanel.addEventListener("submit",e=>{
+  const form=e.target.closest("[data-hunter-form]");if(!form)return;e.preventDefault();
+  const data=Object.fromEntries(new FormData(form).entries()),key=form.dataset.hunterForm;
+  if(key==="watchlist"||key==="alerts"||key==="journal"||key==="symbol"){
+   const storeKey=key==="symbol"?"symbols":key;const list=hunterStore.get(storeKey);
+   list.unshift({...data,date:new Date().toLocaleString("fa-IR")});hunterStore.set(storeKey,list);hunterOpen(key==="symbol"?"symbol":key);return;
+  }
+  if(key==="risk"){
+   const capital=Number(data.capital),risk=Number(data.risk),entry=Number(data.entry),stop=Number(data.stop),unit=Number(data.unit);
+   const amount=capital*risk/100,distance=Math.abs(entry-stop),size=amount/(distance*unit);
+   const out=hunterPanel.querySelector("#bhrHunterRiskResult");
+   out.innerHTML=Number.isFinite(size)&&distance>0&&unit>0&&capital>0&&risk>0?'<b>حجم پیشنهادی: '+size.toLocaleString("en-US",{maximumFractionDigits:6})+'</b><span>مبلغ ریسک: '+amount.toLocaleString("en-US",{maximumFractionDigits:2})+' | فاصله حد ضرر: '+distance.toLocaleString("en-US")+'</span>':'ورودی‌ها را بررسی کن؛ قیمت ورود و حد ضرر نباید برابر باشند.';
+  }
+  if(key==="ai"){
+   const out=hunterPanel.querySelector("#bhrHunterAiResult");
+   out.innerHTML='<b>چک‌لیست تحلیل — '+hunterEsc(data.name)+'</b><ol><li>جهت روند و ساختار بازار را در تایم‌فریم بالاتر مشخص کن.</li><li>نقدینگی و سطوح مهم را روی نمودار علامت بزن.</li><li>شواهد والیوم، دلتا و VWAP را با جهت معامله تطبیق بده.</li><li>نقطه ورود، حد ضرر و شرط ابطال سناریو را دقیق بنویس.</li><li>ریسک معامله را پیش از ورود محاسبه کن.</li></ol><p>یادداشت ساختار بازار: '+hunterEsc(data.structure||"ثبت نشده")+'</p><p>شواهد: '+hunterEsc(data.detail||"ثبت نشده")+'</p>';
+  }
+  if(key==="scanner"){
+   const out=hunterPanel.querySelector("#bhrHunterScanResult");
+   out.innerHTML='<b>چک‌لیست بررسی دستی</b><p>بازار: '+hunterEsc(data.market)+' | الگو: '+hunterEsc(data.setup)+'</p><ul><li>نمادهای فعال این بازار را بررسی کن.</li><li>روند تایم‌فریم بالاتر را هم‌جهت کن.</li><li>وجود نقطه ابطال و نسبت سود به زیان مناسب را بررسی کن.</li></ul>';
+  }
+ });
 }
+
 /* Subtle hover sound for the home-page shortcut cards */
 const marketMain=workspace&&workspace.querySelector(".market-main");
 if(marketMain)home.insertBefore(marketMain,methodIntro);
@@ -6684,4 +6773,42 @@ header .brand .bhr-brand-emblem img{
  color:#d6c18e!important;font-size:12px!important;font-weight:600!important;
  letter-spacing:.25px!important;text-shadow:none!important;
 }
+</style>
+
+
+<style id="bhr-interactive-hunter-tools">
+#bhr-home-market-workspace .bhr-tool-card{cursor:pointer;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+#bhr-home-market-workspace .bhr-tool-card:hover,#bhr-home-market-workspace .bhr-tool-card:focus-visible{transform:translateY(-2px);border-color:#e8c66e!important;box-shadow:0 10px 26px rgba(215,180,90,.18)!important;outline:none}
+#bhr-home-market-workspace .market-main.bhr-hunter-tool-open>*:not(.bhr-hunter-workbench){display:none!important}
+#bhr-home-market-workspace .bhr-hunter-workbench{grid-column:2;grid-row:1;min-width:0;width:100%;padding:22px;border:1px solid rgba(215,180,90,.5);border-radius:18px;background:linear-gradient(145deg,var(--panel),var(--card));box-shadow:0 14px 36px #0003;color:var(--text);box-sizing:border-box}
+#bhr-home-market-workspace .bhr-hunter-workbench[hidden]{display:none!important}
+.bhr-hunter-panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;padding-bottom:17px;border-bottom:1px solid var(--line)}
+.bhr-hunter-panel-head>div>span{font-size:10px;letter-spacing:1.5px;color:var(--gold2);font-weight:800}
+.bhr-hunter-panel-head h2{margin:7px 0;color:var(--gold2);font-size:22px}
+.bhr-hunter-panel-head p{margin:0;color:var(--muted);font-size:12px;line-height:1.9}
+.bhr-hunter-close{flex:0 0 38px;width:38px;height:38px;border:1px solid var(--line);border-radius:10px;background:transparent;color:var(--text);font-size:25px;cursor:pointer}
+.bhr-hunter-panel-body{padding-top:18px;display:grid;gap:16px}
+.bhr-hunter-form{display:grid;gap:13px}
+.bhr-hunter-form label{display:grid;gap:6px;color:var(--muted);font-size:12px}
+.bhr-hunter-form input,.bhr-hunter-form select,.bhr-hunter-form textarea{width:100%;min-width:0;box-sizing:border-box;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text);font:inherit;font-size:13px}
+.bhr-hunter-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.bhr-hunter-primary{justify-self:start;padding:11px 18px;border:1px solid #d7b45a;border-radius:10px;background:linear-gradient(120deg,#e6c36b,#a77b2d);color:#17130a;font:inherit;font-weight:900;cursor:pointer}
+.bhr-hunter-list{display:grid;gap:9px}
+.bhr-hunter-saved-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:11px;background:#ffffff08}
+.bhr-hunter-saved-row span{display:grid;gap:4px;min-width:0}.bhr-hunter-saved-row b{color:var(--gold2)}.bhr-hunter-saved-row small{color:var(--muted);overflow-wrap:anywhere}
+.bhr-hunter-saved-row button{border:1px solid #d66a6a66;border-radius:8px;background:transparent;color:#e88;padding:6px 10px;cursor:pointer}
+.bhr-hunter-empty,.bhr-hunter-result{padding:16px;border:1px dashed var(--line);border-radius:12px;color:var(--muted);font-size:13px;line-height:1.9}
+.bhr-hunter-result{display:grid;gap:8px;border-style:solid}.bhr-hunter-result b{color:var(--gold2)}
+.bhr-hunter-result ol,.bhr-hunter-result ul{margin:0;padding-right:22px}.bhr-hunter-result p{margin:0}
+.bhr-hunter-info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.bhr-hunter-info-grid article{display:grid;gap:7px;padding:15px;border:1px solid var(--line);border-radius:12px;background:#ffffff08}
+.bhr-hunter-info-grid article b{color:var(--gold2)}.bhr-hunter-info-grid article span{font-size:12px;color:var(--muted);line-height:1.8}
+.bhr-hunter-info-grid article a{color:#69aef7;font-size:12px;text-decoration:none}
+.bhr-hunter-health{display:grid;gap:10px}
+.bhr-hunter-health>div{display:flex;align-items:center;gap:12px;padding:13px;border:1px solid var(--line);border-radius:11px}
+.bhr-hunter-health i{width:10px;height:10px;border-radius:50%;background:#2dbd78;box-shadow:0 0 10px #2dbd7866;flex:0 0 auto}
+.bhr-hunter-health i.warn{background:#d6a442;box-shadow:0 0 10px #d6a44266}
+.bhr-hunter-health span{display:grid;gap:3px}.bhr-hunter-health b{font-size:13px}.bhr-hunter-health small,.bhr-hunter-disclaimer{font-size:11px;color:var(--muted)}
+@media(max-width:1050px){#bhr-home-market-workspace .bhr-hunter-workbench{grid-column:1;grid-row:2}}
+@media(max-width:600px){#bhr-home-market-workspace .bhr-hunter-workbench{padding:15px}.bhr-hunter-fields,.bhr-hunter-info-grid{grid-template-columns:1fr}.bhr-hunter-panel-head h2{font-size:19px}}
 </style>
