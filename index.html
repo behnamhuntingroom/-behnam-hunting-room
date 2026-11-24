@@ -1200,6 +1200,45 @@ header nav #bhrCartCount{min-width:16px!important;height:16px!important;padding:
 :root[data-theme="light"] #bhr-world-clocks-page .bhr-overlap-bottom strong{color:#244a35!important}
 @media(max-width:600px){#bhr-world-clocks-page .bhr-clock-overlap{padding:16px 13px}#bhr-world-clocks-page .bhr-overlap-title{font-size:17px}#bhr-world-clocks-page .bhr-overlap-bottom{gap:6px}#bhr-world-clocks-page .bhr-overlap-bottom>div{padding:9px 7px}#bhr-world-clocks-page .bhr-overlap-bottom strong{font-size:12px}}
 </style>
+
+<style id="bhr-desktop-site-search">
+/* Compact search control beside About; overlay results do not resize or restyle other navigation icons. */
+header nav .bhr-site-search-toggle{
+ display:inline-flex;align-items:center;justify-content:center;flex:0 0 34px;
+ width:34px;height:34px;min-width:34px;min-height:34px;padding:0!important;
+ margin:0 2px;border:1px solid rgba(242,217,139,.48);border-radius:9px;
+ color:#ffe6a0;background:linear-gradient(145deg,rgba(255,239,190,.18),rgba(126,91,28,.2) 48%,rgba(15,13,9,.78));
+ box-shadow:inset 0 1px 2px rgba(255,250,220,.28),0 2px 5px rgba(0,0,0,.3),0 0 6px rgba(215,180,90,.12);
+ cursor:pointer;vertical-align:middle;transition:background .2s,border-color .2s,box-shadow .2s;
+}
+header nav .bhr-site-search-toggle:hover{border-color:#f2d98b;background:linear-gradient(145deg,rgba(74,61,35,.98),rgba(22,20,15,.98));box-shadow:0 3px 9px rgba(0,0,0,.25),0 0 10px rgba(215,180,90,.18)}
+header nav .bhr-site-search-toggle svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.bhr-site-search-panel{
+ position:fixed;z-index:3000;top:88px;left:22px;width:min(430px,calc(100vw - 44px));max-height:min(72vh,620px);
+ overflow:hidden;padding:16px;border:1px solid rgba(215,180,90,.52);border-radius:17px;
+ background:linear-gradient(145deg,#171b19,#090d0b);color:#f4f1e7;
+ box-shadow:0 22px 65px rgba(0,0,0,.58),inset 0 1px 0 rgba(255,255,255,.08)
+}
+.bhr-site-search-panel[hidden]{display:none!important}
+.bhr-site-search-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px;color:#f0d58e}
+.bhr-site-search-head strong{font-size:15px}
+.bhr-site-search-close{width:30px;height:30px;border:1px solid rgba(215,180,90,.35);border-radius:8px;background:rgba(255,255,255,.04);color:#f2dfad;font-size:21px;cursor:pointer}
+.bhr-site-search-field{display:flex;align-items:center;gap:9px;padding:10px 12px;border:1px solid rgba(215,180,90,.4);border-radius:11px;background:rgba(255,255,255,.055)}
+.bhr-site-search-field svg{width:18px;height:18px;flex:0 0 18px;fill:none;stroke:#e4c879;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.bhr-site-search-field input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:#fff;font:inherit;font-size:13px}
+.bhr-site-search-field input::placeholder{color:#aab4ad}
+.bhr-site-search-results{display:grid;gap:7px;max-height:calc(min(72vh,620px) - 125px);overflow:auto;margin-top:11px}
+.bhr-site-search-hint{padding:14px 9px;color:#b6c2b9;font-size:12px;line-height:1.9;text-align:center}
+.bhr-site-search-result{display:grid;gap:3px;width:100%;padding:10px 11px;border:1px solid rgba(215,180,90,.16);border-radius:10px;background:rgba(255,255,255,.035);color:#f1eddf;text-align:right;font:inherit;cursor:pointer}
+.bhr-site-search-result:hover{border-color:rgba(215,180,90,.58);background:rgba(215,180,90,.09)}
+.bhr-site-search-result strong{font-size:13px;color:#f0d58e}
+.bhr-site-search-result small{font-size:11px;line-height:1.7;color:#b9c7bd}
+@media(max-width:760px){
+ header nav .bhr-site-search-toggle{display:none!important}
+ .bhr-site-search-panel{display:none!important}
+}
+</style>
+
 </head>
 <body>
 <header>
@@ -3599,7 +3638,8 @@ if(nav){
  '<a href="#bhr-page-community" data-bhr-page="community">♧ <span>تحلیل کاربران</span></a>'+
  
  '<a class="bhr-mobile-assistant-nav" href="#bhr-page-assistant" data-bhr-page="assistant">✧ <span>دستیار هوشمند</span></a>'+
- '<a href="#bhr-page-about" data-bhr-page="about">▦ <span>درباره ما</span></a>';
+ '<a href="#bhr-page-about" data-bhr-page="about">▦ <span>درباره ما</span></a>
+ <button type="button" id="bhrSiteSearchToggle" class="bhr-site-search-toggle" aria-label="جستجو در سایت" title="جستجو در سایت" aria-haspopup="dialog" aria-controls="bhrSiteSearchPanel"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg></button>';
 }
 const cartToggle=$("bhrCartToggle");
 if(nav&&cartToggle){
@@ -3651,6 +3691,66 @@ window.addEventListener("popstate",()=>{
 });
 const initial=location.hash.startsWith("#bhr-page-")?location.hash.slice(10):"home";
 showPage(initial,false);
+
+/* Desktop site-wide search: index page headings and content cards without changing existing nav controls. */
+const searchToggle=$("bhrSiteSearchToggle");
+if(searchToggle&&!$("bhrSiteSearchPanel")){
+ const panel=document.createElement("section");
+ panel.id="bhrSiteSearchPanel";panel.className="bhr-site-search-panel";
+ panel.setAttribute("role","dialog");panel.setAttribute("aria-modal","true");panel.setAttribute("aria-label","جستجو در سایت");
+ panel.hidden=true;
+ panel.innerHTML='<div class="bhr-site-search-head"><strong>جستجو در اتاق شکار</strong><button type="button" class="bhr-site-search-close" aria-label="بستن جستجو">×</button></div><label class="bhr-site-search-field"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg><input id="bhrSiteSearchInput" type="search" autocomplete="off" placeholder="نام بخش، ابزار یا موضوع را بنویس..." /></label><div id="bhrSiteSearchResults" class="bhr-site-search-results"><div class="bhr-site-search-hint">برای نمونه: نقشه حرارتی، طلا، آموزش، ساعت بازارها</div></div>';
+ document.body.append(panel);
+ const input=$("bhrSiteSearchInput"),results=$("bhrSiteSearchResults");
+ const closeSearch=()=>{panel.hidden=true;searchToggle.setAttribute("aria-expanded","false");};
+ const openSearch=()=>{panel.hidden=false;searchToggle.setAttribute("aria-expanded","true");input.value="";renderSearch("");setTimeout(()=>input.focus(),30);};
+ const normalizeSearch=value=>String(value||"").toLocaleLowerCase("fa").replace(/[يى]/g,"ی").replace(/ك/g,"ک").replace(/\s+/g," ").trim();
+ const getSearchItems=()=>{
+  const items=[];
+  const selectors="h1,h2,h3,h4,.bhr-shortcut strong,.bhr-up-card h3,.card h3";
+  Object.entries(pages).forEach(([key,page])=>{
+   const pageTitle=page.querySelector(".bhr-page-heading h1")?.textContent||({home:"صفحه اصلی",room:"اتاق معاملاتی",academy:"آکادمی آموزشی",tools:"ابزارهای تخصصی ترید",community:"تحلیل کاربران",about:"درباره ما",features:"امکانات سایت",heatmap:"نقشه حرارتی بازار",assistant:"دستیار هوشمند BHR",news:"اخبار بازار",clocks:"ساعت بازارهای جهانی"}[key]||key);
+   items.push({key,title:pageTitle,description:"رفتن به بخش "+pageTitle,target:page});
+   page.querySelectorAll(selectors).forEach(node=>{
+    const title=(node.textContent||"").replace(/\s+/g," ").trim();
+    if(!title||title===pageTitle||title.length>100)return;
+    const target=node.closest(".bhr-shortcut,.bhr-up-card,.card,article,section")||node;
+    const description=(target.textContent||"").replace(/\s+/g," ").trim().slice(0,150);
+    items.push({key,title,description,target});
+   });
+  });
+  return items;
+ };
+ let searchItems=[];
+ const renderSearch=query=>{
+  const q=normalizeSearch(query);
+  results.replaceChildren();
+  if(!q){const hint=document.createElement("div");hint.className="bhr-site-search-hint";hint.textContent="برای نمونه: نقشه حرارتی، طلا، آموزش، ساعت بازارها";results.append(hint);return;}
+  const matches=searchItems.map(item=>({...item,hay:normalizeSearch(item.title+" "+item.description)})).filter(item=>item.hay.includes(q)).slice(0,12);
+  if(!matches.length){const empty=document.createElement("div");empty.className="bhr-site-search-hint";empty.textContent="موردی پیدا نشد؛ عبارت دیگری را امتحان کن.";results.append(empty);return;}
+  matches.forEach(item=>{
+   const button=document.createElement("button");button.type="button";button.className="bhr-site-search-result";
+   const title=document.createElement("strong");title.textContent=item.title;
+   const detail=document.createElement("small");detail.textContent=item.description||"باز کردن بخش";
+   button.append(title,detail);
+   button.addEventListener("click",()=>{
+    closeSearch();showPage(item.key,true);
+    if(item.target&&item.target!==pages[item.key])setTimeout(()=>item.target.scrollIntoView({behavior:"smooth",block:"center"}),80);
+   });
+   results.append(button);
+  });
+ };
+ searchToggle.addEventListener("click",()=>panel.hidden?openSearch():closeSearch());
+ panel.querySelector(".bhr-site-search-close").addEventListener("click",closeSearch);
+ input.addEventListener("input",()=>renderSearch(input.value));
+ document.addEventListener("keydown",event=>{
+  if(event.key==="Escape"&&!panel.hidden){closeSearch();searchToggle.focus();}
+  if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==="k"){event.preventDefault();openSearch();}
+ });
+ document.addEventListener("click",event=>{if(!panel.hidden&&!panel.contains(event.target)&&!searchToggle.contains(event.target))closeSearch();});
+ searchItems=getSearchItems();
+}
+
 })();
 </script>
 
