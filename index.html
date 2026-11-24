@@ -5398,11 +5398,13 @@ header nav .nav-icon,header nav svg{width:13px!important;height:13px!important;f
 </style>
 
 <style id="bhr-mobile-ten-cards-blue-border">
-/* Mobile only: give all ten home shortcut cards a consistent blue outline. */
-@media(max-width:760px){
- #bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-shortcut{
-  border:1px solid #238bff!important;
-  box-shadow:0 0 0 1px rgba(35,139,255,.12),0 5px 16px rgba(20,105,220,.12)!important;
+/* Mobile only: force a blue outline on each of the ten home shortcut links. */
+@media screen and (max-width:760px){
+ #bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar .bhr-home-shortcuts>a.bhr-shortcut,
+ #bhr-home-market-workspace .bhr-home-shortcuts-sidebar .bhr-home-shortcuts>a.bhr-shortcut{
+  border:1.5px solid #238bff!important;
+  border-color:#238bff!important;
+  box-shadow:0 0 0 1px rgba(35,139,255,.2),0 5px 16px rgba(20,105,220,.14)!important;
  }
 }
 </style>
