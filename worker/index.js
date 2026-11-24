@@ -1232,6 +1232,113 @@ async function handleOpportunityScanner(env, headers) {
 }
 
 
+
+/* BHR live quotes: Wallex for USDT/BTC and NerkhAra for physical gold/silver + spot references. */
+async function handleLivePrices(env, headers) {
+  const cacheKey = "bhr:live-prices:v1";
+  try {
+    const cached = env.CHAT_STORE ? await env.CHAT_STORE.get(cacheKey, "json") : null;
+    if (cached?.updatedAt && Date.now() - Date.parse(cached.updatedAt) < 8000) {
+      return json({ ...cached, cached: true }, 200, { ...headers, "Cache-Control": "public, max-age=5" });
+    }
+  } catch (error) {
+    console.error("[BHR_PRICE_CACHE_READ]", error?.message || "cache unavailable");
+  }
+
+  const requestHeaders = {
+    "Accept": "application/json",
+    "User-Agent": "BEHNAM-HUNTING-ROOM/1.0 (+https://behnamhunter.ir)"
+  };
+
+  try {
+    const [wallexResponse, localResponse] = await Promise.all([
+      fetch("https://api.wallex.ir/v1/markets", {
+        headers: requestHeaders,
+        cf: { cacheTtl: 5, cacheEverything: true }
+      }),
+      fetch("https://nerkhara.com/api/v1/latest.json", {
+        headers: requestHeaders,
+        cf: { cacheTtl: 30, cacheEverything: true }
+      })
+    ]);
+
+    if (!wallexResponse.ok) throw new Error("Wallex HTTP " + wallexResponse.status);
+    const wallexBody = await wallexResponse.json();
+    const symbols = wallexBody?.result?.symbols || wallexBody?.result?.markets || {};
+    const usdtMarket = symbols.USDTTMN;
+    const btcMarket = symbols.BTCUSDT;
+    const usdtToman = Number(usdtMarket?.stats?.lastPrice);
+    const btcUsd = Number(btcMarket?.stats?.lastPrice);
+    if (!wallexBody?.success || !(usdtToman > 0) || !(btcUsd > 0)) {
+      throw new Error("Wallex did not return valid USDTTMN and BTCUSDT market prices");
+    }
+
+    let byId = {};
+    let localUpdatedAt = null;
+    if (localResponse.ok) {
+      const localBody = await localResponse.json();
+      const items = Array.isArray(localBody?.items) ? localBody.items : [];
+      byId = Object.fromEntries(items.map(item => [item.id, item]));
+      const stamps = items.filter(item => item?.updated_utc)
+        .map(item => Date.parse(String(item.updated_utc).endsWith("Z") ? item.updated_utc : item.updated_utc + "Z"))
+        .filter(Number.isFinite);
+      if (stamps.length) localUpdatedAt = new Date(Math.max(...stamps)).toISOString();
+    }
+
+    const readLocal = id => {
+      const item = byId[id];
+      const price = Number(item?.price);
+      return item && price > 0 && item.unit === "IRT" ? { price, stale: Boolean(item.stale) } : null;
+    };
+    const gold = readLocal("gold-18k");
+    const silver = readLocal("silver-999");
+    const brentItem = byId.brent;
+    const brentUsd = Number(brentItem?.price);
+    const xauUsdOz = Number(byId.xau?.price);
+    const xagUsdOz = Number(byId.xag?.price);
+    const ounceGrams = 31.1034768;
+
+    const payload = {
+      ok: true,
+      source: { crypto: "Wallex", iranMetals: "NerkhAra", worldMetals: "NerkhAra" },
+      updatedAt: new Date().toISOString(),
+      localUpdatedAt,
+      data: {
+        usdt: { toman: usdtToman, usd: 1, change24h: Number(usdtMarket?.stats?.["24h_ch"] ?? 0), stale: false },
+        btc: { toman: btcUsd * usdtToman, usd: btcUsd, change24h: Number(btcMarket?.stats?.["24h_ch"] ?? 0), stale: false },
+        gold18k: {
+          toman: gold?.price ?? null,
+          usd: xauUsdOz > 0 ? xauUsdOz * 0.75 / ounceGrams : null,
+          stale: Boolean(gold?.stale)
+        },
+        silver999: {
+          toman: silver?.price ?? null,
+          usd: xagUsdOz > 0 ? xagUsdOz * 0.999 / ounceGrams : null,
+          stale: Boolean(silver?.stale)
+        },
+        brent: {
+          usd: brentUsd > 0 ? brentUsd : null,
+          toman: brentUsd > 0 ? brentUsd * usdtToman : null,
+          stale: Boolean(brentItem?.stale)
+        }
+      }
+    };
+
+    if (env.CHAT_STORE) {
+      try { await env.CHAT_STORE.put(cacheKey, JSON.stringify(payload), { expirationTtl: 60 }); }
+      catch (error) { console.error("[BHR_PRICE_CACHE_WRITE]", error?.message || "cache unavailable"); }
+    }
+    return json(payload, 200, { ...headers, "Cache-Control": "public, max-age=5" });
+  } catch (error) {
+    console.error("[BHR_LIVE_PRICES_ERROR]", error?.message || "Unknown error");
+    return json({
+      ok: false,
+      error: "دریافت قیمت از والکس یا منبع فلزات ناموفق بود",
+      detail: String(error?.message || "Unknown error").slice(0, 240)
+    }, 502, { ...headers, "Cache-Control": "no-store" });
+  }
+}
+
 export default {
 
   async fetch(request, env) {
@@ -1408,6 +1515,12 @@ export default {
     if (path === "/opportunity-scanner") {
       if (request.method !== "GET") return new Response("Method not allowed", { status: 405, headers });
       return handleOpportunityScanner(env, headers);
+    }
+
+    /* قیمت زنده تتر، بیت‌کوین، طلای ۱۸ عیار و نقره ۹۹۹ */
+    if (path === "/live-prices") {
+      if (request.method !== "GET") return new Response("Method not allowed", { status: 405, headers });
+      return handleLivePrices(env, headers);
     }
 
     /* شاخص کل بورس تهران؛ شاخص منتخب با مسیر جایگزین نمای کلی بازار */
