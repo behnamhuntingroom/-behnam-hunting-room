@@ -3613,6 +3613,27 @@ if(marketSidebar){
 }else{
  home.append(shortcuts);
 }
+/* Add an independent desktop tools column; leave the existing shortcuts untouched. */
+if(workspace&&marketSidebar){
+ const toolsSidebar=document.createElement("aside");
+ toolsSidebar.className="bhr-tools-sidebar";
+ toolsSidebar.setAttribute("aria-label","ابزارهای اختصاصی اتاق شکار");
+ toolsSidebar.innerHTML=
+  '<h2 class="bhr-tools-sidebar-title">HUNTER TOOLS <span>ابزارهای شکار</span></h2>'+
+  '<div class="bhr-tools-list">'+
+  '<div class="bhr-tool-card"><span>◈</span><strong>واچ‌لیست هوشمند</strong><small>پیگیری نمادهای منتخب</small></div>'+
+  '<div class="bhr-tool-card"><span>◉</span><strong>هشدار قیمت</strong><small>اعلان رسیدن قیمت به سطح دلخواه</small></div>'+
+  '<div class="bhr-tool-card"><span>▦</span><strong>تقویم اقتصادی</strong><small>رویدادها و داده‌های مهم بازار</small></div>'+
+  '<div class="bhr-tool-card"><span>▧</span><strong>نقشه حرارتی پیشرفته</strong><small>بررسی قدرت و ضعف بازارها</small></div>'+
+  '<div class="bhr-tool-card"><span>▤</span><strong>ژورنال معاملاتی</strong><small>ثبت معاملات و عملکرد</small></div>'+
+  '<div class="bhr-tool-card"><span>✧</span><strong>AI HUNTER</strong><small>تحلیل هوشمند و سناریوهای بازار</small></div>'+
+  '<div class="bhr-tool-card"><span>⌕</span><strong>صفحه اختصاصی نمادها</strong><small>اطلاعات و تحلیل هر نماد</small></div>'+
+  '<div class="bhr-tool-card"><span>◌</span><strong>سلامت داده‌های بازار</strong><small>وضعیت اتصال و زمان به‌روزرسانی</small></div>'+
+  '<div class="bhr-tool-card"><span>⚖</span><strong>مدیریت ریسک</strong><small>محاسبه حجم و ریسک معامله</small></div>'+
+  '<div class="bhr-tool-card"><span>⌁</span><strong>اسکنر فرصت‌ها</strong><small>شناسایی موقعیت‌های قابل بررسی</small></div>'+
+  '</div>';
+ workspace.append(toolsSidebar);
+}
 /* Subtle hover sound for the home-page shortcut cards */
 const marketMain=workspace&&workspace.querySelector(".market-main");
 if(marketMain)home.insertBefore(marketMain,methodIntro);
@@ -5652,6 +5673,50 @@ header nav .nav-icon,header nav svg{width:13px!important;height:13px!important;f
 }
 </style>
 
+
+<style id="bhr-hunter-tools-sidebar">
+/* New left desktop column only. Existing header, logos, navigation and right shortcuts remain unchanged. */
+@media(min-width:1051px){
+ #bhr-home-market-workspace{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:18px!important;
+  align-items:start!important;
+ }
+ #bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar{
+  width:100%!important;max-width:none!important;margin:0!important;
+ }
+ #bhr-home-market-workspace .bhr-tools-sidebar{
+  min-width:0;width:100%;padding:0;margin:0;
+ }
+ #bhr-home-market-workspace .bhr-tools-sidebar-title{
+  margin:0 0 12px;padding:12px 14px;text-align:center;
+  border:1px solid rgba(55,150,255,.78);border-radius:13px;
+  color:var(--gold2);font-size:16px;letter-spacing:1px;
+  background:var(--card);
+ }
+ #bhr-home-market-workspace .bhr-tools-sidebar-title span{
+  display:block;margin-top:3px;font-size:12px;letter-spacing:0;color:var(--muted)
+ }
+ #bhr-home-market-workspace .bhr-tools-list{display:grid;grid-template-columns:1fr;gap:10px}
+ #bhr-home-market-workspace .bhr-tool-card{
+  display:grid;grid-template-columns:38px minmax(0,1fr);grid-template-rows:auto auto;
+  align-items:center;column-gap:10px;row-gap:2px;min-width:0;
+  padding:14px 13px;border:1px solid rgba(55,150,255,.78);border-radius:17px;
+  background:var(--card);box-shadow:0 8px 22px rgba(20,105,210,.08);
+ }
+ #bhr-home-market-workspace .bhr-tool-card>span{
+  grid-column:1;grid-row:1/span 2;display:grid;place-items:center;
+  width:34px;height:34px;border-radius:10px;color:#7dbaff;
+  background:rgba(35,139,255,.10);font-size:21px
+ }
+ #bhr-home-market-workspace .bhr-tool-card strong{grid-column:2;grid-row:1;color:var(--gold2);font-size:14px}
+ #bhr-home-market-workspace .bhr-tool-card small{grid-column:2;grid-row:2;color:var(--muted);font-size:11px;line-height:1.6}
+}
+@media(max-width:1050px){
+ #bhr-home-market-workspace .bhr-tools-sidebar{display:none!important}
+}
+</style>
 </body>
 
 <style id="bhr-file-attachment-visibility-fix">
