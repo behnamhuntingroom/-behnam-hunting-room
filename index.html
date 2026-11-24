@@ -3651,9 +3651,6 @@ if(workspace&&marketSidebar){
   ["risk","مدیریت ریسک","محاسبه حجم و ریسک معامله"],
   ["scanner","اسکنر فرصت‌ها","فیلتر و ثبت فرصت‌های قابل بررسی"]
  ];
- const hunterPageKeys={watchlist:"hunterWatchlist",alerts:"hunterAlerts",calendar:"hunterCalendar",heatmap:"hunterHeatmap",journal:"hunterJournal",ai:"hunterAi",symbol:"hunterSymbol",health:"hunterHealth",risk:"hunterRisk",scanner:"hunterScanner"};
- const hunterPages={};
- hunterToolNames.forEach(([key,title,subtitle])=>{hunterPages[key]=makePage("bhr-"+hunterPageKeys[key]+"-page",title,subtitle);});
  toolsSidebar.querySelectorAll(".bhr-tool-card").forEach((card,index)=>{
   card.dataset.hunterTool=hunterToolNames[index][0];
   card.setAttribute("role","button");card.setAttribute("tabindex","0");
@@ -3695,16 +3692,26 @@ if(workspace&&marketSidebar){
   if(key==="health")body='<div class="bhr-hunter-health"><div><i></i><span><b>رابط کاربری</b><small>فعال — ابزارهای آزمایشی در مرورگر اجرا می‌شوند</small></span></div><div><i class="warn"></i><span><b>داده‌های زنده</b><small>وضعیت اتصال از این پنل تأیید نشده است</small></span></div><div><i class="warn"></i><span><b>هشدار خودکار</b><small>در نسخه فعلی غیرفعال است</small></span></div><div><i class="warn"></i><span><b>همگام‌سازی ابری</b><small>اطلاعات فقط در همین مرورگر ذخیره می‌شود</small></span></div></div>';
   if(key==="risk")body='<form data-hunter-form="risk" class="bhr-hunter-form"><div class="bhr-hunter-fields"><label>موجودی حساب<input name="capital" type="number" min="0" step="any" required placeholder="مثلاً 10000"></label><label>ریسک هر معامله (%)<input name="risk" type="number" min="0.01" max="100" step="any" value="1" required></label></div><div class="bhr-hunter-fields"><label>قیمت ورود<input name="entry" type="number" step="any" required></label><label>حد ضرر<input name="stop" type="number" step="any" required></label></div><label>ارزش هر واحد حرکت به ازای یک واحد حجم<input name="unit" type="number" min="0.000001" step="any" value="1" required></label><button class="bhr-hunter-primary">محاسبه حجم معامله</button></form><div class="bhr-hunter-result" id="bhrHunterRiskResult">حجم پیشنهادی و مبلغ ریسک پس از محاسبه نمایش داده می‌شود.</div><small class="bhr-hunter-disclaimer">محاسبه‌گر آموزشی است؛ ارزش قرارداد، کارمزد و اسلیپیج را جداگانه بررسی کن.</small>';
   if(key==="scanner")body='<form data-hunter-form="scanner" class="bhr-hunter-form"><label>بازار<select name="market"><option>همه بازارها</option><option>طلا و فلزات</option><option>فارکس</option><option>ارز دیجیتال</option><option>بورس ایران</option><option>بورس آمریکا</option></select></label><label>شرایطی که می‌خواهی بررسی کنی<select name="setup"><option>شکست ساختار (BOS)</option><option>بازگشت به ناحیه عرضه/تقاضا</option><option>هم‌جهتی VWAP و دلتا</option><option>شکست سقف/کف روز</option></select></label><button class="bhr-hunter-primary">ساخت چک‌لیست جست‌وجو</button></form><div class="bhr-hunter-result" id="bhrHunterScanResult">این اسکنر هنوز داده بازار را اسکن نمی‌کند؛ شرایط انتخابی را به چک‌لیست بررسی دستی تبدیل می‌کند.</div>';
-  hunterPanel.innerHTML='<div class="bhr-hunter-panel-head"><div><span>HUNTER TOOLS / WORKSPACE</span><h2>'+item[1]+'</h2><p>'+intro+'</p></div><button type="button" class="bhr-hunter-close" aria-label="بازگشت به فهرست ابزارها">← بازگشت</button></div><div class="bhr-hunter-panel-body">'+body+'</div>';
-  const page=hunterPages[key];
-  if(!page)return;
-  page.append(hunterPanel);
+  hunterPanel.innerHTML='<div class="bhr-hunter-panel-head"><div><span>HUNTER TOOLS / WORKSPACE</span><h2>'+item[1]+'</h2><p>'+intro+'</p></div><button type="button" class="bhr-hunter-close" aria-label="بستن ابزار">×</button></div><div class="bhr-hunter-panel-body">'+body+'</div>';
+  const card=toolsSidebar.querySelector('[data-hunter-tool="'+key+'"]');
+  if(!card)return;
+  toolsSidebar.querySelectorAll(".bhr-tool-card.bhr-expanded").forEach(other=>{
+   if(other!==card)other.classList.remove("bhr-expanded");
+  });
+  card.classList.add("bhr-expanded");
+  card.append(hunterPanel);
   hunterPanel.hidden=false;
  }
- toolsSidebar.addEventListener("click",e=>{const card=e.target.closest("[data-hunter-tool]");if(card){const key=card.dataset.hunterTool;hunterOpen(key);showPage(hunterPageKeys[key],true);}});
- toolsSidebar.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.matches("[data-hunter-tool]")){e.preventDefault();const key=e.target.dataset.hunterTool;hunterOpen(key);showPage(hunterPageKeys[key],true);}});
+ toolsSidebar.addEventListener("click",e=>{const card=e.target.closest("[data-hunter-tool]");if(card)hunterOpen(card.dataset.hunterTool)});
+ toolsSidebar.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.matches("[data-hunter-tool]")){e.preventDefault();hunterOpen(e.target.dataset.hunterTool)}});
  hunterPanel.addEventListener("click",e=>{
-  if(e.target.closest(".bhr-hunter-close")){showPage("home",true);return;}
+  if(e.target.closest(".bhr-hunter-close")){
+   const card=hunterActiveCard();
+   hunterPanel.hidden=true;
+   if(card)card.classList.remove("bhr-expanded");
+   hunterPanel.remove();
+   return;
+  }
   const del=e.target.closest("[data-hunter-delete]");if(del){const key=del.dataset.hunterDelete;const list=hunterStore.get(key);list.splice(Number(del.dataset.index),1);hunterStore.set(key,list);hunterOpen(key==="symbols"?"symbol":key);return}
   const pageLink=e.target.closest("[data-bhr-page]");if(pageLink){hunterPanel.hidden=true;}
  });
@@ -3791,7 +3798,7 @@ if(brand&&!brand.querySelector(".bhr-sun-mark")){
  mark.innerHTML='<span class="bhr-sun-letters">BHR</span>';
  brand.prepend(mark);
 }
-const pages={home,room,academy,tools,community,about,features,heatmap,assistant:assistantPage,news:newsPage,clocks:clockPage,hunterWatchlist:hunterPages.watchlist,hunterAlerts:hunterPages.alerts,hunterCalendar:hunterPages.calendar,hunterHeatmap:hunterPages.heatmap,hunterJournal:hunterPages.journal,hunterAi:hunterPages.ai,hunterSymbol:hunterPages.symbol,hunterHealth:hunterPages.health,hunterRisk:hunterPages.risk,hunterScanner:hunterPages.scanner};
+const pages={home,room,academy,tools,community,about,features,heatmap,assistant:assistantPage,news:newsPage,clocks:clockPage};
 Object.values(pages).forEach(page=>{
  if(page===home)return;
  const back=document.createElement("button");
@@ -5839,7 +5846,7 @@ header nav .nav-icon,header nav svg{width:13px!important;height:13px!important;f
  }
 }
 </style>
-\n<style id="bhr-left-sidebar-hunter-tools-title">\n/* Matching HUNTER TOOLS header for the existing left shortcut column. */\n#bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar>.bhr-tools-sidebar-title{\n display:block!important;box-sizing:border-box!important;width:100%!important;\n margin:0 0 12px!important;padding:12px 14px!important;text-align:center!important;\n border:1px solid rgba(55,150,255,.78)!important;border-radius:13px!important;\n color:var(--gold2)!important;font-size:16px!important;letter-spacing:1px!important;\n background:var(--card)!important;\n}\n#bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar>.bhr-tools-sidebar-title span{\n display:block!important;margin-top:3px!important;font-size:12px!important;letter-spacing:0!important;color:var(--muted)!important;\n}\n</style>\n\n<style id="bhr-hunter-tools-independent-pages">\n/* Hunter tools are independent site pages; sidebar cards never expand. */\n#bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded{display:flex!important;cursor:pointer!important;min-height:0!important;width:auto!important;padding:15px!important}\n#bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded>:not(.bhr-hunter-workbench){display:initial!important}\n#bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card>.bhr-hunter-workbench{display:none!important}\n.bhr-page-view>.bhr-hunter-workbench{display:block!important;width:min(1120px,92%);margin:18px auto 0;padding:22px;box-sizing:border-box;border:1px solid rgba(215,180,90,.34);border-radius:18px;background:linear-gradient(145deg,#17150f,#090a0a);box-shadow:0 16px 38px #0006}\n.bhr-page-view>.bhr-hunter-workbench[hidden]{display:none!important}\n.bhr-page-view>.bhr-hunter-workbench .bhr-hunter-panel-head{grid-template-columns:minmax(0,1fr) auto;align-items:start}\n.bhr-page-view>.bhr-hunter-workbench .bhr-hunter-close{width:auto;min-width:90px;padding:8px 12px;border-radius:9px;white-space:nowrap}\n.bhr-page-view>.bhr-hunter-workbench .bhr-hunter-panel-body{max-width:100%}\n@media(max-width:600px){.bhr-page-view>.bhr-hunter-workbench{width:calc(100% - 24px);padding:13px}.bhr-page-view>.bhr-hunter-workbench .bhr-hunter-panel-head{grid-template-columns:minmax(0,1fr) auto;gap:8px}.bhr-page-view>.bhr-hunter-workbench .bhr-hunter-close{min-width:72px;padding:7px 8px;font-size:10px}}\n</style>\n</body>
+\n<style id="bhr-left-sidebar-hunter-tools-title">\n/* Matching HUNTER TOOLS header for the existing left shortcut column. */\n#bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar>.bhr-tools-sidebar-title{\n display:block!important;box-sizing:border-box!important;width:100%!important;\n margin:0 0 12px!important;padding:12px 14px!important;text-align:center!important;\n border:1px solid rgba(55,150,255,.78)!important;border-radius:13px!important;\n color:var(--gold2)!important;font-size:16px!important;letter-spacing:1px!important;\n background:var(--card)!important;\n}\n#bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar>.bhr-tools-sidebar-title span{\n display:block!important;margin-top:3px!important;font-size:12px!important;letter-spacing:0!important;color:var(--muted)!important;\n}\n</style>\n</body>
 
 <style id="bhr-file-attachment-visibility-fix">
 /* Keep attachment controls visible above generic assistant/support button styles */
@@ -6851,4 +6858,4 @@ header .brand .bhr-brand-emblem img{
 #bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded .bhr-hunter-saved-row{padding:8px;font-size:10px}
 #bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded .bhr-hunter-health>div{padding:8px}
 #bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded .bhr-hunter-health small{font-size:9px}
-\n/* HUNTER TOOLS: show each tool as an inner page inside its own card */\n#bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded{padding:14px!important;min-height:260px;width:100%;box-sizing:border-box;cursor:default!important}\n#bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded>:not(.bhr-hunter-workbench){display:none!important}\n#bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded>.bhr-hunter-workbench{margin:0!important;padding:0!important;border:0!important;width:100%;min-height:220px;box-sizing:border-box}\n#bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded .bhr-hunter-panel-head{grid-template-columns:minmax(0,1fr) auto!important;align-items:start}\n#bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded .bhr-hunter-close{width:auto!important;min-width:76px!important;height:auto!important;padding:7px 10px!important;border-radius:8px;font-size:10px!important;white-space:nowrap}\n#bhr-home-market-workspace .bhr-tools-sidebar .bhr-tool-card.bhr-expanded .bhr-hunter-panel-body{max-height:65vh;overflow-y:auto}\n</style>
+</style>
