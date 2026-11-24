@@ -5679,15 +5679,20 @@ header nav .nav-icon,header nav svg{width:13px!important;height:13px!important;f
 @media(min-width:1051px){
  #bhr-home-market-workspace{
   display:grid!important;
-  grid-template-columns:repeat(2,minmax(0,1fr))!important;
-  gap:18px!important;
+  grid-template-columns:minmax(230px,270px) minmax(0,1fr) minmax(230px,270px)!important;
+  gap:16px!important;
   align-items:start!important;
  }
+ #bhr-home-market-workspace .market-main{
+  grid-column:2!important;grid-row:1!important;min-width:0;width:100%!important;
+ }
  #bhr-home-market-workspace .market-sidebar.bhr-home-shortcuts-sidebar{
-  width:100%!important;max-width:none!important;margin:0!important;
+  grid-column:3!important;grid-row:1!important;
+  width:100%!important;max-width:270px!important;margin:0!important;
  }
  #bhr-home-market-workspace .bhr-tools-sidebar{
-  min-width:0;width:100%;padding:0;margin:0;
+  grid-column:1!important;grid-row:1!important;
+  min-width:0;width:100%;max-width:270px;padding:0;margin:0;
  }
  #bhr-home-market-workspace .bhr-tools-sidebar-title{
   margin:0 0 12px;padding:12px 14px;text-align:center;
