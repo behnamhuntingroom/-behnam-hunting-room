@@ -1104,8 +1104,8 @@ header nav #bhrCartCount{min-width:16px!important;height:16px!important;padding:
 #bhr-world-clocks-page .bhr-clock-city{font-size:17px;text-shadow:0 0 14px rgba(215,180,90,.18)}
 #bhr-world-clocks-page .bhr-clock-country{margin-top:2px;letter-spacing:1.2px;font-size:10px}
 #bhr-world-clocks-page .bhr-clock-status{padding:5px 11px;backdrop-filter:blur(8px)}
-#bhr-world-clocks-page .bhr-clock-status.is-open{color:#70e3ad;border-color:#3acb8a77;background:linear-gradient(120deg,#0b6d4933,#16a36a12);box-shadow:0 0 14px #16a36a18}
-#bhr-world-clocks-page .bhr-clock-status.is-closed{color:#f08b83;border-color:#d16b6266;background:linear-gradient(120deg,#8f302d2b,#d16b6210)}
+#bhr-world-clocks-page .bhr-clock-status.is-open{color:#eafff3!important;border-color:#55d99a!important;background:linear-gradient(120deg,#087a4b,#075638)!important;box-shadow:0 0 14px rgba(22,163,106,.28)!important;text-shadow:0 1px 2px #003b25}
+#bhr-world-clocks-page .bhr-clock-status.is-closed{color:#fff0ed!important;border-color:#e8877e!important;background:linear-gradient(120deg,#873b36,#542522)!important;text-shadow:0 1px 2px #35100d}
 #bhr-world-clocks-page .bhr-clock-stage{position:relative;display:grid;place-items:center;margin:14px auto 0;padding:5px 0 2px}
 #bhr-world-clocks-page .bhr-clock-analog{width:174px;height:174px;margin:0;overflow:visible;filter:drop-shadow(0 9px 13px #000b) drop-shadow(0 0 13px rgba(215,180,90,.13))}
 #bhr-world-clocks-page .bhr-clock-analog-face{fill:url(#bhrDial);stroke:#b68b3d;stroke-width:1.2}
@@ -5254,12 +5254,9 @@ header .brand .bhr-brand-emblem img{display:block;width:100%;height:100%;object-
  };
 
  const overlapPanel=wrap.querySelector("#bhrClockOverlap");
- let overlapLastUpdate=0;
  const clockText=(date,zone)=>new Intl.DateTimeFormat("en-GB",{timeZone:zone,hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(date);
  function updateOverlap(now){
   if(!overlapPanel)return;
-  if(now.getTime()-overlapLastUpdate<15000)return;
-  overlapLastUpdate=now.getTime();
   const london=sessions.find(x=>x.zone==="Europe/London");
   const newYork=sessions.find(x=>x.zone==="America/New_York");
   let current=null,next=null;
@@ -5318,9 +5315,9 @@ header .brand .bhr-brand-emblem img{display:block;width:100%;height:100%;object-
    const setHand=(selector,degrees,length)=>{
     const angle=(degrees-90)*Math.PI/180;
     const hand=card.querySelector(selector);
-    hand.setAttribute("x1","50");hand.setAttribute("y1","50");
-    hand.setAttribute("x2",(50+Math.cos(angle)*length).toFixed(3));
-    hand.setAttribute("y2",(50+Math.sin(angle)*length).toFixed(3));
+    hand.setAttribute("x1","60");hand.setAttribute("y1","60");
+    hand.setAttribute("x2",(60+Math.cos(angle)*length).toFixed(3));
+    hand.setAttribute("y2",(60+Math.sin(angle)*length).toFixed(3));
    };
    setHand("[data-hour-hand]",(p.hour%12)*30+p.minute*0.5,21);
    setHand("[data-minute-hand]",p.minute*6+p.second*0.1,32);
