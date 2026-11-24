@@ -1365,8 +1365,9 @@ export default {
     const publicMarketMapRead = path === "/market-map" && request.method === "GET" && !origin;
     const publicCalendarRead = path === "/economic-calendar" && request.method === "GET" && !origin;
     const publicScannerRead = path === "/opportunity-scanner" && request.method === "GET" && !origin;
+    const publicLivePricesRead = path === "/live-prices" && request.method === "GET" && !origin;
 
-    if (!ALLOWED_ORIGINS.includes(origin) && !publicMarketMapRead && !publicCalendarRead && !publicScannerRead) {
+    if (!ALLOWED_ORIGINS.includes(origin) && !publicMarketMapRead && !publicCalendarRead && !publicScannerRead && !publicLivePricesRead) {
 
       return new Response("Forbidden", { status: 403 });
 
