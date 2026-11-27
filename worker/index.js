@@ -1530,7 +1530,11 @@ export default {
 
 
 
-    if (path === "/liquidations") {
+    if (path === "/liquidations-test" && request.method === "GET") {
+      return testLiquidationUpstream();
+    }
+
+    if (path === "/liquidations") {
       return handleLiquidationSocket(request);
     }
 
