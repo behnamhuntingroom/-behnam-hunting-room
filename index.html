@@ -3797,37 +3797,33 @@ if(workspace&&marketSidebar){
    filter.addEventListener("change",render);
    const connect=()=>{
     if(closed)return;
-    try{socket=new WebSocket("wss://stream.bybit.com/v5/public/linear");}
-    catch(e){status.textContent="اتصال برقرار نشد؛ تلاش مجدد…";retryTimer=setTimeout(connect,5000);return;}
+    try{socket=new WebSocket("wss://tiny-unit-4ed3.behnamhuntingroom.workers.dev/liquidations");}
+    catch(e){status.textContent="اتصال به درگاه بایننس برقرار نشد؛ تلاش مجدد…";retryTimer=setTimeout(connect,5000);return;}
     socket.onopen=()=>{
      if(closed)return;
      dot.classList.add("live");
-     status.textContent="اتصال زنده برقرار است | Bybit USDT/USDC Perpetual";
-     socket.send(JSON.stringify({op:"subscribe",args:["BTCUSDT","ETHUSDT","SOLUSDT","XRPUSDT","BNBUSDT"].map(s=>"allLiquidation."+s)}));
-     socket._bhrPing=setInterval(()=>{if(socket&&socket.readyState===WebSocket.OPEN)socket.send(JSON.stringify({op:"ping"}));},20000);
+     status.textContent="اتصال زنده برقرار است | Binance USDⓈ-M Futures";
     };
     socket.onmessage=ev=>{
      try{
       const packet=JSON.parse(ev.data);
-      if(!packet.topic||!packet.topic.startsWith("allLiquidation.")||!packet.data)return;
-      // Bybit All Liquidation sends data as a single object (not an array).
-      const liquidationItems=Array.isArray(packet.data)?packet.data:[packet.data];
-      liquidationItems.forEach(d=>{
-       if(!d||!d.s||!d.S)return;
-       const qty=Number(d.v||0),price=Number(d.p||0),value=qty*price;
-       if(!Number.isFinite(qty)||!Number.isFinite(price)||qty<=0||price<=0)return;
-       // Bybit S=Buy means a long position was liquidated; S=Sell means a short position was liquidated.
-       const side=d.S==="Buy"?"SELL":d.S==="Sell"?"BUY":null;
-       if(!side)return;
-       events.unshift({time:Number(d.T||packet.ts||Date.now()),symbol:d.s,side,price,value});
-      });
+      const payload=packet&&packet.data?packet.data:packet;
+      const order=payload&&payload.o?payload.o:payload;
+      if(!order||!order.s||!order.S)return;
+      const qty=Number(order.z||order.q||order.l||0);
+      const price=Number(order.ap||order.p||order.L||0);
+      const value=qty*price;
+      if(!Number.isFinite(qty)||!Number.isFinite(price)||qty<=0||price<=0)return;
+      const side=String(order.S).toUpperCase()==="SELL"?"SELL":String(order.S).toUpperCase()==="BUY"?"BUY":null;
+      if(!side)return;
+      events.unshift({time:Number(order.T||payload.E||Date.now()),symbol:order.s,side,price,value});
       if(events.length>600)events.length=600;
       render();
       hunterPanel.querySelector("#bhrLiqClock").textContent="آخرین دریافت: "+new Date().toLocaleTimeString("fa-IR");
      }catch(e){}
     };
-    socket.onerror=()=>{status.textContent="اختلال در اتصال داده Bybit؛ در حال بازیابی…";};
-    socket.onclose=()=>{dot.classList.remove("live");if(socket&&socket._bhrPing)clearInterval(socket._bhrPing);if(!closed){status.textContent="اتصال قطع شد؛ تلاش مجدد تا ۵ ثانیه دیگر…";retryTimer=setTimeout(connect,5000);}};
+    socket.onerror=()=>{status.textContent="اختلال در اتصال به داده‌های بایننس؛ در حال بازیابی…";};
+    socket.onclose=()=>{dot.classList.remove("live");if(!closed){status.textContent="اتصال قطع شد؛ تلاش مجدد تا ۵ ثانیه دیگر…";retryTimer=setTimeout(connect,5000);}};
    };
    connect();
    const closeBtn=hunterPanel.querySelector(".bhr-hunter-close");
