@@ -1421,7 +1421,7 @@ async function handleLiquidationSocket(request) {
   let upstream;
   try {
     // Cloudflare's documented outbound WebSocket handshake.
-    const upstreamResponse = await fetch("https://fstream.binance.com/market/ws/!forceOrder@arr", {
+    const upstreamResponse = await fetch("https://fstream.binance.com/market/stream?streams=!forceOrder@arr", {
       headers: { Upgrade: "websocket" }
     });
     upstream = upstreamResponse.webSocket;
@@ -1482,7 +1482,7 @@ async function handleLiquidationSocket(request) {
 async function testLiquidationUpstream() {
   const checkedAt = new Date().toISOString();
   try {
-    const response = await fetch("https://dstream.binance.com/ws/!forceOrder@arr", {
+    const response = await fetch("https://fstream.binance.com/market/stream?streams=!forceOrder@arr", {
       headers: { Upgrade: "websocket" }
     });
     const socket = response.webSocket;
@@ -1490,7 +1490,7 @@ async function testLiquidationUpstream() {
       const detail = await response.text().catch(() => "");
       return json({
         ok: false,
-        stage: "dstream_binance_handshake",
+        stage: "binance_market_stream_handshake",
         httpStatus: response.status,
         detail: detail.slice(0, 300),
         checkedAt
@@ -1500,13 +1500,13 @@ async function testLiquidationUpstream() {
     try { socket.close(1000, "Diagnostic complete"); } catch (_) {}
     return json({
       ok: true,
-      stage: "dstream_websocket_handshake",
+      stage: "binance_market_stream_handshake",
       httpStatus: response.status,
-      message: "Dstream Binance WebSocket handshake succeeded",
+      message: "Binance USD-M Futures market liquidation stream handshake succeeded",
       checkedAt
     }, 200, { "Cache-Control": "no-store" });
   } catch (error) {
-    console.error("[BHR_DSTREAM_LIQUIDATION_DIAGNOSTIC_ERROR]", error?.message || "Unknown error");
+    console.error("[BHR_BINANCE_LIQUIDATION_DIAGNOSTIC_ERROR]", error?.message || "Unknown error");
     return json({
       ok: false,
       stage: "worker_fetch",
