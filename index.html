@@ -1364,7 +1364,8 @@ header nav .bhr-site-search-toggle svg{width:17px;height:17px;fill:none;stroke:c
         <button type="button" data-bhr-market-pick="XAGUSD">🥈 نقره</button>
         <button type="button" data-bhr-market-pick="BTC">₿ بیت‌کوین</button>
         <button type="button" data-bhr-market-pick="EURUSD">یورو/دلار</button>
-        <button type="button" data-bhr-market-pick="DXY">شاخص دلار</button>
+        <button type="button" data-bhr-market-pick="SHIB">شیبا</button>
+        <button type="button" data-bhr-market-pick="DOGE">دوج‌کوین</button>
         <button type="button" data-bhr-market-pick="NQ">نزدک</button>
         <button type="button" data-bhr-market-pick="USOIL">نفت</button>
         <button type="button" data-bhr-market-pick="ETH">اتریوم</button>
@@ -1774,7 +1775,6 @@ function searchMarket(shouldScroll = true) {
     ["OANDA:AUDUSD","Australian Dollar / US Dollar","AUDUSD,AUD/USD"],
     ["OANDA:USDCAD","US Dollar / Canadian Dollar","USDCAD,USD/CAD"],
     ["OANDA:NZDUSD","New Zealand Dollar / US Dollar","NZDUSD,NZD/USD"],
-    ["TVC:DXY","US Dollar Index","DXY,US Dollar Index,USD Index,شاخص دلار,ایندکس دلار"],
     ["OANDA:EURGBP","Euro / British Pound","EURGBP,EUR/GBP"],
     ["OANDA:EURJPY","Euro / Japanese Yen","EURJPY,EUR/JPY"],
     ["OANDA:GBPJPY","British Pound / Japanese Yen","GBPJPY,GBP/JPY"],
@@ -1810,17 +1810,12 @@ function searchMarket(shouldScroll = true) {
   const markets = window.BHR_MARKETS;
 
   let market = null;
-  // نماد شاخص دلار را مستقیم و بدون اتکا به جستجوی عمومی نگاشت کن.
-  if (query === "dxy" || query === "شاخصدلار" || query === "ایندکسدلار" || query === "usdollarindex") {
-    market = ["TVC:DXY", "US Dollar Index"];
-  } else {
-    for (const item of markets) {
-      const aliases = item[2].split(",");
-      if (aliases.some(alias => normalize(alias) === query) ||
-          normalize(item[0].split(":").pop()) === query) {
-        market = [item[0], item[1]];
-        break;
-      }
+  for (const item of markets) {
+    const aliases = item[2].split(",");
+    if (aliases.some(alias => normalize(alias) === query) ||
+        normalize(item[0].split(":").pop()) === query) {
+      market = [item[0], item[1]];
+      break;
     }
   }
 
