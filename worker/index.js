@@ -1273,17 +1273,28 @@ async function handleLivePrices(env, headers) {
   // بازار رمزارز مستقل از منبع فلزات دریافت می‌شود.
   try {
     const body = await fetchJson("https://api.bitpin.org/api/v1/mkt/tickers/", { "Referer": "https://bitpin.org/" }, 5);
-    const rows = Array.isArray(body) ? body : (Array.isArray(body?.results) ? body.results : []);
-    const findTicker = (...names) => rows.find(row => names.includes(String(row?.symbol || row?.market || "").toUpperCase()));
-    const usdt = findTicker("USDT_IRT", "USDT/IRT", "USDTIRT");
-    const btc = findTicker("BTC_USDT", "BTC/USDT", "BTCUSDT");
-    const u = Number(usdt?.price ?? usdt?.last);
-    const b = Number(btc?.price ?? btc?.last);
-    if (!(u > 0) || !(b > 0)) throw new Error("Bitpin ticker symbols or prices not found");
+    const rows = Array.isArray(body) ? body
+      : (Array.isArray(body?.results) ? body.results
+      : (Array.isArray(body?.data) ? body.data : Object.values(body?.data || body || {})));
+    // Bitpin's public ticker payload may identify markets by code, symbol, or market.
+    const symbolOf = row => String(row?.symbol || row?.market || row?.code || row?.title || "").toUpperCase().replaceAll("/", "_");
+    const findTicker = (...names) => rows.find(row => names.includes(symbolOf(row)));
+    const tickerPrice = row => Number(row?.price ?? row?.last ?? row?.price_info?.price ?? row?.order_book_info?.price ?? row?.internal_price_info?.price);
+    const usdtDirect = findTicker("USDT_IRT", "USDTIRT", "USDT_TOMAN");
+    const btcToman = findTicker("BTC_IRT", "BTC_TOMAN");
+    const btc = findTicker("BTC_USDT", "BTCUSDT");
+    const directUsdtPrice = tickerPrice(usdtDirect);
+    const btcTomanPrice = tickerPrice(btcToman);
+    const btcUsdPrice = tickerPrice(btc);
+    // If there is no USDT/IRT market, derive Tether/Toman from the two BTC markets.
+    const derivedUsdtPrice = btcTomanPrice > 0 && btcUsdPrice > 0 ? btcTomanPrice / btcUsdPrice : null;
+    const u = directUsdtPrice > 0 ? directUsdtPrice : derivedUsdtPrice;
+    const b = btcUsdPrice;
+    if (!(u > 0) || !(b > 0)) throw new Error("Bitpin ticker response did not contain usable BTC/IRT and BTC/USDT prices");
     usdtToman = u;
     btcUsd = b;
-    usdtChange = Number(usdt?.daily_change_percentage ?? usdt?.change ?? 0);
-    btcChange = Number(btc?.daily_change_percentage ?? btc?.change ?? 0);
+    usdtChange = Number(usdtDirect?.daily_change_percentage ?? usdtDirect?.change ?? 0);
+    btcChange = Number(btc?.daily_change_percentage ?? btc?.percentage ?? btc?.change ?? 0);
     cryptoSource = "Bitpin";
   } catch (bitpinError) {
     try {
