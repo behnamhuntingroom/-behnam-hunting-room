@@ -1810,12 +1810,17 @@ function searchMarket(shouldScroll = true) {
   const markets = window.BHR_MARKETS;
 
   let market = null;
-  for (const item of markets) {
-    const aliases = item[2].split(",");
-    if (aliases.some(alias => normalize(alias) === query) ||
-        normalize(item[0].split(":").pop()) === query) {
-      market = [item[0], item[1]];
-      break;
+  // نماد شاخص دلار را مستقیم و بدون اتکا به جستجوی عمومی نگاشت کن.
+  if (query === "dxy" || query === "شاخصدلار" || query === "ایندکسدلار" || query === "usdollarindex") {
+    market = ["TVC:DXY", "US Dollar Index"];
+  } else {
+    for (const item of markets) {
+      const aliases = item[2].split(",");
+      if (aliases.some(alias => normalize(alias) === query) ||
+          normalize(item[0].split(":").pop()) === query) {
+        market = [item[0], item[1]];
+        break;
+      }
     }
   }
 
