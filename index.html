@@ -3633,7 +3633,8 @@ shortcuts.innerHTML=
  '<a class="bhr-shortcut" href="#bhr-page-academy" data-bhr-page="academy"><span class="bhr-shortcut-icon">▤</span><strong>آکادمی آموزشی</strong><small>۹ فصل آموزش والیوم تریدینگ</small></a>'+
  '<a class="bhr-shortcut" href="#bhr-page-room" data-bhr-page="room"><span class="bhr-shortcut-icon">◈</span><strong>اتاق معاملاتی</strong><small>روش BHR و سناریوهای معاملاتی</small></a>'+
  '<a class="bhr-shortcut" href="#bhr-page-features" data-bhr-page="features"><span class="bhr-shortcut-icon">✧</span><strong>امکانات سایت</strong><small>ابزارها، بازارها و خدمات اتاق شکار</small></a>'+
- '<a class="bhr-shortcut" href="#bhr-page-about" data-bhr-page="about"><span class="bhr-shortcut-icon">✦</span><strong>درباره ما</strong><small>آشنایی با برند BHR</small></a>';
+ '<a class="bhr-shortcut" href="#bhr-page-about" data-bhr-page="about"><span class="bhr-shortcut-icon">✦</span><strong>درباره ما</strong><small>آشنایی با برند BHR</small></a>'+
+ '<a class="bhr-shortcut bhr-shortcut-bank-orders" href="#bank-orders" data-bhr-bank-orders><span class="bhr-shortcut-icon">🏦</span><strong>سفارشات بانک‌ها</strong><small>گزارش آپشن‌های ارزی و جریان سفارش مؤسسات مالی</small></a>';
 const methodIntro=document.createElement("section");
 methodIntro.className="bhr-home-method-intro";
 methodIntro.innerHTML=
@@ -3746,6 +3747,10 @@ if(workspace&&marketSidebar){
   hunterPanel.hidden=false;
  }
  toolsSidebar.addEventListener("click",e=>{const card=e.target.closest("[data-hunter-tool]");if(card)hunterOpen(card.dataset.hunterTool)});
+ shortcuts.addEventListener("click",e=>{
+  const bankOrdersLink=e.target.closest("[data-bhr-bank-orders]");
+  if(bankOrdersLink){e.preventDefault();hunterOpen("bankorders");}
+ });
  toolsSidebar.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.matches("[data-hunter-tool]")){e.preventDefault();hunterOpen(e.target.dataset.hunterTool)}});
  hunterPanel.addEventListener("click",e=>{
   if(e.target.closest(".bhr-hunter-close")){
