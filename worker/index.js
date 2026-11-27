@@ -1334,6 +1334,22 @@ async function handleLivePrices(env, headers) {
     const price = Number(item?.price);
     return item && price > 0 && item.unit === "IRT" ? { price, stale: Boolean(item.stale) } : null;
   };
+  // اگر API صرافی‌ها از سمت Cloudflare با 403 مسدود بود، از همان پاسخ NerkhAra برای رمزارزها استفاده کن.
+  if (!(usdtToman > 0) || !(btcUsd > 0)) {
+    const usdtItem = byId.usdt;
+    const btcItem = byId.btc;
+    const fallbackUsdt = Number(usdtItem?.price);
+    const fallbackBtc = Number(btcItem?.price);
+    if (usdtItem?.unit === "IRT" && fallbackUsdt > 0 && btcItem?.unit === "USDT" && fallbackBtc > 0) {
+      usdtToman = fallbackUsdt;
+      btcUsd = fallbackBtc;
+      usdtChange = Number(usdtItem?.change_pct ?? 0);
+      btcChange = Number(btcItem?.change_pct ?? 0);
+      cryptoSource = "NerkhAra";
+      cryptoError = null;
+    }
+  }
+
   const gold = readLocal("gold-18k");
   const silver = readLocal("silver-999");
   const brentItem = byId.brent;
