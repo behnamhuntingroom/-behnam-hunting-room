@@ -1479,6 +1479,43 @@ async function handleLiquidationSocket(request) {
   return new Response(null, { status: 101, webSocket: client });
 }
 
+async function testLiquidationUpstream() {
+  const checkedAt = new Date().toISOString();
+  try {
+    const response = await fetch("https://fstream.binance.com/market/ws/!forceOrder@arr", {
+      headers: { Upgrade: "websocket" }
+    });
+    const socket = response.webSocket;
+    if (!socket) {
+      const detail = await response.text().catch(() => "");
+      return json({
+        ok: false,
+        stage: "binance_handshake",
+        httpStatus: response.status,
+        detail: detail.slice(0, 300),
+        checkedAt
+      }, 502, { "Cache-Control": "no-store" });
+    }
+    socket.accept({ allowHalfOpen: true });
+    try { socket.close(1000, "Diagnostic complete"); } catch (_) {}
+    return json({
+      ok: true,
+      stage: "binance_websocket_handshake",
+      httpStatus: response.status,
+      message: "Binance WebSocket handshake succeeded",
+      checkedAt
+    }, 200, { "Cache-Control": "no-store" });
+  } catch (error) {
+    console.error("[BHR_LIQUIDATION_DIAGNOSTIC_ERROR]", error?.message || "Unknown error");
+    return json({
+      ok: false,
+      stage: "worker_fetch",
+      error: String(error?.message || "Unknown error").slice(0, 300),
+      checkedAt
+    }, 502, { "Cache-Control": "no-store" });
+  }
+}
+
 export default {
 
   async fetch(request, env) {
