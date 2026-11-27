@@ -1414,48 +1414,68 @@ async function handleLivePrices(env, headers) {
 }
 /* WebSocket proxy for Binance liquidation stream */
 async function handleLiquidationSocket(request) {
-  if (request.headers.get("Upgrade") !== "websocket") return new Response("Expected Upgrade: websocket", { status: 426 });
+  if (request.headers.get("Upgrade") !== "websocket") {
+    return new Response("Expected Upgrade: websocket", { status: 426 });
+  }
+
+  let upstream;
+  try {
+    // Cloudflare's documented outbound WebSocket handshake.
+    const upstreamResponse = await fetch("https://fstream.binance.com/market/ws/!forceOrder@arr", {
+      headers: { Upgrade: "websocket" }
+    });
+    upstream = upstreamResponse.webSocket;
+    if (!upstream) {
+      const detail = await upstreamResponse.text().catch(() => "");
+      throw new Error("Binance WebSocket handshake failed: HTTP " + upstreamResponse.status + " " + detail.slice(0, 180));
+    }
+    upstream.accept({ allowHalfOpen: true });
+  } catch (error) {
+    console.error("[BHR_LIQUIDATION_UPSTREAM_ERROR]", error?.message || "Unknown error");
+    return new Response("Binance upstream connection failed", { status: 502 });
+  }
+
   const pair = new WebSocketPair();
   const client = pair[0], server = pair[1];
   server.accept({ allowHalfOpen: true });
-  let upstream = null, shuttingDown = false;
-  const closeBoth = (code = 1011, reason = "Upstream connection closed") => {
+  let shuttingDown = false;
+
+  const safeClose = (ws, code, reason) => {
+    try {
+      if (ws && ws.readyState < WebSocket.CLOSING) {
+        const validCode = code === 1000 || (code >= 3000 && code <= 4999);
+        if (validCode) ws.close(code, String(reason || "").slice(0, 100));
+        else ws.close(1011, "WebSocket proxy closed");
+      }
+    } catch (_) {}
+  };
+  const closeBoth = (code = 1011, reason = "Proxy connection closed") => {
     if (shuttingDown) return;
     shuttingDown = true;
-    try { if (upstream && upstream.readyState < WebSocket.CLOSING) upstream.close(code, reason.slice(0, 100)); } catch (_) {}
-    try { if (server.readyState < WebSocket.CLOSING) server.close(code, reason.slice(0, 100)); } catch (_) {}
+    safeClose(upstream, code, reason);
+    safeClose(server, code, reason);
   };
-  try {
-    upstream = new WebSocket("wss://fstream.binance.com/market/ws/!forceOrder@arr");
-    upstream.addEventListener("open", () => {
-      if (server.readyState === WebSocket.OPEN) server.send(JSON.stringify({ type: "bhr_proxy_status", status: "connected" }));
-    });
-    upstream.addEventListener("message", event => {
-      if (server.readyState === WebSocket.OPEN) { try { server.send(event.data); } catch (_) { closeBoth(); } }
-    });
-    upstream.addEventListener("error", () => closeBoth(1011, "Binance upstream error"));
-    upstream.addEventListener("close", event => {
-      const code = event.code >= 1000 && event.code < 5000 && ![1004,1005,1006,1015].includes(event.code) ? event.code : 1011;
-      closeBoth(code, event.reason || "Binance upstream disconnected");
-    });
-    server.addEventListener("message", event => {
-      if (upstream && upstream.readyState === WebSocket.OPEN) { try { upstream.send(event.data); } catch (_) { closeBoth(); } }
-    });
-    server.addEventListener("close", event => {
-      if (shuttingDown) return;
-      shuttingDown = true;
-      try {
-        if (upstream && upstream.readyState < WebSocket.CLOSING) {
-          const code = event.code >= 1000 && event.code < 5000 && ![1004,1005,1006,1015].includes(event.code) ? event.code : 1000;
-          upstream.close(code, (event.reason || "Client disconnected").slice(0, 100));
-        }
-      } catch (_) {}
-    });
-    server.addEventListener("error", () => closeBoth());
-  } catch (error) {
-    console.error("[BHR_LIQUIDATION_PROXY_ERROR]", error?.message || "Unknown error");
-    closeBoth(1011, "Could not connect to Binance");
-  }
+
+  upstream.addEventListener("message", event => {
+    if (server.readyState === WebSocket.OPEN) {
+      try { server.send(event.data); } catch (_) { closeBoth(); }
+    }
+  });
+  upstream.addEventListener("error", () => closeBoth(1011, "Binance upstream error"));
+  upstream.addEventListener("close", () => closeBoth(1011, "Binance upstream disconnected"));
+
+  server.addEventListener("message", event => {
+    if (upstream.readyState === WebSocket.OPEN) {
+      try { upstream.send(event.data); } catch (_) { closeBoth(); }
+    }
+  });
+  server.addEventListener("close", () => {
+    if (shuttingDown) return;
+    shuttingDown = true;
+    safeClose(upstream, 1000, "Client disconnected");
+  });
+  server.addEventListener("error", () => closeBoth());
+
   return new Response(null, { status: 101, webSocket: client });
 }
 
