@@ -3767,7 +3767,7 @@ if(workspace&&marketSidebar){
   if(key==="health")body='<div class="bhr-hunter-health"><div><i></i><span><b>رابط کاربری</b><small>فعال — ابزارهای آزمایشی در مرورگر اجرا می‌شوند</small></span></div><div><i class="warn"></i><span><b>داده‌های زنده</b><small>وضعیت اتصال از این پنل تأیید نشده است</small></span></div><div><i class="warn"></i><span><b>هشدار خودکار</b><small>در نسخه فعلی غیرفعال است</small></span></div><div><i class="warn"></i><span><b>همگام‌سازی ابری</b><small>اطلاعات فقط در همین مرورگر ذخیره می‌شود</small></span></div></div>';
   if(key==="risk")body='<form data-hunter-form="risk" class="bhr-hunter-form"><div class="bhr-hunter-fields"><label>موجودی حساب<input name="capital" type="number" min="0" step="any" required placeholder="مثلاً 10000"></label><label>ریسک هر معامله (%)<input name="risk" type="number" min="0.01" max="100" step="any" value="1" required></label></div><div class="bhr-hunter-fields"><label>قیمت ورود<input name="entry" type="number" step="any" required></label><label>حد ضرر<input name="stop" type="number" step="any" required></label></div><label>ارزش هر واحد حرکت به ازای یک واحد حجم<input name="unit" type="number" min="0.000001" step="any" value="1" required></label><button class="bhr-hunter-primary">محاسبه حجم معامله</button></form><div class="bhr-hunter-result" id="bhrHunterRiskResult">حجم پیشنهادی و مبلغ ریسک پس از محاسبه نمایش داده می‌شود.</div><small class="bhr-hunter-disclaimer">محاسبه‌گر آموزشی است؛ ارزش قرارداد، کارمزد و اسلیپیج را جداگانه بررسی کن.</small>';
   if(key==="scanner")body='<form data-hunter-form="scanner" class="bhr-hunter-form"><label>بازار<select name="market"><option>همه بازارها</option><option>طلا و فلزات</option><option>فارکس</option><option>ارز دیجیتال</option><option>بورس ایران</option><option>بورس آمریکا</option></select></label><label>شرایطی که می‌خواهی بررسی کنی<select name="setup"><option>شکست ساختار (BOS)</option><option>بازگشت به ناحیه عرضه/تقاضا</option><option>هم‌جهتی VWAP و دلتا</option><option>شکست سقف/کف روز</option></select></label><button class="bhr-hunter-primary">ساخت چک‌لیست جست‌وجو</button></form><div class="bhr-hunter-result" id="bhrHunterScanResult">این اسکنر هنوز داده بازار را اسکن نمی‌کند؛ شرایط انتخابی را به چک‌لیست بررسی دستی تبدیل می‌کند.</div>';
-  if(key==="bankorders")body='<div class="bhr-liquidation-dashboard" id="bhrLiquidationDashboard"><div class="bhr-liquidation-status"><i id="bhrLiqDot"></i><span id="bhrLiqStatus">در حال اتصال به داده‌های فیوچرز Binance…</span><small id="bhrLiqClock">—</small></div><div class="bhr-liquidation-stats"><article><small>لیکوییدیشن لانگ</small><b id="bhrLiqLong">$0</b><span id="bhrLiqLongCount">۰ رویداد</span></article><article><small>لیکوییدیشن شورت</small><b id="bhrLiqShort">$0</b><span id="bhrLiqShortCount">۰ رویداد</span></article><article><small>مجموع مشاهده‌شده</small><b id="bhrLiqTotal">$0</b><span id="bhrLiqCount">۰ رویداد</span></article></div><div class="bhr-liquidation-toolbar"><b>آخرین رویدادهای لیکوییدیشن</b><select id="bhrLiqFilter" aria-label="فیلتر نماد"><option value="ALL">همه نمادها</option><option value="BTC">بیت‌کوین</option><option value="ETH">اتریوم</option><option value="SOL">سولانا</option><option value="XRP">ریپل</option><option value="BNB">بایننس‌کوین</option></select></div><div class="bhr-liquidation-table-wrap"><table class="bhr-liquidation-table"><thead><tr><th>زمان</th><th>نماد</th><th>نوع</th><th>قیمت</th><th>حجم تقریبی</th></tr></thead><tbody id="bhrLiqRows"><tr><td colspan="5">در انتظار اولین رویداد…</td></tr></tbody></table></div><small class="bhr-hunter-disclaimer">منبع: جریان عمومی لیکوییدیشن فیوچرز Binance. هر نماد حداکثر آخرین رویداد هر بازه یک‌ثانیه‌ای را گزارش می‌کند؛ بنابراین این آمار کل لیکوییدیشن‌های بازار نیست. جمع‌ها فقط از لحظه بازشدن این پنل محاسبه می‌شوند و ارزش دلاری تقریبی‌اند.</small></div>';
+  if(key==="bankorders")body='<div class="bhr-liquidation-dashboard" id="bhrLiquidationDashboard"><div class="bhr-liquidation-status"><i id="bhrLiqDot"></i><span id="bhrLiqStatus">در حال اتصال به داده‌های فیوچرز Binance…</span><small id="bhrLiqClock">—</small></div><div class="bhr-liquidation-stats"><article><small>لیکوییدیشن لانگ</small><b id="bhrLiqLong">$0</b><span id="bhrLiqLongCount">۰ رویداد</span></article><article><small>لیکوییدیشن شورت</small><b id="bhrLiqShort">$0</b><span id="bhrLiqShortCount">۰ رویداد</span></article><article><small>مجموع مشاهده‌شده</small><b id="bhrLiqTotal">$0</b><span id="bhrLiqCount">۰ رویداد</span></article></div><div class="bhr-liquidation-toolbar"><b>آخرین رویدادهای لیکوییدیشن</b><select id="bhrLiqFilter" aria-label="فیلتر نماد"><option value="ALL">همه نمادها</option><option value="BTC">بیت‌کوین</option><option value="ETH">اتریوم</option><option value="SOL">سولانا</option><option value="XRP">ریپل</option><option value="BNB">بایننس‌کوین</option></select></div><div class="bhr-liquidation-table-wrap"><table class="bhr-liquidation-table"><thead><tr><th>زمان</th><th>نماد</th><th>نوع</th><th>قیمت</th><th>حجم تقریبی</th></tr></thead><tbody id="bhrLiqRows"><tr><td colspan="5">در انتظار اولین رویداد…</td></tr></tbody></table></div><small class="bhr-hunter-disclaimer">منبع: جریان عمومی All Liquidation صرافی Bybit برای BTC، ETH، SOL، XRP و BNB در قراردادهای خطی. داده‌ها هر ۵۰۰ میلی‌ثانیه به‌روزرسانی می‌شوند؛ این پنل پوشش تمام نمادهای بازار را ندارد. جمع‌ها فقط از لحظه بازشدن این پنل محاسبه می‌شوند و ارزش دلاری تقریبی‌اند. جمع‌ها فقط از لحظه بازشدن این پنل محاسبه می‌شوند و ارزش دلاری تقریبی‌اند.</small></div>';
   hunterPanel.innerHTML='<div class="bhr-hunter-panel-head"><div><span>HUNTER TOOLS / WORKSPACE</span><h2>'+item[1]+'</h2><p>'+intro+'</p></div><button type="button" class="bhr-hunter-close" aria-label="بازگشت">'+(key==="watchlist"?"← بازگشت":"×")+'</button></div><div class="bhr-hunter-panel-body">'+body+'</div>';
   const card=toolsSidebar.querySelector('[data-hunter-tool="'+key+'"]');
   if(!card)return;
@@ -3797,22 +3797,34 @@ if(workspace&&marketSidebar){
    filter.addEventListener("change",render);
    const connect=()=>{
     if(closed)return;
-    try{socket=new WebSocket("wss://fstream.binance.com/market/ws/!forceOrder@arr");}
+    try{socket=new WebSocket("wss://stream.bybit.com/v5/public/linear");}
     catch(e){status.textContent="اتصال برقرار نشد؛ تلاش مجدد…";retryTimer=setTimeout(connect,5000);return;}
-    socket.onopen=()=>{if(closed)return;dot.classList.add("live");status.textContent="اتصال زنده برقرار است | Binance USDⓈ-M Futures";};
+    socket.onopen=()=>{
+     if(closed)return;
+     dot.classList.add("live");
+     status.textContent="اتصال زنده برقرار است | Bybit USDT/USDC Perpetual";
+     socket.send(JSON.stringify({op:"subscribe",args:["BTCUSDT","ETHUSDT","SOLUSDT","XRPUSDT","BNBUSDT"].map(s=>"allLiquidation."+s)}));
+     socket._bhrPing=setInterval(()=>{if(socket&&socket.readyState===WebSocket.OPEN)socket.send(JSON.stringify({op:"ping"}));},20000);
+    };
     socket.onmessage=ev=>{
      try{
-      const packet=JSON.parse(ev.data),d=packet.data||packet,o=d.o||d;
-      if(d.e!=="forceOrder"||!o.s)return;
-      const qty=Number(o.z||o.q||0),price=Number(o.ap||o.p||0),value=qty*price;
-      events.unshift({time:Number(d.E||o.T||Date.now()),symbol:o.s,side:o.S,price,value});
+      const packet=JSON.parse(ev.data);
+      if(!packet.topic||!packet.topic.startsWith("allLiquidation.")||!Array.isArray(packet.data))return;
+      packet.data.forEach(d=>{
+       if(!d.s||!d.S)return;
+       const qty=Number(d.v||0),price=Number(d.p||0),value=qty*price;
+       // Bybit: Buy means a long position was liquidated; normalize to the panel's existing side labels.
+       const side=d.S==="Buy"?"SELL":d.S==="Sell"?"BUY":null;
+       if(!side)return;
+       events.unshift({time:Number(d.T||packet.ts||Date.now()),symbol:d.s,side,price,value});
+      });
       if(events.length>600)events.length=600;
       render();
       hunterPanel.querySelector("#bhrLiqClock").textContent="آخرین دریافت: "+new Date().toLocaleTimeString("fa-IR");
      }catch(e){}
     };
-    socket.onerror=()=>{status.textContent="اختلال در اتصال داده؛ در حال بازیابی…";};
-    socket.onclose=()=>{dot.classList.remove("live");if(!closed){status.textContent="اتصال قطع شد؛ تلاش مجدد تا ۵ ثانیه دیگر…";retryTimer=setTimeout(connect,5000);}};
+    socket.onerror=()=>{status.textContent="اختلال در اتصال داده Bybit؛ در حال بازیابی…";};
+    socket.onclose=()=>{dot.classList.remove("live");if(socket&&socket._bhrPing)clearInterval(socket._bhrPing);if(!closed){status.textContent="اتصال قطع شد؛ تلاش مجدد تا ۵ ثانیه دیگر…";retryTimer=setTimeout(connect,5000);}};
    };
    connect();
    const closeBtn=hunterPanel.querySelector(".bhr-hunter-close");
