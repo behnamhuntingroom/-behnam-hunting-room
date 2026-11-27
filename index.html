@@ -3702,7 +3702,7 @@ if(workspace&&marketSidebar){
   '<div class="bhr-tool-card"><span>◌</span><strong>سلامت داده‌های بازار</strong><small>وضعیت اتصال و زمان به‌روزرسانی</small></div>'+
   '<div class="bhr-tool-card"><span>⚖</span><strong>مدیریت ریسک</strong><small>محاسبه حجم و ریسک معامله</small></div>'+
   '<div class="bhr-tool-card"><span>⌁</span><strong>اسکنر فرصت‌ها</strong><small>شناسایی موقعیت‌های قابل بررسی</small></div>'+
-  '<div class="bhr-tool-card"><span>⚡</span><strong>ردیاب لیکوییدیشن</strong><small>رصد لحظه‌ای لیکوییدیشن فیوچرز</small></div>'+
+  '<div class="bhr-tool-card"><span>🎯</span><strong>چک‌لیست شکار P1/P2/P3</strong><small>بررسی تأیید ساختار قبل از ورود</small></div>'+
   '</div>';
 
  workspace.append(toolsSidebar);
@@ -3718,7 +3718,7 @@ if(workspace&&marketSidebar){
   ["health","سلامت داده‌های بازار","وضعیت اتصال و منبع داده"],
   ["risk","مدیریت ریسک","محاسبه حجم و ریسک معامله"],
   ["scanner","اسکنر فرصت‌ها","فیلتر و ثبت فرصت‌های قابل بررسی"],
-  ["bankorders","ردیاب لیکوییدیشن","رصد لحظه‌ای لیکوییدیشن لانگ و شورت"]
+  ["structure","چک‌لیست شکار P1/P2/P3","بررسی تأیید ساختار قبل از ورود"]
  ];
  toolsSidebar.querySelectorAll(".bhr-tool-card").forEach((card,index)=>{
   card.dataset.hunterTool=hunterToolNames[index][0];
@@ -3754,7 +3754,7 @@ if(workspace&&marketSidebar){
    health:"وضعیت اتصال ابزارهای زنده در این نسخه از داخل مرورگر قابل تأیید نیست؛ این پنل فقط وضعیت نسخه آزمایشی را نشان می‌دهد.",
    risk:"سرمایه، درصد ریسک و فاصله حد ضرر را وارد کن تا حجم پیشنهادی بر اساس فرمول ریسک محاسبه شود.",
    scanner:"شرایطی را که دنبال می‌کنی انتخاب کن و فرصت‌ها را به واچ‌لیست منتقل کن؛ اسکن خودکار بازار هنوز فعال نیست.",
-   bankorders:"جریان عمومی سفارش‌های لیکوییدشده در بازار فیوچرز Binance؛ رویدادها به‌صورت زنده دریافت می‌شوند و آمار فقط مربوط به داده‌های مشاهده‌شده در همین نشست است."
+   structure:"چک‌لیست اختصاصی روش P1/P2/P3؛ تأیید فقط زمانی صادر می‌شود که پس از تشکیل P3، بدنه کندل از P2 عبور کند."
   }[key];
   let body="";
   if(key==="watchlist")body='<form data-hunter-form="watchlist" class="bhr-hunter-form"><label>نماد یا دارایی<input name="name" required placeholder="مثلاً XAUUSD یا BTCUSDT"></label><label>یادداشت کوتاه<input name="detail" placeholder="سطح مهم یا دلیل پیگیری"></label><button class="bhr-hunter-primary">افزودن به واچ‌لیست</button></form><div class="bhr-hunter-list">'+(rows||'<div class="bhr-hunter-empty">هنوز نمادی اضافه نشده است.</div>')+'</div>';
@@ -3767,7 +3767,7 @@ if(workspace&&marketSidebar){
   if(key==="health")body='<div class="bhr-hunter-health"><div><i></i><span><b>رابط کاربری</b><small>فعال — ابزارهای آزمایشی در مرورگر اجرا می‌شوند</small></span></div><div><i class="warn"></i><span><b>داده‌های زنده</b><small>وضعیت اتصال از این پنل تأیید نشده است</small></span></div><div><i class="warn"></i><span><b>هشدار خودکار</b><small>در نسخه فعلی غیرفعال است</small></span></div><div><i class="warn"></i><span><b>همگام‌سازی ابری</b><small>اطلاعات فقط در همین مرورگر ذخیره می‌شود</small></span></div></div>';
   if(key==="risk")body='<form data-hunter-form="risk" class="bhr-hunter-form"><div class="bhr-hunter-fields"><label>موجودی حساب<input name="capital" type="number" min="0" step="any" required placeholder="مثلاً 10000"></label><label>ریسک هر معامله (%)<input name="risk" type="number" min="0.01" max="100" step="any" value="1" required></label></div><div class="bhr-hunter-fields"><label>قیمت ورود<input name="entry" type="number" step="any" required></label><label>حد ضرر<input name="stop" type="number" step="any" required></label></div><label>ارزش هر واحد حرکت به ازای یک واحد حجم<input name="unit" type="number" min="0.000001" step="any" value="1" required></label><button class="bhr-hunter-primary">محاسبه حجم معامله</button></form><div class="bhr-hunter-result" id="bhrHunterRiskResult">حجم پیشنهادی و مبلغ ریسک پس از محاسبه نمایش داده می‌شود.</div><small class="bhr-hunter-disclaimer">محاسبه‌گر آموزشی است؛ ارزش قرارداد، کارمزد و اسلیپیج را جداگانه بررسی کن.</small>';
   if(key==="scanner")body='<form data-hunter-form="scanner" class="bhr-hunter-form"><label>بازار<select name="market"><option>همه بازارها</option><option>طلا و فلزات</option><option>فارکس</option><option>ارز دیجیتال</option><option>بورس ایران</option><option>بورس آمریکا</option></select></label><label>شرایطی که می‌خواهی بررسی کنی<select name="setup"><option>شکست ساختار (BOS)</option><option>بازگشت به ناحیه عرضه/تقاضا</option><option>هم‌جهتی VWAP و دلتا</option><option>شکست سقف/کف روز</option></select></label><button class="bhr-hunter-primary">ساخت چک‌لیست جست‌وجو</button></form><div class="bhr-hunter-result" id="bhrHunterScanResult">این اسکنر هنوز داده بازار را اسکن نمی‌کند؛ شرایط انتخابی را به چک‌لیست بررسی دستی تبدیل می‌کند.</div>';
-  if(key==="bankorders")body='<div class="bhr-liquidation-dashboard" id="bhrLiquidationDashboard"><div class="bhr-liquidation-status"><i id="bhrLiqDot"></i><span id="bhrLiqStatus">در حال اتصال به داده‌های فیوچرز Binance…</span><small id="bhrLiqClock">—</small></div><div class="bhr-liquidation-stats"><article><small>لیکوییدیشن لانگ</small><b id="bhrLiqLong">$0</b><span id="bhrLiqLongCount">۰ رویداد</span></article><article><small>لیکوییدیشن شورت</small><b id="bhrLiqShort">$0</b><span id="bhrLiqShortCount">۰ رویداد</span></article><article><small>مجموع مشاهده‌شده</small><b id="bhrLiqTotal">$0</b><span id="bhrLiqCount">۰ رویداد</span></article></div><div class="bhr-liquidation-toolbar"><b>آخرین رویدادهای لیکوییدیشن</b><select id="bhrLiqFilter" aria-label="فیلتر نماد"><option value="ALL">همه نمادها</option><option value="BTC">بیت‌کوین</option><option value="ETH">اتریوم</option><option value="SOL">سولانا</option><option value="XRP">ریپل</option><option value="BNB">بایننس‌کوین</option></select></div><div class="bhr-liquidation-table-wrap"><table class="bhr-liquidation-table"><thead><tr><th>زمان</th><th>نماد</th><th>نوع</th><th>قیمت</th><th>حجم تقریبی</th></tr></thead><tbody id="bhrLiqRows"><tr><td colspan="5">در انتظار اولین رویداد…</td></tr></tbody></table></div><small class="bhr-hunter-disclaimer">منبع: جریان عمومی All Liquidation صرافی Bybit برای BTC، ETH، SOL، XRP و BNB در قراردادهای خطی. داده‌ها هر ۵۰۰ میلی‌ثانیه به‌روزرسانی می‌شوند؛ این پنل پوشش تمام نمادهای بازار را ندارد. جمع‌ها فقط از لحظه بازشدن این پنل محاسبه می‌شوند و ارزش دلاری تقریبی‌اند. جمع‌ها فقط از لحظه بازشدن این پنل محاسبه می‌شوند و ارزش دلاری تقریبی‌اند.</small></div>';
+  if(key==="structure")body='<div class="bhr-hunter-result"><b>قانون تأیید روند</b><p>۱) P1: مبدأ حرکت و سوئینگ اصلی را مشخص کن.</p><p>۲) P2: سوئینگ بعدی در جهت روند را مشخص کن.</p><p>۳) P3: پولبک بعد از P2 تشکیل شود.</p><p>۴) فقط عبور <strong>بدنه کندل</strong> از P2 تأیید است؛ شکست با سایه به‌تنهایی تأیید نیست.</p></div><form class="bhr-hunter-form" id="bhrStructureForm"><label>جهت ساختار<select name="direction"><option value="صعودی">صعودی</option><option value="نزولی">نزولی</option></select></label><label><input type="checkbox" name="p1" required> P1 مشخص شده است</label><label><input type="checkbox" name="p2" required> P2 در جهت روند مشخص شده است</label><label><input type="checkbox" name="p3" required> پولبک P3 تشکیل شده است</label><label><input type="checkbox" name="bodyBreak"> بدنه کندل P2 را شکسته است</label><button class="bhr-hunter-primary" type="submit">بررسی تأیید ساختار</button></form><div class="bhr-hunter-result" id="bhrStructureResult">تا وقتی بدنه کندل از P2 عبور نکرده، ساختار تأییدشده نیست.</div>'
   hunterPanel.innerHTML='<div class="bhr-hunter-panel-head"><div><span>HUNTER TOOLS / WORKSPACE</span><h2>'+item[1]+'</h2><p>'+intro+'</p></div><button type="button" class="bhr-hunter-close" aria-label="بازگشت">'+(key==="watchlist"?"← بازگشت":"×")+'</button></div><div class="bhr-hunter-panel-body">'+body+'</div>';
   const card=toolsSidebar.querySelector('[data-hunter-tool="'+key+'"]');
   if(!card)return;
@@ -3775,66 +3775,11 @@ if(workspace&&marketSidebar){
   hunterToolPage.replaceChildren(hunterPanel);
   document.body.append(hunterToolPage);
   hunterPanel.hidden=false;
-  if(key==="bankorders"){
-   const dot=hunterPanel.querySelector("#bhrLiqDot"),status=hunterPanel.querySelector("#bhrLiqStatus");
-   const rowsEl=hunterPanel.querySelector("#bhrLiqRows"),filter=hunterPanel.querySelector("#bhrLiqFilter");
-   const events=[];let socket=null,retryTimer=null,closed=false;
-   const money=n=>"$"+Number(n||0).toLocaleString("en-US",{maximumFractionDigits:0});
-   const fmt=n=>Number(n||0).toLocaleString("en-US",{maximumFractionDigits:8});
-   const render=()=>{
-    const now=Date.now(),recent=events.filter(x=>now-x.time<=15*60*1000);
-    const longs=recent.filter(x=>x.side==="SELL"),shorts=recent.filter(x=>x.side==="BUY");
-    const sum=a=>a.reduce((v,x)=>v+x.value,0);
-    hunterPanel.querySelector("#bhrLiqLong").textContent=money(sum(longs));
-    hunterPanel.querySelector("#bhrLiqShort").textContent=money(sum(shorts));
-    hunterPanel.querySelector("#bhrLiqTotal").textContent=money(sum(recent));
-    hunterPanel.querySelector("#bhrLiqLongCount").textContent=longs.length.toLocaleString("fa-IR")+" رویداد";
-    hunterPanel.querySelector("#bhrLiqShortCount").textContent=shorts.length.toLocaleString("fa-IR")+" رویداد";
-    hunterPanel.querySelector("#bhrLiqCount").textContent=recent.length.toLocaleString("fa-IR")+" رویداد | ۱۵ دقیقه اخیر";
-    const shown=events.filter(x=>filter.value==="ALL"||x.symbol.startsWith(filter.value)).slice(0,80);
-    rowsEl.innerHTML=shown.length?shown.map(x=>'<tr><td>'+new Date(x.time).toLocaleTimeString("fa-IR")+'</td><td><b>'+x.symbol+'</b></td><td><span class="bhr-liq-side '+(x.side==="SELL"?"long":"short")+'">'+(x.side==="SELL"?"لیکویید لانگ":"لیکویید شورت")+'</span></td><td>'+fmt(x.price)+'</td><td>'+money(x.value)+'</td></tr>').join(""):'<tr><td colspan="5">هنوز رویدادی برای این فیلتر دریافت نشده است.</td></tr>';
-   };
-   filter.addEventListener("change",render);
-   const connect=()=>{
-    if(closed)return;
-    try{socket=new WebSocket("wss://fstream.binance.com/market/stream?streams=!forceOrder@arr");}
-    catch(e){status.textContent="اتصال به درگاه بایننس برقرار نشد؛ تلاش مجدد…";retryTimer=setTimeout(connect,5000);return;}
-    socket.onopen=()=>{
-     if(closed)return;
-     dot.classList.add("live");
-     status.textContent="اتصال زنده برقرار است | Binance USDⓈ-M Futures";
-    };
-    socket.onmessage=ev=>{
-     try{
-      const packet=JSON.parse(ev.data);
-      const payload=packet&&packet.data?packet.data:packet;
-      const order=payload&&payload.o?payload.o:payload;
-      if(!order||!order.s||!order.S)return;
-      const qty=Number(order.z||order.q||order.l||0);
-      const price=Number(order.ap||order.p||order.L||0);
-      const value=qty*price;
-      if(!Number.isFinite(qty)||!Number.isFinite(price)||qty<=0||price<=0)return;
-      const side=String(order.S).toUpperCase()==="SELL"?"SELL":String(order.S).toUpperCase()==="BUY"?"BUY":null;
-      if(!side)return;
-      events.unshift({time:Number(order.T||payload.E||Date.now()),symbol:order.s,side,price,value});
-      if(events.length>600)events.length=600;
-      render();
-      hunterPanel.querySelector("#bhrLiqClock").textContent="آخرین دریافت: "+new Date().toLocaleTimeString("fa-IR");
-     }catch(e){}
-    };
-    socket.onerror=()=>{status.textContent="اختلال در اتصال به داده‌های بایننس؛ در حال بازیابی…";};
-    socket.onclose=()=>{dot.classList.remove("live");if(!closed){status.textContent="اتصال قطع شد؛ تلاش مجدد تا ۵ ثانیه دیگر…";retryTimer=setTimeout(connect,5000);}};
-   };
-   connect();
-   const closeBtn=hunterPanel.querySelector(".bhr-hunter-close");
-   closeBtn.addEventListener("click",()=>{closed=true;clearTimeout(retryTimer);if(socket)socket.close();});
-   render();
-  }
  }
  toolsSidebar.addEventListener("click",e=>{const card=e.target.closest("[data-hunter-tool]");if(card)hunterOpen(card.dataset.hunterTool)});
  shortcuts.addEventListener("click",e=>{
   const bankOrdersLink=e.target.closest("[data-bhr-bank-orders]");
-  if(bankOrdersLink){e.preventDefault();hunterOpen("bankorders");}
+  if(bankOrdersLink){e.preventDefault();hunterOpen("structure");}
  });
  toolsSidebar.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.matches("[data-hunter-tool]")){e.preventDefault();hunterOpen(e.target.dataset.hunterTool)}});
  hunterPanel.addEventListener("click",e=>{
@@ -3852,6 +3797,18 @@ if(workspace&&marketSidebar){
   if(key==="watchlist"||key==="alerts"||key==="journal"||key==="symbol"){
    const storeKey=key==="symbol"?"symbols":key;const list=hunterStore.get(storeKey);
    list.unshift({...data,date:new Date().toLocaleString("fa-IR")});hunterStore.set(storeKey,list);hunterOpen(key==="symbol"?"symbol":key);return;
+  }
+  if(form.id==="bhrStructureForm"){
+   const result=hunterPanel.querySelector("#bhrStructureResult");
+   const data=new FormData(form);
+   if(!data.has("p1")||!data.has("p2")||!data.has("p3")){
+    result.textContent="ابتدا P1، P2 و P3 را به‌ترتیب مشخص کن.";
+   }else if(!data.has("bodyBreak")){
+    result.textContent="ساختار هنوز تأیید نشده؛ منتظر شکست P2 با بدنه کندل بمان. شکست با سایه کافی نیست.";
+   }else{
+    result.textContent="ساختار "+data.get("direction")+" تأیید شد؛ حالا حد ضرر و نسبت ریسک به بازده را پیش از ورود بررسی کن.";
+   }
+   return;
   }
   if(key==="risk"){
    const capital=Number(data.capital),risk=Number(data.risk),entry=Number(data.entry),stop=Number(data.stop),unit=Number(data.unit);
