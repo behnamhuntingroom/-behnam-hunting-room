@@ -3797,7 +3797,7 @@ if(workspace&&marketSidebar){
    filter.addEventListener("change",render);
    const connect=()=>{
     if(closed)return;
-    try{socket=new WebSocket("wss://tiny-unit-4ed3.behnamhuntingroom.workers.dev/liquidations");}
+    try{socket=new WebSocket("wss://fstream.binance.com/market/ws/!forceOrder@arr");}
     catch(e){status.textContent="اتصال برقرار نشد؛ تلاش مجدد…";retryTimer=setTimeout(connect,5000);return;}
     socket.onopen=()=>{if(closed)return;dot.classList.add("live");status.textContent="اتصال زنده برقرار است | Binance USDⓈ-M Futures";};
     socket.onmessage=ev=>{
