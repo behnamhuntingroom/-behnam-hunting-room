@@ -1412,6 +1412,53 @@ async function handleLivePrices(env, headers) {
   }
   return json(payload, 200, { ...headers, "Cache-Control": "public, max-age=5" });
 }
+/* WebSocket proxy for Binance liquidation stream */
+async function handleLiquidationSocket(request) {
+  if (request.headers.get("Upgrade") !== "websocket") return new Response("Expected Upgrade: websocket", { status: 426 });
+  const pair = new WebSocketPair();
+  const client = pair[0], server = pair[1];
+  server.accept({ allowHalfOpen: true });
+  let upstream = null, shuttingDown = false;
+  const closeBoth = (code = 1011, reason = "Upstream connection closed") => {
+    if (shuttingDown) return;
+    shuttingDown = true;
+    try { if (upstream && upstream.readyState < WebSocket.CLOSING) upstream.close(code, reason.slice(0, 100)); } catch (_) {}
+    try { if (server.readyState < WebSocket.CLOSING) server.close(code, reason.slice(0, 100)); } catch (_) {}
+  };
+  try {
+    upstream = new WebSocket("wss://fstream.binance.com/market/ws/!forceOrder@arr");
+    upstream.addEventListener("open", () => {
+      if (server.readyState === WebSocket.OPEN) server.send(JSON.stringify({ type: "bhr_proxy_status", status: "connected" }));
+    });
+    upstream.addEventListener("message", event => {
+      if (server.readyState === WebSocket.OPEN) { try { server.send(event.data); } catch (_) { closeBoth(); } }
+    });
+    upstream.addEventListener("error", () => closeBoth(1011, "Binance upstream error"));
+    upstream.addEventListener("close", event => {
+      const code = event.code >= 1000 && event.code < 5000 && ![1004,1005,1006,1015].includes(event.code) ? event.code : 1011;
+      closeBoth(code, event.reason || "Binance upstream disconnected");
+    });
+    server.addEventListener("message", event => {
+      if (upstream && upstream.readyState === WebSocket.OPEN) { try { upstream.send(event.data); } catch (_) { closeBoth(); } }
+    });
+    server.addEventListener("close", event => {
+      if (shuttingDown) return;
+      shuttingDown = true;
+      try {
+        if (upstream && upstream.readyState < WebSocket.CLOSING) {
+          const code = event.code >= 1000 && event.code < 5000 && ![1004,1005,1006,1015].includes(event.code) ? event.code : 1000;
+          upstream.close(code, (event.reason || "Client disconnected").slice(0, 100));
+        }
+      } catch (_) {}
+    });
+    server.addEventListener("error", () => closeBoth());
+  } catch (error) {
+    console.error("[BHR_LIQUIDATION_PROXY_ERROR]", error?.message || "Unknown error");
+    closeBoth(1011, "Could not connect to Binance");
+  }
+  return new Response(null, { status: 101, webSocket: client });
+}
+
 export default {
 
   async fetch(request, env) {
@@ -1426,7 +1473,11 @@ export default {
 
 
 
-    if (path === "/telegram-webhook") {
+    if (path === "/liquidations") {
+      return handleLiquidationSocket(request);
+    }
+
+    if (path === "/telegram-webhook") {
 
       return handleTelegramWebhook(request, env);
 
