@@ -1235,9 +1235,10 @@ async function handleOpportunityScanner(env, headers) {
 
 /* BHR live quotes: Wallex for USDT/BTC and NerkhAra for physical gold/silver + spot references. */
 async function handleLivePrices(env, headers) {
-  const cacheKey = "bhr:live-prices:v2";
+  const cacheKey = "bhr:live-prices:v3";
+  let cached = null;
   try {
-    const cached = env.CHAT_STORE ? await env.CHAT_STORE.get(cacheKey, "json") : null;
+    cached = env.CHAT_STORE ? await env.CHAT_STORE.get(cacheKey, "json") : null;
     if (cached?.updatedAt && Date.now() - Date.parse(cached.updatedAt) < 8000) {
       return json({ ...cached, cached: true }, 200, { ...headers, "Cache-Control": "public, max-age=5" });
     }
@@ -1248,123 +1249,142 @@ async function handleLivePrices(env, headers) {
   const requestHeaders = {
     "Accept": "application/json",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/124.0.0.0 Safari/537.36",
-    "Referer": "https://bitpin.org/"
+    "Referer": "https://behnamhunter.ir/"
+  };
+  const fetchJson = async (url, extraHeaders = {}, cacheTtl = 5) => {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort("provider timeout"), 7000);
+    try {
+      const response = await fetch(url, {
+        headers: { ...requestHeaders, ...extraHeaders },
+        signal: controller.signal,
+        cf: { cacheTtl, cacheEverything: true }
+      });
+      if (!response.ok) throw new Error("HTTP " + response.status);
+      return await response.json();
+    } finally {
+      clearTimeout(timer);
+    }
   };
 
+  let usdtToman = null, btcUsd = null, usdtChange = 0, btcChange = 0;
+  let cryptoSource = null, cryptoError = null;
+
+  // بازار رمزارز مستقل از منبع فلزات دریافت می‌شود.
   try {
-    let usdtToman = 0;
-    let btcUsd = 0;
-    let usdtChange = 0;
-    let btcChange = 0;
-    let cryptoSource = "";
-
-    // اول Bitpin؛ داده عمومی و بدون نیاز به کلید API.
+    const body = await fetchJson("https://api.bitpin.org/api/v1/mkt/tickers/", { "Referer": "https://bitpin.org/" }, 5);
+    const rows = Array.isArray(body) ? body : (Array.isArray(body?.results) ? body.results : []);
+    const findTicker = (...names) => rows.find(row => names.includes(String(row?.symbol || row?.market || "").toUpperCase()));
+    const usdt = findTicker("USDT_IRT", "USDT/IRT", "USDTIRT");
+    const btc = findTicker("BTC_USDT", "BTC/USDT", "BTCUSDT");
+    const u = Number(usdt?.price ?? usdt?.last);
+    const b = Number(btc?.price ?? btc?.last);
+    if (!(u > 0) || !(b > 0)) throw new Error("Bitpin ticker symbols or prices not found");
+    usdtToman = u;
+    btcUsd = b;
+    usdtChange = Number(usdt?.daily_change_percentage ?? usdt?.change ?? 0);
+    btcChange = Number(btc?.daily_change_percentage ?? btc?.change ?? 0);
+    cryptoSource = "Bitpin";
+  } catch (bitpinError) {
     try {
-      const response = await fetch("https://api.bitpin.org/api/v1/mkt/tickers/", {
-        headers: requestHeaders,
-        cf: { cacheTtl: 5, cacheEverything: true }
-      });
-      if (!response.ok) throw new Error("Bitpin HTTP " + response.status);
-      const body = await response.json();
-      const rows = Array.isArray(body) ? body : (Array.isArray(body?.results) ? body.results : []);
-      const findTicker = (...names) => rows.find(row => names.includes(String(row?.symbol || row?.market || "").toUpperCase()));
-      const usdt = findTicker("USDT_IRT", "USDT/IRT", "USDTIRT");
-      const btc = findTicker("BTC_USDT", "BTC/USDT", "BTCUSDT");
-      usdtToman = Number(usdt?.price ?? usdt?.last);
-      btcUsd = Number(btc?.price ?? btc?.last);
-      usdtChange = Number(usdt?.daily_change_percentage ?? usdt?.change ?? 0);
-      btcChange = Number(btc?.daily_change_percentage ?? btc?.change ?? 0);
-      if (!(usdtToman > 0) || !(btcUsd > 0)) throw new Error("Bitpin ticker symbols or prices not found");
-      cryptoSource = "Bitpin";
-    } catch (bitpinError) {
-      // مسیر جایگزین: Wallex؛ اگر CDN آن در دسترس باشد.
-      const response = await fetch("https://api.wallex.ir/v1/markets", {
-        headers: { ...requestHeaders, "Referer": "https://wallex.ir/" },
-        cf: { cacheTtl: 5, cacheEverything: true }
-      });
-      if (!response.ok) throw new Error("Bitpin unavailable (" + String(bitpinError?.message || bitpinError) + "); Wallex HTTP " + response.status);
-      const body = await response.json();
+      const body = await fetchJson("https://api.wallex.ir/v1/markets", { "Referer": "https://wallex.ir/" }, 5);
       const symbols = body?.result?.symbols || body?.result?.markets || {};
-      const usdt = symbols.USDTTMN;
-      const btc = symbols.BTCUSDT;
-      usdtToman = Number(usdt?.stats?.lastPrice);
-      btcUsd = Number(btc?.stats?.lastPrice);
-      usdtChange = Number(usdt?.stats?.["24h_ch"] ?? 0);
-      btcChange = Number(btc?.stats?.["24h_ch"] ?? 0);
-      if (!body?.success || !(usdtToman > 0) || !(btcUsd > 0)) throw new Error("Wallex returned invalid market prices");
+      const u = Number(symbols.USDTTMN?.stats?.lastPrice);
+      const b = Number(symbols.BTCUSDT?.stats?.lastPrice);
+      if (!body?.success || !(u > 0) || !(b > 0)) throw new Error("Wallex returned invalid market prices");
+      usdtToman = u;
+      btcUsd = b;
+      usdtChange = Number(symbols.USDTTMN?.stats?.["24h_ch"] ?? 0);
+      btcChange = Number(symbols.BTCUSDT?.stats?.["24h_ch"] ?? 0);
       cryptoSource = "Wallex";
+    } catch (wallexError) {
+      cryptoError = String(wallexError?.message || wallexError);
+      console.error("[BHR_CRYPTO_PROVIDER_ERROR]", String(bitpinError?.message || bitpinError), cryptoError);
     }
+  }
 
-    const localResponse = await fetch("https://nerkhara.com/api/v1/latest.json", {
-      headers: requestHeaders,
-      cf: { cacheTtl: 30, cacheEverything: true }
-    });
-    let byId = {};
-    let localUpdatedAt = null;
-    if (localResponse.ok) {
-      const localBody = await localResponse.json();
-      const items = Array.isArray(localBody?.items) ? localBody.items : [];
-      byId = Object.fromEntries(items.map(item => [item.id, item]));
-      const stamps = items.filter(item => item?.updated_utc)
-        .map(item => Date.parse(String(item.updated_utc).endsWith("Z") ? item.updated_utc : item.updated_utc + "Z"))
-        .filter(Number.isFinite);
-      if (stamps.length) localUpdatedAt = new Date(Math.max(...stamps)).toISOString();
-    }
-
-    const readLocal = id => {
-      const item = byId[id];
-      const price = Number(item?.price);
-      return item && price > 0 && item.unit === "IRT" ? { price, stale: Boolean(item.stale) } : null;
-    };
-    const gold = readLocal("gold-18k");
-    const silver = readLocal("silver-999");
-    const brentItem = byId.brent;
-    const brentUsd = Number(brentItem?.price);
-    const xauUsdOz = Number(byId.xau?.price);
-    const xagUsdOz = Number(byId.xag?.price);
-    const ounceGrams = 31.1034768;
-
-    const payload = {
-      ok: true,
-      source: { crypto: cryptoSource, iranMetals: "NerkhAra", worldMetals: "NerkhAra" },
-      updatedAt: new Date().toISOString(),
-      localUpdatedAt,
-      data: {
-        usdt: { toman: usdtToman, usd: 1, change24h: usdtChange, stale: false },
-        btc: { toman: btcUsd * usdtToman, usd: btcUsd, change24h: btcChange, stale: false },
-        gold18k: {
-          toman: gold?.price ?? null,
-          usd: xauUsdOz > 0 ? xauUsdOz * 0.75 / ounceGrams : null,
-          stale: Boolean(gold?.stale)
-        },
-        silver999: {
-          toman: silver?.price ?? null,
-          usd: xagUsdOz > 0 ? xagUsdOz * 0.999 / ounceGrams : null,
-          stale: Boolean(silver?.stale)
-        },
-        brent: {
-          usd: brentUsd > 0 ? brentUsd : null,
-          toman: brentUsd > 0 ? brentUsd * usdtToman : null,
-          stale: Boolean(brentItem?.stale)
-        }
-      }
-    };
-
-    if (env.CHAT_STORE) {
-      try { await env.CHAT_STORE.put(cacheKey, JSON.stringify(payload), { expirationTtl: 60 }); }
-      catch (error) { console.error("[BHR_PRICE_CACHE_WRITE]", error?.message || "cache unavailable"); }
-    }
-    return json(payload, 200, { ...headers, "Cache-Control": "public, max-age=5" });
+  // فلزات و نفت در مسیر جداگانه‌اند؛ خطای این منبع قیمت تتر و بیت‌کوین را متوقف نمی‌کند.
+  let byId = {}, localUpdatedAt = null, localSourceError = null;
+  try {
+    const localBody = await fetchJson("https://nerkhara.com/api/v1/latest.json", {}, 20);
+    const items = Array.isArray(localBody?.items) ? localBody.items : [];
+    byId = Object.fromEntries(items.map(item => [item.id, item]));
+    const stamps = items.filter(item => item?.updated_utc)
+      .map(item => Date.parse(String(item.updated_utc).endsWith("Z") ? item.updated_utc : item.updated_utc + "Z"))
+      .filter(Number.isFinite);
+    if (stamps.length) localUpdatedAt = new Date(Math.max(...stamps)).toISOString();
   } catch (error) {
-    console.error("[BHR_LIVE_PRICES_ERROR]", error?.message || "Unknown error");
+    localSourceError = String(error?.message || error);
+    console.error("[BHR_LOCAL_PRICE_PROVIDER_ERROR]", localSourceError);
+  }
+
+  const readLocal = id => {
+    const item = byId[id];
+    const price = Number(item?.price);
+    return item && price > 0 && item.unit === "IRT" ? { price, stale: Boolean(item.stale) } : null;
+  };
+  const gold = readLocal("gold-18k");
+  const silver = readLocal("silver-999");
+  const brentItem = byId.brent;
+  const brentUsd = Number(brentItem?.price);
+  const xauUsdOz = Number(byId.xau?.price);
+  const xagUsdOz = Number(byId.xag?.price);
+  const ounceGrams = 31.1034768;
+
+  const hasCrypto = usdtToman > 0 && btcUsd > 0;
+  const hasLocalMarkets = Boolean(silver || (brentUsd > 0) || gold);
+  if (!hasCrypto && !hasLocalMarkets) {
+    if (cached?.data) {
+      return json({ ...cached, stale: true, cached: true }, 200, { ...headers, "Cache-Control": "public, max-age=10" });
+    }
     return json({
       ok: false,
-      error: "دریافت قیمت از منابع رمزارز یا فلزات ناموفق بود",
-      detail: String(error?.message || "Unknown error").slice(0, 320)
+      error: "دریافت قیمت از منابع بازار ناموفق بود",
+      detail: [cryptoError, localSourceError].filter(Boolean).join(" | ").slice(0, 320)
     }, 502, { ...headers, "Cache-Control": "no-store" });
   }
-}
 
+  const payload = {
+    ok: true,
+    source: {
+      crypto: cryptoSource || "unavailable",
+      iranMetals: localSourceError ? "unavailable" : "NerkhAra",
+      worldMetals: localSourceError ? "unavailable" : "NerkhAra"
+    },
+    providerErrors: {
+      crypto: cryptoError || null,
+      metals: localSourceError || null
+    },
+    updatedAt: new Date().toISOString(),
+    localUpdatedAt,
+    data: {
+      usdt: { toman: usdtToman, usd: 1, change24h: usdtChange, stale: !hasCrypto },
+      btc: { toman: hasCrypto ? btcUsd * usdtToman : null, usd: btcUsd, change24h: btcChange, stale: !hasCrypto },
+      // منبع و فرمول قیمت طلا فعلاً بدون تغییر نگه داشته شده است.
+      gold18k: {
+        toman: gold?.price ?? null,
+        usd: xauUsdOz > 0 ? xauUsdOz * 0.75 / ounceGrams : null,
+        stale: Boolean(gold?.stale)
+      },
+      silver999: {
+        toman: silver?.price ?? null,
+        usd: xagUsdOz > 0 ? xagUsdOz * 0.999 / ounceGrams : null,
+        stale: Boolean(silver?.stale || localSourceError)
+      },
+      brent: {
+        usd: brentUsd > 0 ? brentUsd : null,
+        toman: brentUsd > 0 && usdtToman > 0 ? brentUsd * usdtToman : null,
+        stale: Boolean(brentItem?.stale || localSourceError)
+      }
+    }
+  };
+
+  if (env.CHAT_STORE) {
+    try { await env.CHAT_STORE.put(cacheKey, JSON.stringify(payload), { expirationTtl: 90 }); }
+    catch (error) { console.error("[BHR_PRICE_CACHE_WRITE]", error?.message || "cache unavailable"); }
+  }
+  return json(payload, 200, { ...headers, "Cache-Control": "public, max-age=5" });
+}
 export default {
 
   async fetch(request, env) {
