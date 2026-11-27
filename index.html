@@ -3809,11 +3809,14 @@ if(workspace&&marketSidebar){
     socket.onmessage=ev=>{
      try{
       const packet=JSON.parse(ev.data);
-      if(!packet.topic||!packet.topic.startsWith("allLiquidation.")||!Array.isArray(packet.data))return;
-      packet.data.forEach(d=>{
-       if(!d.s||!d.S)return;
+      if(!packet.topic||!packet.topic.startsWith("allLiquidation.")||!packet.data)return;
+      // Bybit All Liquidation sends data as a single object (not an array).
+      const liquidationItems=Array.isArray(packet.data)?packet.data:[packet.data];
+      liquidationItems.forEach(d=>{
+       if(!d||!d.s||!d.S)return;
        const qty=Number(d.v||0),price=Number(d.p||0),value=qty*price;
-       // Bybit: Buy means a long position was liquidated; normalize to the panel's existing side labels.
+       if(!Number.isFinite(qty)||!Number.isFinite(price)||qty<=0||price<=0)return;
+       // Bybit S=Buy means a long position was liquidated; S=Sell means a short position was liquidated.
        const side=d.S==="Buy"?"SELL":d.S==="Sell"?"BUY":null;
        if(!side)return;
        events.unshift({time:Number(d.T||packet.ts||Date.now()),symbol:d.s,side,price,value});
