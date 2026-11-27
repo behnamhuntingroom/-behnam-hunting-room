@@ -1421,7 +1421,7 @@ async function handleLiquidationSocket(request) {
   let upstream;
   try {
     // Cloudflare's documented outbound WebSocket handshake.
-    const upstreamResponse = await fetch("https://fstream.binance.com/market/stream?streams=!forceOrder@arr", {
+    const upstreamResponse = await fetch("https://fstream.binance.com/stream?streams=!forceOrder@arr", {
       headers: { Upgrade: "websocket" }
     });
     upstream = upstreamResponse.webSocket;
@@ -1482,7 +1482,7 @@ async function handleLiquidationSocket(request) {
 async function testLiquidationUpstream() {
   const checkedAt = new Date().toISOString();
   try {
-    const response = await fetch("https://fstream.binance.com/market/stream?streams=!forceOrder@arr", {
+    const response = await fetch("https://fstream.binance.com/stream?streams=!forceOrder@arr", {
       headers: { Upgrade: "websocket" }
     });
     const socket = response.webSocket;
