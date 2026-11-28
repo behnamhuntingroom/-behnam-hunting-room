@@ -35,6 +35,7 @@ function installEmailMembership() {
   const form = document.createElement("form");
   form.noValidate = true;
   form.style.cssText = "display:grid;gap:10px;margin-top:8px";
+  form.append(nameField.wrap, emailField.wrap, passwordField.wrap);
   const submit = document.createElement("button");
   submit.type = "submit";
   submit.className = "theme-btn";
