@@ -2920,6 +2920,128 @@ function renderAlerts(){
   const box=document.createElement("div");box.className="bhr-up-item";
   const t=document.createElement("span");t.textContent=x.symbol+" | "+(x.direction==="above"?"بالاتر از ":"پایین‌تر از ")+x.price;
   const b=document.createElement("button");b.className="secondary";b.textContent="حذف";
+  b.addEventListener("click",()=>{data.splice(i,1);writeStore("bhr-alerts",data);renderAlerts();});
+  box.append(t,b);list.appendChild(box);
+ });
+}
+$("bhrAlertAdd")?.addEventListener("click",()=>{
+ const symbol=$("bhrAlertSymbol").value.trim().toUpperCase();
+ const price=Number($("bhrAlertPrice").value);
+ if(!symbol||!(price>0)){alert("نماد و قیمت معتبر وارد کن.");return;}
+ const data=readStore("bhr-alerts",[]);
+ data.push({symbol,price,direction:$("bhrAlertDirection").value});
+ writeStore("bhr-alerts",data);$("bhrAlertPrice").value="";renderAlerts();
+});
+renderAlerts();
+
+/* Watchlist removed: replaced by Persian market headlines. */
+/* Personal scenarios */
+function renderScenarios(){
+ const data=readStore("bhr-scenarios",[]),list=$("bhrScenarioList");if(!list)return;
+ list.innerHTML="";
+ data.forEach((x,i)=>{
+  const box=document.createElement("div");box.className="bhr-up-item";
+  const h=document.createElement("strong");h.textContent=x.symbol+" | "+x.side;
+  const p=document.createElement("p");p.textContent=x.text;
+  const b=document.createElement("button");b.className="secondary";b.textContent="حذف";
+  b.addEventListener("click",()=>{data.splice(i,1);writeStore("bhr-scenarios",data);renderScenarios();});
+  box.append(h,p,b);list.appendChild(box);
+ });
+}
+$("bhrScenarioAdd")?.addEventListener("click",()=>{
+ const symbol=$("bhrScenarioSymbol").value.trim().toUpperCase();
+ const text=$("bhrScenarioText").value.trim();
+ if(!symbol||!text){alert("نماد و شرح سناریو را وارد کن.");return;}
+ const data=readStore("bhr-scenarios",[]);
+ data.unshift({symbol,side:$("bhrScenarioSide").value,text});
+ writeStore("bhr-scenarios",data);$("bhrScenarioText").value="";renderScenarios();
+});
+renderScenarios();
+
+/* Community analysis: local device storage only */
+function renderAnalyses(){
+ const data=readStore("bhr-analyses",[]),list=$("bhrAnalysisList");if(!list)return;
+ list.innerHTML="";
+ data.forEach((x,i)=>{
+  const box=document.createElement("div");box.className="bhr-up-item";
+  const h=document.createElement("strong");h.textContent=x.symbol+" | "+x.side+" | "+x.author;
+  const p=document.createElement("p");p.textContent=x.text;
+  const levels=document.createElement("small");
+  levels.textContent="Entry: "+(x.entry||"—")+" | SL: "+(x.stop||"—")+" | TP: "+(x.target||"—");
+  box.append(h,p,levels);
+  if(x.image){
+   const img=document.createElement("img");img.src=x.image;img.alt="تصویر تحلیل";
+   img.style.cssText="display:block;max-width:100%;max-height:300px;margin-top:10px;border-radius:10px";
+   box.appendChild(img);
+  }
+  const del=document.createElement("button");del.className="secondary";del.textContent="حذف تحلیل";
+  del.addEventListener("click",()=>{data.splice(i,1);writeStore("bhr-analyses",data);renderAnalyses();});
+  box.appendChild(del);list.appendChild(box);
+ });
+}
+$("bhrAnalysisSubmit")?.addEventListener("click",()=>{
+ const author=$("bhrAnalysisAuthor").value.trim()||"کاربر";
+ const symbol=$("bhrAnalysisSymbol").value.trim().toUpperCase();
+ const text=$("bhrAnalysisText").value.trim();
+ if(!symbol||!text){$("bhrAnalysisStatus").textContent="نماد و شرح تحلیل را وارد کن.";return;}
+ const file=$("bhrAnalysisImage").files[0];
+ if(file&&file.size>1500000){$("bhrAnalysisStatus").textContent="حجم تصویر باید کمتر از ۱٫۵ مگابایت باشد.";return;}
+ const save=image=>{
+  const data=readStore("bhr-analyses",[]);
+  data.unshift({
+   author,symbol,side:$("bhrAnalysisSide").value,
+   entry:$("bhrAnalysisEntry").value,stop:$("bhrAnalysisStop").value,
+   target:$("bhrAnalysisTarget").value,text,image,
+   date:new Date().toLocaleString("fa-IR")
+  });
+  if(!writeStore("bhr-analyses",data)){
+   $("bhrAnalysisStatus").textContent="ذخیره انجام نشد؛ احتمالاً فضای مرورگر کافی نیست.";return;
+  }
+  $("bhrAnalysisStatus").textContent="تحلیل فقط در همین مرورگر ذخیره شد.";
+  $("bhrAnalysisText").value="";$("bhrAnalysisImage").value="";
+  renderAnalyses();
+ };
+ if(file){
+  const reader=new FileReader();
+  reader.onload=()=>save(reader.result);
+  reader.onerror=()=>{$("bhrAnalysisStatus").textContent="خواندن تصویر ناموفق بود.";};
+  reader.readAsDataURL(file);
+ }else save("");
+});
+renderAnalyses();
+
+})();
+</script><script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+
+/* Navigation links */
+const nav=document.querySelector("header nav");
+if(nav){
+ const links=[
+  ["bhr-academy","آکادمی رایگان"],
+  ["bhr-trading-tools","ابزارهای ترید"],
+  ["bhr-command-center","مرکز بازار"],
+  ["bhr-community","تحلیل کاربران"]
+ ];
+ links.forEach(([id,label])=>{
+  if(document.querySelector('header nav a[href="#'+id+'"]'))return;
+  const a=document.createElement("a");
+  a.href="#"+id;a.textContent=label;nav.appendChild(a);
+ });
+}
+
+/* Login and signup buttons */
+const tools=document.querySelector("header .header-tools");
+if(tools){
+ ["ورود","عضویت"].forEach(label=>{
+  const b=document.createElement("button");
+  b.type="button";b.className="theme-btn bhr-auth-nav-button";
+  b.setAttribute("aria-label",label);
+  b.innerHTML=(label==="ورود"
+   ?'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6v-2h6V5h-6V3zM10.6 7.6 15 12l-4.4 4.4-1.4-1.4 2-2H3v-2h8.2l-2-2 1.4-1.4z"/></svg>'
+   :'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-4.4 0-8 2.2-8 5v2h12.2a6.5 6.5 0 0 1-.2-1.5c0-1.8.7-3.4 1.8-4.6A16 16 0 0 0 9 13zm11-1v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>')+'<span>'+label+'</span>';
   tools.appendChild(b);
  });
  const languageButton=$("langBtn");
@@ -2935,7 +3057,8 @@ $("bhr-auth-panel")?.addEventListener("click",e=>{
   $("bhr-auth-panel").setAttribute("aria-hidden","true");
  }
 });
- /* Support chat: two-way Cloudflare Worker + Telegram */
+
+/* Support chat: two-way Cloudflare Worker + Telegram */
 const SUPPORT_ENDPOINT="https://tiny-unit-4ed3.behnamhuntingroom.workers.dev/";
 let supportUser=null;
 let supportConversationId=null;
