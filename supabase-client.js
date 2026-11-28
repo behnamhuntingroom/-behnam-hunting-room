@@ -274,17 +274,30 @@ function installEmailMembership() {
       }
     } catch (error) {
       const message = String(error && error.message || "");
-      const code = error && error.code || "";
-      if (code === "invalid_credentials" || /invalid login credentials/i.test(message)) {
+      const code = String(error && error.code || "").toLowerCase();
+      const statusCode = Number(error && error.status) || 0;
+      if (code === "email_address_not_authorized") {
+        status.textContent = "ارسال به این ایمیل فعلاً مجاز نیست؛ سرویس پیش‌فرض Supabase فقط به اعضای تیم پروژه ایمیل می‌فرستد. برای ارسال به همه کاربران، SMTP اختصاصی باید تنظیم شود.";
+      } else if (code === "over_email_send_rate_limit" || statusCode === 429) {
+        status.textContent = "سقف ارسال ایمیل پر شده؛ کمی بعد دوباره تلاش کن.";
+      } else if (code === "email_exists" || code === "user_already_exists") {
+        status.textContent = "با این ایمیل قبلاً حساب ساخته شده؛ وارد شو یا رمز را بازیابی کن.";
+      } else if (code === "signup_disabled" || code === "email_provider_disabled") {
+        status.textContent = "ثبت‌نام ایمیلی در تنظیمات سرویس خاموش است.";
+      } else if (code === "email_address_invalid" || code === "validation_failed") {
+        status.textContent = "نشانی ایمیل معتبر وارد کن.";
+      } else if (code === "invalid_credentials" || /invalid login credentials/i.test(message)) {
         status.textContent = "ایمیل یا رمز عبور درست نیست.";
       } else if (code === "email_not_confirmed" || /email not confirmed/i.test(message)) {
         status.textContent = "ابتدا لینک تأیید ارسال‌شده به ایمیلت را باز کن.";
       } else if (code === "weak_password" || /password.*(at least|characters)/i.test(message)) {
         status.textContent = "رمز عبور باید حداقل ۸ نویسه باشد.";
-      } else if (error && error.status === 429) {
-        status.textContent = "درخواست‌های زیادی انجام شده؛ چند دقیقه بعد دوباره تلاش کن.";
+      } else if (/failed to fetch|networkerror|network request failed/i.test(message)) {
+        status.textContent = "ارتباط با سرویس عضویت برقرار نشد؛ اتصال اینترنت را بررسی کن و دوباره تلاش کن.";
+      } else if (code || statusCode) {
+        status.textContent = "ارسال انجام نشد (کد خطا: " + (code || statusCode) + "). این کد را برای پشتیبانی بفرست.";
       } else {
-        status.textContent = "انجام نشد. ایمیل و رمز عبور را بررسی کن و دوباره تلاش کن.";
+        status.textContent = "ارسال انجام نشد؛ لطفاً نشانی ایمیل و رمز عبور را بررسی کن و دوباره تلاش کن.";
       }
     } finally {
       busy = false;
