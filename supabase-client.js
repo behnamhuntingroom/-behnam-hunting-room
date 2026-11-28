@@ -142,7 +142,12 @@ function installEmailMembership() {
 
   document.querySelectorAll(".bhr-auth-nav-button").forEach((button) => {
     if (button === signedIn || button === signOut) return;
-    button.addEventListener("click", () => setMode(button.getAttribute("aria-label") === "عضویت" ? "signup" : "login"));
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      const label = (button.getAttribute("aria-label") || button.textContent || "").trim();
+      setMode(label.includes("عضویت") ? "signup" : "login");
+      showPanel(true);
+    });
   });
   reset.addEventListener("click", () => setMode("reset"));
   switchMode.addEventListener("click", () => setMode(mode === "login" ? "signup" : "login"));
