@@ -72,11 +72,13 @@ function installEmailMembership() {
   signedIn.className = "theme-btn bhr-auth-nav-button";
   signedIn.textContent = "حساب من";
   signedIn.hidden = true;
+  signedIn.style.setProperty("display", "none", "important");
   const signOut = document.createElement("button");
   signOut.type = "button";
   signOut.className = "theme-btn bhr-auth-nav-button";
   signOut.textContent = "خروج";
   signOut.hidden = true;
+  signOut.style.setProperty("display", "none", "important");
   if (headerTools) headerTools.append(signedIn, signOut);
 
   let mode = "login";
@@ -84,8 +86,8 @@ function installEmailMembership() {
   const setVisible = (element, visible, displayValue = "") => {
     element.hidden = !visible;
     if (visible) {
+      element.style.removeProperty("display");
       if (displayValue) element.style.setProperty("display", displayValue);
-      else element.style.removeProperty("display");
     } else {
       element.style.setProperty("display", "none", "important");
     }
@@ -160,13 +162,34 @@ function installEmailMembership() {
   });
   reset.addEventListener("click", () => setMode("reset"));
   switchMode.addEventListener("click", () => setMode(mode === "login" ? "signup" : "login"));
-  signedIn.addEventListener("click", () => {
-    const accountPanel = document.getElementById("bhr-user-panel");
-    if (accountPanel) {
-      accountPanel.classList.add("open");
-      accountPanel.setAttribute("aria-hidden", "false");
-    }
+  const accountPanel = document.getElementById("bhr-user-panel");
+  const openAccountPanel = () => {
+    if (!accountPanel) return;
+    accountPanel.classList.add("open");
+    accountPanel.setAttribute("aria-hidden", "false");
+  };
+  const closeAccountPanel = () => {
+    if (!accountPanel) return;
+    accountPanel.classList.remove("open");
+    accountPanel.setAttribute("aria-hidden", "true");
+    if (!signedIn.hidden) signedIn.focus();
+  };
+  signedIn.addEventListener("click", openAccountPanel);
+  document.getElementById("bhrUserPanelOpen")?.addEventListener("click", openAccountPanel);
+  document.getElementById("bhrUserPanelClose")?.addEventListener("click", closeAccountPanel);
+  accountPanel?.addEventListener("click", (event) => {
+    if (event.target === accountPanel) closeAccountPanel();
   });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && accountPanel?.classList.contains("open")) closeAccountPanel();
+  });
+  const accountTabs = accountPanel?.querySelectorAll("[data-bhr-panel-tab]") || [];
+  const accountViews = accountPanel?.querySelectorAll("[data-bhr-panel-view]") || [];
+  accountTabs.forEach((tab) => tab.addEventListener("click", () => {
+    const key = tab.dataset.bhrPanelTab;
+    accountTabs.forEach((item) => item.classList.toggle("active", item === tab));
+    accountViews.forEach((view) => setVisible(view, view.dataset.bhrPanelView === key, "block"));
+  }));
   signOut.addEventListener("click", async () => {
     if (!supabaseClient) {
       status.textContent = "سرویس عضویت هنوز آماده نیست؛ صفحه را تازه کن و دوباره تلاش کن.";
