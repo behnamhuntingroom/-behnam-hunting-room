@@ -81,6 +81,15 @@ function installEmailMembership() {
 
   let mode = "login";
   let busy = false;
+  const setVisible = (element, visible, displayValue = "") => {
+    element.hidden = !visible;
+    if (visible) {
+      if (displayValue) element.style.setProperty("display", displayValue);
+      else element.style.removeProperty("display");
+    } else {
+      element.style.setProperty("display", "none", "important");
+    }
+  };
   const showPanel = (open) => {
     panel.classList.toggle("open", open);
     panel.setAttribute("aria-hidden", open ? "false" : "true");
@@ -91,22 +100,22 @@ function installEmailMembership() {
     const signup = mode === "signup";
     const resetMode = mode === "reset";
     title.textContent = signup ? "عضویت با ایمیل" : recovery ? "تغییر رمز عبور" : resetMode ? "بازیابی رمز عبور" : "ورود با ایمیل";
-    nameField.wrap.hidden = !signup;
+    setVisible(nameField.wrap, signup, "grid");
     nameField.input.disabled = !signup;
     nameField.input.required = signup;
-    emailField.wrap.hidden = recovery;
+    setVisible(emailField.wrap, !recovery, "grid");
     emailField.input.disabled = recovery;
     emailField.input.required = !recovery;
-    passwordField.wrap.hidden = resetMode;
+    setVisible(passwordField.wrap, !resetMode, "grid");
     passwordField.input.disabled = resetMode;
     passwordField.input.required = !resetMode;
     passwordField.input.minLength = signup || recovery ? 8 : 0;
     passwordField.input.autocomplete = signup || recovery ? "new-password" : "current-password";
     submit.textContent = signup ? "ساخت حساب" : recovery ? "ذخیره رمز جدید" : resetMode ? "ارسال لینک بازیابی" : "ورود";
-    reset.hidden = mode !== "login";
-    switchMode.hidden = recovery;
+    setVisible(reset, mode === "login", "block");
+    setVisible(switchMode, !recovery, "block");
     switchMode.textContent = mode === "login" ? "حساب نداری؟ عضویت" : signup ? "حساب داری؟ ورود" : "بازگشت به ورود";
-    note.hidden = !signup;
+    setVisible(note, signup, "block");
     note.textContent = "برای فعال‌شدن حساب، لینک تأییدی را که به ایمیلت فرستاده می‌شود باز کن.";
     status.textContent = "";
   };
@@ -133,10 +142,10 @@ function installEmailMembership() {
     const user = session && session.user;
     document.querySelectorAll(".bhr-auth-nav-button").forEach((button) => {
       if (button === signedIn || button === signOut) return;
-      button.hidden = !!user;
+      setVisible(button, !user);
     });
-    signedIn.hidden = !user;
-    signOut.hidden = !user;
+    setVisible(signedIn, !!user);
+    setVisible(signOut, !!user);
     updateAccountPanel(session);
   };
 
