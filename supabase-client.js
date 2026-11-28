@@ -1,4 +1,4 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+let supabaseClient = null;
 
 function installEmailMembership() {
   const box = document.getElementById("bhr-auth-box");
@@ -154,6 +154,11 @@ function installEmailMembership() {
     }
   });
   signOut.addEventListener("click", async () => {
+    if (!supabaseClient) {
+      status.textContent = "سرویس عضویت هنوز آماده نیست؛ صفحه را تازه کن و دوباره تلاش کن.";
+      showPanel(true);
+      return;
+    }
     const result = await supabaseClient.auth.signOut();
     if (result.error) {
       status.textContent = "خروج انجام نشد. دوباره تلاش کن.";
@@ -164,6 +169,10 @@ function installEmailMembership() {
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (busy) return;
+    if (!supabaseClient) {
+      status.textContent = "فرم آماده است، اما سرویس عضویت در دسترس نیست؛ کمی بعد دوباره تلاش کن.";
+      return;
+    }
     const email = emailField.input.value.trim();
     const password = passwordField.input.value;
     const name = nameField.input.value.trim();
@@ -246,6 +255,9 @@ function installEmailMembership() {
     }
   });
 
+  window.addEventListener("bhr:supabase-error", () => {
+    status.textContent = "فرم عضویت آماده است، اما اتصال به سرویس ورود برقرار نشد.";
+  });
   window.addEventListener("bhr:auth-state", (event) => {
     const detail = event.detail || {};
     applySession(detail.session || null);
@@ -255,30 +267,38 @@ function installEmailMembership() {
       showPanel(true);
     }
   });
-  supabaseClient.auth.getSession().then((result) => {
-    if (!result.error) applySession(result.data && result.data.session);
-  }).catch(() => {});
+  if (supabaseClient) {
+    supabaseClient.auth.getSession().then((result) => {
+      if (!result.error) applySession(result.data && result.data.session);
+    }).catch(() => {});
+  }
   setMode("login");
 }
 
 const SUPABASE_URL = "https://sbsalvbnozkmvmglhppr.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_fUXFAfepAtfg67_9ImF6Ow_DCHvA3qV";
 
-const supabaseClient = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true
-  }
-});
-
-window.BHR_SUPABASE = supabaseClient;
-window.BHR_SUPABASE_READY = true;
-window.dispatchEvent(new CustomEvent("bhr:supabase-ready"));
+window.BHR_SUPABASE = null;
+window.BHR_SUPABASE_READY = false;
 installEmailMembership();
 
-supabaseClient.auth.onAuthStateChange((event, session) => {
-  window.dispatchEvent(new CustomEvent("bhr:auth-state", {
-    detail: { event, session }
-  }));
+import("https://esm.sh/@supabase/supabase-js@2").then(({ createClient }) => {
+  supabaseClient = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
+    }
+  });
+  window.BHR_SUPABASE = supabaseClient;
+  window.BHR_SUPABASE_READY = true;
+  window.dispatchEvent(new CustomEvent("bhr:supabase-ready"));
+  supabaseClient.auth.onAuthStateChange((event, session) => {
+    window.dispatchEvent(new CustomEvent("bhr:auth-state", {
+      detail: { event, session }
+    }));
+  });
+}).catch(() => {
+  window.BHR_SUPABASE_READY = false;
+  window.dispatchEvent(new CustomEvent("bhr:supabase-error"));
 });
